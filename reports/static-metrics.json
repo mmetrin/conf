@@ -1,0 +1,20 @@
+{
+  "before": {
+    "htmlBytes": 4199467,
+    "scrollListeners": 4,
+    "independentRafDrivers": 5,
+    "blockingAnimationFrames": 20,
+    "programmeUnusedStyleUpdates": 120,
+    "frameCacheRgbaBytes": 182206720
+  },
+  "after": {
+    "htmlBytes": 882,
+    "jsBytes": 279999,
+    "cssBytes": 42038,
+    "scrollListeners": 1,
+    "independentRafDrivers": 1,
+    "blockingAnimationFrames": 1,
+    "programmeUnusedStyleUpdates": 0,
+    "frameCacheRgbaBytesAt1130CssPxAndDpr1": 57494400
+  }
+}

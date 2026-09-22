@@ -1,0 +1,473 @@
+{
+  "jsBytes": 299019,
+  "cssBytes": 49967,
+  "metafile": {
+    "inputs": {
+      "node_modules/scheduler/cjs/scheduler.production.js": {
+        "bytes": 10181,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/scheduler/index.js": {
+        "bytes": 194,
+        "imports": [
+          {
+            "path": "node_modules/scheduler/cjs/scheduler.production.js",
+            "kind": "require-call",
+            "original": "./cjs/scheduler.production.js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react/cjs/react.production.js": {
+        "bytes": 18040,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/react/index.js": {
+        "bytes": 186,
+        "imports": [
+          {
+            "path": "node_modules/react/cjs/react.production.js",
+            "kind": "require-call",
+            "original": "./cjs/react.production.js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react-dom/cjs/react-dom.production.js": {
+        "bytes": 7326,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "require-call",
+            "original": "react"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react-dom/index.js": {
+        "bytes": 1359,
+        "imports": [
+          {
+            "path": "node_modules/react-dom/cjs/react-dom.production.js",
+            "kind": "require-call",
+            "original": "./cjs/react-dom.production.js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react-dom/cjs/react-dom-client.production.js": {
+        "bytes": 625168,
+        "imports": [
+          {
+            "path": "node_modules/scheduler/index.js",
+            "kind": "require-call",
+            "original": "scheduler"
+          },
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "require-call",
+            "original": "react"
+          },
+          {
+            "path": "node_modules/react-dom/index.js",
+            "kind": "require-call",
+            "original": "react-dom"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react-dom/client.js": {
+        "bytes": 1373,
+        "imports": [
+          {
+            "path": "node_modules/react-dom/cjs/react-dom-client.production.js",
+            "kind": "require-call",
+            "original": "./cjs/react-dom-client.production.js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "node_modules/react/cjs/react-jsx-runtime.production.js": {
+        "bytes": 976,
+        "imports": [],
+        "format": "cjs"
+      },
+      "node_modules/react/jsx-runtime.js": {
+        "bytes": 210,
+        "imports": [
+          {
+            "path": "node_modules/react/cjs/react-jsx-runtime.production.js",
+            "kind": "require-call",
+            "original": "./cjs/react-jsx-runtime.production.js"
+          }
+        ],
+        "format": "cjs"
+      },
+      "src/components/ThreeParticleShape.jsx": {
+        "bytes": 12371,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/components/Hero.jsx": {
+        "bytes": 3901,
+        "imports": [
+          {
+            "path": "src/components/ThreeParticleShape.jsx",
+            "kind": "import-statement",
+            "original": "./ThreeParticleShape.jsx"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/data/programme.js": {
+        "bytes": 3047,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/components/Programme.jsx": {
+        "bytes": 2665,
+        "imports": [
+          {
+            "path": "src/data/programme.js",
+            "kind": "import-statement",
+            "original": "../data/programme.js"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/utils/phone.js": {
+        "bytes": 469,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/utils/validation.js": {
+        "bytes": 1884,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/components/Registration.jsx": {
+        "bytes": 11273,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "src/utils/phone.js",
+            "kind": "import-statement",
+            "original": "../utils/phone.js"
+          },
+          {
+            "path": "src/utils/validation.js",
+            "kind": "import-statement",
+            "original": "../utils/validation.js"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/components/StageOverlay.jsx": {
+        "bytes": 3509,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "node_modules/react-dom/index.js",
+            "kind": "import-statement",
+            "original": "react-dom"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/components/Footer.jsx": {
+        "bytes": 1854,
+        "imports": [
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/scheduler.js": {
+        "bytes": 1078,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/animation/runtime.js": {
+        "bytes": 2078,
+        "imports": [
+          {
+            "path": "src/animation/scheduler.js",
+            "kind": "import-statement",
+            "original": "./scheduler.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/typography.js": {
+        "bytes": 7129,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/animation/receiver.js": {
+        "bytes": 4291,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/animation/scene.js": {
+        "bytes": 56167,
+        "imports": [
+          {
+            "path": "src/animation/typography.js",
+            "kind": "import-statement",
+            "original": "./typography.js"
+          },
+          {
+            "path": "src/animation/receiver.js",
+            "kind": "import-statement",
+            "original": "./receiver.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/abstract.js": {
+        "bytes": 8215,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/animation/scroll.js": {
+        "bytes": 6878,
+        "imports": [],
+        "format": "esm"
+      },
+      "src/hooks/useSceneRuntime.js": {
+        "bytes": 2340,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "src/animation/runtime.js",
+            "kind": "import-statement",
+            "original": "../animation/runtime.js"
+          },
+          {
+            "path": "src/animation/scene.js",
+            "kind": "import-statement",
+            "original": "../animation/scene.js"
+          },
+          {
+            "path": "src/animation/abstract.js",
+            "kind": "import-statement",
+            "original": "../animation/abstract.js"
+          },
+          {
+            "path": "src/animation/scroll.js",
+            "kind": "import-statement",
+            "original": "../animation/scroll.js"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/App.jsx": {
+        "bytes": 557,
+        "imports": [
+          {
+            "path": "src/components/Hero.jsx",
+            "kind": "import-statement",
+            "original": "./components/Hero.jsx"
+          },
+          {
+            "path": "src/components/Programme.jsx",
+            "kind": "import-statement",
+            "original": "./components/Programme.jsx"
+          },
+          {
+            "path": "src/components/Registration.jsx",
+            "kind": "import-statement",
+            "original": "./components/Registration.jsx"
+          },
+          {
+            "path": "src/components/StageOverlay.jsx",
+            "kind": "import-statement",
+            "original": "./components/StageOverlay.jsx"
+          },
+          {
+            "path": "src/components/Footer.jsx",
+            "kind": "import-statement",
+            "original": "./components/Footer.jsx"
+          },
+          {
+            "path": "src/hooks/useSceneRuntime.js",
+            "kind": "import-statement",
+            "original": "./hooks/useSceneRuntime.js"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/main.jsx": {
+        "bytes": 137,
+        "imports": [
+          {
+            "path": "node_modules/react-dom/client.js",
+            "kind": "import-statement",
+            "original": "react-dom/client"
+          },
+          {
+            "path": "src/App.jsx",
+            "kind": "import-statement",
+            "original": "./App.jsx"
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      }
+    },
+    "outputs": {
+      "main.js": {
+        "imports": [],
+        "exports": [],
+        "entryPoint": "src/main.jsx",
+        "inputs": {
+          "node_modules/scheduler/cjs/scheduler.production.js": {
+            "bytesInOutput": 3662
+          },
+          "node_modules/scheduler/index.js": {
+            "bytesInOutput": 51
+          },
+          "node_modules/react/cjs/react.production.js": {
+            "bytesInOutput": 7969
+          },
+          "node_modules/react/index.js": {
+            "bytesInOutput": 51
+          },
+          "node_modules/react-dom/cjs/react-dom.production.js": {
+            "bytesInOutput": 3666
+          },
+          "node_modules/react-dom/index.js": {
+            "bytesInOutput": 253
+          },
+          "node_modules/react-dom/cjs/react-dom-client.production.js": {
+            "bytesInOutput": 205728
+          },
+          "node_modules/react-dom/client.js": {
+            "bytesInOutput": 253
+          },
+          "node_modules/react/cjs/react-jsx-runtime.production.js": {
+            "bytesInOutput": 364
+          },
+          "node_modules/react/jsx-runtime.js": {
+            "bytesInOutput": 51
+          },
+          "src/main.jsx": {
+            "bytesInOutput": 113
+          },
+          "src/components/ThreeParticleShape.jsx": {
+            "bytesInOutput": 5779
+          },
+          "src/components/Hero.jsx": {
+            "bytesInOutput": 4698
+          },
+          "src/data/programme.js": {
+            "bytesInOutput": 6159
+          },
+          "src/components/Programme.jsx": {
+            "bytesInOutput": 1836
+          },
+          "src/components/Registration.jsx": {
+            "bytesInOutput": 8804
+          },
+          "src/utils/phone.js": {
+            "bytesInOutput": 269
+          },
+          "src/utils/validation.js": {
+            "bytesInOutput": 2356
+          },
+          "src/components/StageOverlay.jsx": {
+            "bytesInOutput": 3806
+          },
+          "src/components/Footer.jsx": {
+            "bytesInOutput": 2374
+          },
+          "src/hooks/useSceneRuntime.js": {
+            "bytesInOutput": 1451
+          },
+          "src/animation/scheduler.js": {
+            "bytesInOutput": 468
+          },
+          "src/animation/runtime.js": {
+            "bytesInOutput": 901
+          },
+          "src/animation/typography.js": {
+            "bytesInOutput": 3043
+          },
+          "src/animation/receiver.js": {
+            "bytesInOutput": 1587
+          },
+          "src/animation/scene.js": {
+            "bytesInOutput": 23129
+          },
+          "src/animation/abstract.js": {
+            "bytesInOutput": 4791
+          },
+          "src/animation/scroll.js": {
+            "bytesInOutput": 3117
+          },
+          "src/App.jsx": {
+            "bytesInOutput": 205
+          }
+        },
+        "bytes": 299019
+      }
+    }
+  }
+}
