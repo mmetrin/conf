@@ -21,8 +21,17 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     pending = 0,
     writeFrame = 0,
     abstractLocked = false,
-    previousScrollY = window.scrollY,
-    sceneEffectsActive = true;
+    particleTransitionActive = true,
+    previousScrollY = window.scrollY;
+  function setParticleTransitionActive(active) {
+    if (active === particleTransitionActive) return;
+    particleTransitionActive = active;
+    window.dispatchEvent(
+      new window.CustomEvent("audience-transition-active", {
+        detail: { active },
+      }),
+    );
+  }
   function commit(node, key, value) {
     let cache = written.get(node);
     if (!cache) {
@@ -36,6 +45,39 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   function measure() {
     pending = 0;
     if (scope.disposed) return;
+    // Mobile sections remain in document flow, without the desktop timeline.
+    if (mobile.matches) {
+      const height = window.innerHeight;
+      const programmeTitleTop = programmeTitle.getBoundingClientRect().top;
+      const trackTop = track.getBoundingClientRect().top;
+      const focus = height * 0.5;
+      if (!metrics)
+        metrics = items.map((item) => {
+          const rect = item.getBoundingClientRect();
+          return { top: rect.top - trackTop, bottom: rect.bottom - trackTop };
+        });
+      const levels = metrics.map((item) => {
+        const distance = Math.abs((item.top + item.bottom) / 2 + trackTop - focus);
+        // Match the reference's moving reflection: the active row is fully lit,
+        // adjacent rows retain a soft spill, and distant rows settle near dark.
+        const sigma = Math.min(170, height * 0.2);
+        return Math.exp(-(distance * distance) / (2 * sigma * sigma)).toFixed(3);
+      });
+      // Reveal only as the heading enters the top 80px, after the audience.
+      const smokeReveal = ease(clamp((80 - programmeTitleTop) / 80));
+      // The mobile particle portrait is static, but deactivate its controller
+      // once the programme approaches so resize/style changes cannot repaint it.
+      setParticleTransitionActive(programmeTitleTop > height);
+      scope.cancel(writeFrame);
+      scene.classList.remove("programme-exiting", "programme-pinned");
+      document.body.classList.remove("registration-visible");
+      writeFrame = scope.request(() => {
+        commit(track, "--programme-line-y", (focus - trackTop).toFixed(1) + "px");
+        items.forEach((item, index) => commit(item, "--focus", levels[index]));
+        abstractLights?.show(smokeReveal);
+      });
+      return;
+    }
     // All layout reads are performed together, before any of this frame's writes.
     const height = scene.clientHeight,
       heroScale = getHeroScale(scene.clientWidth, height),
@@ -45,6 +87,10 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       registrationRect = registration.getBoundingClientRect();
     const progress = clamp(1 - remaining / Math.max(1, height * 0.5)),
       fade = ease(progress);
+    // Freeze both portrait canvases before the programme transition begins.
+    // Their last frame remains visible and follows the existing CSS exit, while
+    // the main thread is left to the scroll geometry, beam and programme reveal.
+    setParticleTransitionActive(progress <= 0.001);
     const entry = ease(
         clamp((height * 0.9 - programmeRect.top) / Math.max(1, height * 0.5)),
       ),
@@ -69,13 +115,10 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       abstractLocked = true;
     if (abstractLocked && scrollDirection < 0 && titleCenterOffset >= 0)
       abstractLocked = false;
-    const darkEdge =
-        Math.max(0, window.programmeBeam?.y ?? Math.min(80, height * 0.1)) +
-        8,
-      litEdge = Math.max(
-        darkEdge + 60,
-        Math.min(height * 0.36, height * 0.48 - 24),
-      );
+    // Begin fading only in the top 18% of the viewport; finish above it.
+    // Keep this independent of the projector lens so resize cannot move the mask.
+    const darkEdge = -height * 0.18,
+      litEdge = height * 0.18;
     let focusState = null,
       registrationEdges = null;
     if (active) {
@@ -98,13 +141,14 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
           litEdge,
         ].map((v) => (v - contentTop).toFixed(1) + "px"),
         levels: metrics.map((item) => {
-          const distance = Math.abs(
-            (item.top + item.bottom) / 2 + trackTop - focus,
-          );
+          const centerOffset = (item.top + item.bottom) / 2 + trackTop - focus;
+          const distance = Math.abs(centerOffset);
+          // Above the focus line, only the top mask dims outgoing content.
+          const entryDistance = Math.max(0, centerOffset);
           return {
             opacity: (
               0.3 +
-              0.7 * ease(clamp(1 - distance / (height * 0.3)))
+              0.7 * ease(clamp(1 - entryDistance / (height * 0.3)))
             ).toFixed(3),
             scale: reduced.matches || mobile.matches
               ? "1"
@@ -141,17 +185,11 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
         (-height * 0.38 * heroScale * progress).toFixed(2) + "px",
       );
       commit(scene, "--copy-exit-opacity", (1 - fade).toFixed(4));
-      commit(scene, "--copy-exit-brightness", (1 - 0.85 * fade).toFixed(4));
       commit(programme, "--programme-entry-y", entryY.toFixed(2) + "px");
       commit(
         programme,
         "--programme-entry-opacity",
         (0.35 + 0.65 * entry).toFixed(4),
-      );
-      commit(
-        programme,
-        "--programme-entry-light",
-        (0.55 + 0.45 * entry).toFixed(4),
       );
       previousEntryY = entryY;
       scene.classList.toggle("programme-exiting", progress > 0);
@@ -180,15 +218,8 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
         registrationRect.top < height * 0.7 &&
           registrationRect.bottom > height * 0.2,
       );
-      const nextSceneEffectsActive = registrationRect.top > height * 0.95;
-      if (nextSceneEffectsActive !== sceneEffectsActive) {
-        sceneEffectsActive = nextSceneEffectsActive;
-        window.dispatchEvent(
-          new window.CustomEvent("scene-effects-active", {
-            detail: { active: sceneEffectsActive },
-          }),
-        );
-      }
+      // The fixed projector and beam remain visible through registration/footer.
+      // Scene visibility and page lifecycle own suspension, not section entry.
       if (abstractLights) abstractLights.show(abstractLocked ? 1 : active ? abstractReveal : 0);
       if (focusState) {
         commit(track, "--programme-line-y", focusState.lineY);
@@ -209,7 +240,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     metrics = null;
     schedule();
   }
-  scope.listen(window, "scroll", measure, { passive: true });
+  scope.listen(window, "scroll", schedule, { passive: true });
   scope.listen(window, "resize", invalidate, { passive: true });
   scope.listen(reduced, "change", schedule);
   scope.listen(mobile, "change", invalidate);
@@ -232,6 +263,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   }, () => {}); // Critical loading owns the error/retry UI.
   schedule();
   scope.defer(() => {
+    setParticleTransitionActive(true);
     delete window.programmeBeam;
     document.body.classList.remove("registration-visible");
     registration.classList.remove("assets-ready");

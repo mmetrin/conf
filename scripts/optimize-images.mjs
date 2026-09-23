@@ -49,6 +49,15 @@ const regularImages = [
     }),
   ),
   {
+    source: "programme/light-on-mobile.png",
+    output: "programme/light-on-mobile",
+    widths: [96, 192],
+    usage: [
+      "src/components/Programme.jsx (responsive programme portrait)",
+    ],
+    avif: false,
+  },
+  {
     source: "registration/light-ribbon.png",
     output: "registration/light-ribbon",
     widths: [700, 1400],
@@ -66,7 +75,7 @@ const unusedImages = [
   {
     source: "programme/light-on.png",
     decision:
-      "Unused: the programme uses light-on-icon.svg; original PNG retained and SVG left untouched.",
+      "Unused: the programme uses light-on-mobile.png; original PNG retained.",
   },
 ];
 

@@ -7,8 +7,7 @@ export const topics = [
       "Открытие конференции. Роль данных и технологий в развитии бизнеса и амбиции МТС Ads",
   },
   {
-    image: "assets/programme/light-on-icon.svg",
-    icon: true,
+    image: "assets/programme/light-on-mobile.webp",
     title: "Свет включается",
     description:
       "Почему рекламный рынок виден фрагментарно и как данные, каналы, коммуникации и результаты складываются в единую систему",

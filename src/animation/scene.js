@@ -21,7 +21,8 @@ export function startScene({
     projector = document.querySelector("#projector"),
     finalProjector = document.querySelector("#projector-final"),
     object = document.querySelector(".object");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
+    mobile = matchMedia("(max-width: 599px)");
   // Avoid invalidating style for values that are already committed to the DOM.
   const committedStyles = new WeakMap(),
     committedAttributes = new WeakMap(),
@@ -99,7 +100,7 @@ export function startScene({
     audiencePreparationRequested = false,
     audienceEffectActive = false;
   const automaticEnd = 2.65;
-  const openingHoldDuration = 0.6;
+  const openingHoldDuration = mobile.matches ? 0.15 : 0.6;
   const projectorTravelDuration = 2.2,
     projectorBlendStart = projectorTravelDuration * 0.76,
     projectorBlendDuration = 0.6;
@@ -111,6 +112,7 @@ export function startScene({
     );
   }
   function projectorImageReveal(assembly) {
+    if (assembly >= 1) return 1;
     const t = clamp(
       (assembly * projectorMorphDuration - projectorBlendStart) /
         projectorBlendDuration,
@@ -400,7 +402,9 @@ export function startScene({
   }
   function resize() {
     const nextW = scene.clientWidth,
-      nextH = scene.clientHeight;
+      nextH = mobile.matches
+        ? document.querySelector("#invitation-particles").clientHeight
+        : scene.clientHeight;
     const nextKey = `${nextW}:${nextH}:${innerWidth}:${innerHeight}:${devicePixelRatio}:${fontRevision}`;
     if (nextKey === resizeKey) {
       readScroll();
@@ -512,7 +516,7 @@ export function startScene({
     setStyle(finalProjector, "--final-opacity", finalEntry);
     setStyle(finalProjector, "--final-lens-power", lens);
     setStyle(object, "opacity", reveal * (0.45 + 0.55 * reveal) * 1);
-    const photoTitleReveal =
+    const photoTitleReveal = mobile.matches ? 1 :
       ease(
         clamp((scrollChapter - photoFadeStart) / (photoFadeDuration * 0.85)),
       ) * 1;
@@ -529,7 +533,7 @@ export function startScene({
     setStyle(
       scene,
       "--next-copy-y",
-      `${h * 0.45 * layout.heroScale * (1 - photoTitleReveal)}px`,
+      `${h * (w < 600 ? 0.34 : 0.45) * layout.heroScale * (1 - photoTitleReveal)}px`,
     );
     setStyle(scene, "--next-copy-light", 0.12 + 0.88 * photoTitleReveal);
     setStyle(
@@ -551,9 +555,9 @@ export function startScene({
       photoTitleReveal > 0 ? "visible" : "hidden",
     );
     // Reveal supporting copy only once the heading has entered the light.
-    const subtitleAmount = ease(clamp(audienceElapsed / 0.42));
+    const subtitleAmount = mobile.matches ? 1 : ease(clamp(audienceElapsed / 0.42));
     const subtitleReveal = subtitleAmount * 1;
-    const silhouetteReveal = ease(clamp((audienceElapsed - 0.32) / 0.76));
+    const silhouetteReveal = mobile.matches ? 1 : ease(clamp((audienceElapsed - 0.32) / 0.76));
     particleShapes.forEach((particleShape) => {
       setStyle(particleShape, "--three-particle-opacity", silhouetteReveal);
       setStyle(particleShape, "--three-particle-reveal", silhouetteReveal);
@@ -577,7 +581,7 @@ export function startScene({
     setAttribute(photoSubtitle, "aria-hidden", subtitleReveal <= 0);
     let rolesVisible = false;
     photoRoleItems.forEach((item, index) => {
-      const amount = ease(
+      const amount = mobile.matches ? 1 : ease(
         clamp((audienceElapsed - 0.32 - index * 0.15) / 0.42),
       );
       const visible = amount * 1;
@@ -597,7 +601,7 @@ export function startScene({
     setAttribute(photoTitle, "aria-hidden", photoTitleReveal <= 0);
     setAttribute(object, "aria-hidden", false);
     const nextAudienceEffectActive =
-      scrollChapter >= photoFadeStart - 0.3 && programmeSpread < 0.02;
+      (mobile.matches ? openingComplete : scrollChapter >= photoFadeStart - 0.3) && programmeSpread < 0.02;
     if (nextAudienceEffectActive !== audienceEffectActive) {
       audienceEffectActive = nextAudienceEffectActive;
       window.dispatchEvent(
@@ -626,6 +630,12 @@ export function startScene({
       (targetY - h * (0.8 + 0.85 * listSpread)) * receiverBlend;
     // Keep the beam geometry fixed when the programme section is scrolled.
     targetY += h * 0.07;
+    if (mobileBeamSpread > 0) {
+      const firstLength = Math.max(30, targetY - sourceY);
+      targetY += (Math.max(targetY, h * 1.45) - targetY) * mobileBeamSpread;
+      // Preserve the cone angle while extending it, then widen it slightly.
+      beamWidth *= (targetY - sourceY) / firstLength * (1 + 0.18 * mobileBeamSpread);
+    }
     window.programmeBeam = {
       x: sourceX,
       y: sourceY,
@@ -637,16 +647,33 @@ export function startScene({
     geometryDirty = false;
     updateDecorativeState();
   }
-  let programmeSpread = 0;
+  let programmeSpread = 0,
+    mobileBeamSpread = 0,
+    mobileSymbolVisibility = 1;
   function readScroll() {
-    const nextSpread = ease(
+    const nextMobileBeamSpread = mobile.matches
+      ? ease(clamp((window.scrollY - layout.top) / Math.max(1, h * 0.55)))
+      : 0;
+    if (nextMobileBeamSpread !== mobileBeamSpread) {
+      mobileBeamSpread = nextMobileBeamSpread;
+      geometryDirty = true;
+    }
+    const nextSymbolVisibility = mobile.matches
+      ? 1 - ease(clamp((window.scrollY - layout.top) / Math.max(1, h * 0.5)))
+      : 1;
+    if (nextSymbolVisibility !== mobileSymbolVisibility) {
+      mobileSymbolVisibility = nextSymbolVisibility;
+      dirty = true;
+      wake();
+    }
+    const nextSpread = mobile.matches ? 0 : ease(
       clamp((window.scrollY - layout.stickyEnd) / Math.max(1, h * 0.6)),
     );
     if (Math.abs(nextSpread - programmeSpread) > 0.00001) {
       programmeSpread = nextSpread;
       geometryDirty = true;
     }
-    const next = Math.max(
+    const next = mobile.matches ? 0 : Math.max(
       0,
       Math.min(
         scrollChapterCount,
@@ -666,10 +693,10 @@ export function startScene({
       wake();
     }
   }
-  function advanceScroll(dt) {
+  function advanceScroll(dt, openingDt = dt) {
     const before = rawScrollChapter;
     if (openingComplete) rawScrollChapter = automaticEnd + targetScrollChapter;
-    else advanceOpening(dt);
+    else advanceOpening(openingDt);
     scrollChapter =
       rawScrollChapter < automaticEnd
         ? 0.85 * clamp((rawScrollChapter - 0.98) / (automaticEnd - 0.98))
@@ -707,7 +734,7 @@ export function startScene({
   // frame. The live shear, intensity, masks and particle movement stay intact.
   const shaftLayers = new Map();
   // Crop a triangular field at a fixed lens width, independent of the lower spread.
-  function drawShaft(halfWidth, length) {
+  function drawShaft(halfWidth, length, headBoost = false) {
     const firstScreenNeck = 1 - programmeSpread;
     const neckWidth =
       Math.min(20, Math.max(8, layout.fpw * 0.025)) *
@@ -716,8 +743,12 @@ export function startScene({
     const ratio = canvas.width / w;
     const width = halfWidth * 2 * ratio,
       fullHeight = length * 1.04 * ratio;
-    const height = Math.max(1, Math.min(fullHeight, (h - sourceY) * ratio + 2));
-    const slot = halfWidth > beamWidth ? "outer" : "inner";
+    const height = Math.max(1, Math.min(
+      fullHeight,
+      (h - sourceY) * ratio + 2,
+      headBoost ? 160 * ratio : Infinity,
+    ));
+    const slot = headBoost ? "head" : halfWidth > beamWidth ? "outer" : "inner";
     let layer = shaftLayers.get(slot);
     if (!layer) {
       const image = document.createElement("canvas");
@@ -742,6 +773,18 @@ export function startScene({
         width,
         fullHeight,
       );
+      if (headBoost) {
+        // Cache a short, softly fading boost at the lens, never down the full ray.
+        const fade = layer.context.createLinearGradient(0, 0, 0, height);
+        fade.addColorStop(0, "#000");
+        fade.addColorStop(0.2, "rgba(0,0,0,0.85)");
+        fade.addColorStop(0.65, "rgba(0,0,0,0.3)");
+        fade.addColorStop(1, "#0000");
+        layer.context.globalCompositeOperation = "destination-in";
+        layer.context.fillStyle = fade;
+        layer.context.fillRect(0, 0, layer.image.width, layer.image.height);
+        layer.context.globalCompositeOperation = "source-over";
+      }
     }
     ctx.drawImage(
       layer.image,
@@ -772,19 +815,21 @@ export function startScene({
     const power =
       arrival *
       (1 - 0.3 * textSceneFade) *
-      (1 + 0.24 * textSceneFade * (1 - programmeSpread));
+      (1 + 0.24 * textSceneFade * (1 - programmeSpread)) *
+      (1 - 0.62 * mobileBeamSpread);
     // Light stays fixed while the two content screens move through it.
     const beamPresence = reveal * 1;
     // Data exists only while the photograph is revealed and not yet darkened.
     const photoData =
       reveal *
-      1 *
+      mobileSymbolVisibility *
       (1 - ease(clamp((scrollChapter - photoFadeStart) / photoFadeDuration)));
     // Only the upward stream inside the cone is active on the photograph.
     if (ignition === 0) return;
     const finalBeamFade = Math.max(
       ease(clamp((rawScrollChapter - 0.95) / 0.5)) * (1 - reveal),
       programmeSpread,
+      mobileBeamSpread,
     );
     const nextEffectKey = `${canvas.width}:${canvas.height}:${sourceX}:${sourceY}:${targetX}:${targetY}:${beamWidth}:${travel}:${layout.fpw}:${finalBeamFade}:${textSceneFade}`;
     if (nextEffectKey !== beamEffectKey) {
@@ -807,6 +852,10 @@ export function startScene({
     // Add light on the conference photograph; fade this boost with that screen.
     ctx.globalAlpha = power * 0.48 * beamPresence;
     drawShaft(rayWidth, length);
+    if (mobileBeamSpread > 0) {
+      ctx.globalAlpha = power * 0.18 * mobileBeamSpread;
+      drawShaft(rayWidth, length, true);
+    }
     ctx.restore();
     // Subtle inner shafts restore structure without hard cone boundaries.
     for (let ray = 0; ray < 2; ray++) {
@@ -847,16 +896,33 @@ export function startScene({
         end = targetY + 18;
       bottomMask = ctx.createLinearGradient(
         0,
-        start + (h * 0.42 - start) * finalBeamFade,
+        start + (h * (0.42 - 0.17 * mobileBeamSpread) - start) * finalBeamFade,
         0,
-        end + (h * 1.55 - end) * finalBeamFade,
+        end + (h * (1.55 - 0.5 * mobileBeamSpread) - end) * finalBeamFade,
       );
+      const lowerAlpha = (base, mobile) =>
+        base + (mobile - base) * mobileBeamSpread;
       bottomMask.addColorStop(0, "#000");
-      bottomMask.addColorStop(0.15, "rgba(0,0,0,.94)");
-      bottomMask.addColorStop(0.3, "rgba(0,0,0,.78)");
-      bottomMask.addColorStop(0.5, "rgba(0,0,0,.5)");
-      bottomMask.addColorStop(0.7, "rgba(0,0,0,.22)");
-      bottomMask.addColorStop(0.85, "rgba(0,0,0,.06)");
+      bottomMask.addColorStop(
+        0.15,
+        `rgba(0,0,0,${lowerAlpha(0.94, 0.78)})`,
+      );
+      bottomMask.addColorStop(
+        0.3,
+        `rgba(0,0,0,${lowerAlpha(0.78, 0.48)})`,
+      );
+      bottomMask.addColorStop(
+        0.5,
+        `rgba(0,0,0,${lowerAlpha(0.5, 0.2)})`,
+      );
+      bottomMask.addColorStop(
+        0.7,
+        `rgba(0,0,0,${lowerAlpha(0.22, 0.05)})`,
+      );
+      bottomMask.addColorStop(
+        0.85,
+        `rgba(0,0,0,${lowerAlpha(0.06, 0.01)})`,
+      );
       bottomMask.addColorStop(1, "#0000");
       beamEffects.bottomMask = bottomMask;
     }
@@ -989,11 +1055,14 @@ export function startScene({
     lastScrollChangeAt = -Infinity;
   function frame(now) {
     raf = 0;
-    const dt = Math.min(last ? (now - last) / 1000 : 1 / 60, 0.05);
+    const elapsed = last ? (now - last) / 1000 : 1 / 60;
+    const dt = Math.min(elapsed, 0.05);
     last = now;
     frameDelta = paused ? 0 : dt;
     if (!paused) time += dt;
-    const scrollChanged = advanceScroll(dt);
+    // Opening follows wall time, even when an inexpensive phone misses frames.
+    // Physics still uses a bounded step; visibility handlers reset `last`.
+    const scrollChanged = advanceScroll(dt, elapsed);
     advanceAudience(dt);
     if (scrollChanged) {
       lastScrollChangeAt = now;
@@ -1008,12 +1077,21 @@ export function startScene({
       document.documentElement.classList.contains("opening-locked")
     ) {
       document.documentElement.classList.remove("opening-locked");
+      window.dispatchEvent(new window.Event("opening-complete"));
     }
     // Scroll transforms and text run at display refresh rate. Slow atmospheric
     // effects use 24 fps during scrolling and 30 fps at rest.
     ambientDelta += frameDelta;
+    const mobileSceneSettled =
+      mobile.matches &&
+      openingComplete &&
+      mobileBeamSpread >= 0.999 &&
+      mobileSymbolVisibility <= 0.001;
     const ambientInterval = 1000 / (now - lastScrollChangeAt < 150 ? 24 : 30);
-    if (now - lastAmbientFrame >= ambientInterval && (dirty || !paused)) {
+    if (
+      now - lastAmbientFrame >= ambientInterval &&
+      (dirty || (!paused && !mobileSceneSettled))
+    ) {
       frameDelta = Math.min(ambientDelta, 0.1);
       ambientDelta = 0;
       lastAmbientFrame = now;
@@ -1024,7 +1102,7 @@ export function startScene({
       (openingReady && !openingComplete) ||
       (audienceStarted && audienceElapsed < audienceRevealDuration) ||
       dirty ||
-      !paused
+      (!paused && !mobileSceneSettled)
     )
       wake();
     else last = 0;
@@ -1046,6 +1124,12 @@ export function startScene({
   }
   scope.listen(window, "scroll", readScroll, { passive: true });
   scope.listen(window, "resize", scheduleResize);
+  scope.listen(mobile, "change", () => {
+    dirty = true;
+    geometryDirty = true;
+    resize();
+    wake();
+  });
   scope.listen(reduced, "change", () => {
     paused = reduced.matches;
     dirty = true;
@@ -1173,7 +1257,7 @@ export function startScene({
     function prepare() {
       if (!preparationReady || scope.disposed) return;
       // Text needs native display resolution, independently of the low-resolution light.
-      dpr = devicePixelRatio || 1;
+      dpr = Math.min(devicePixelRatio || 1, mobile.matches ? 2 : 3);
       stageCanvas.width = Math.ceil(w * dpr);
       stageCanvas.height = Math.ceil(h * dpr);
       stageCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -1278,11 +1362,11 @@ export function startScene({
       );
       if (!targetPoints.length) targetPoints.push(...sourcePoints);
       const morphCount = Math.min(
-        w < 600 ? 70 : 140,
+        w < 600 ? 110 : 140,
         sourcePoints.length,
         targetPoints.length,
       );
-      const symbolCount = w < 600 ? 10 : 20,
+      const symbolCount = w < 600 ? 16 : 20,
         symbolStride = Math.ceil(morphCount / symbolCount);
       morphParticles = Array.from({ length: morphCount }, (_, i) => {
         const a =
@@ -1325,9 +1409,9 @@ export function startScene({
       const scatter = clamp(
         (morph * projectorMorphDuration) / projectorTravelDuration,
       );
-      // The lettering follows behind the visible light front, never ahead of it.
+      // Reveal the complete composition together as the beam lights up.
       const textAssembly = beamArrival();
-      const registrationIn = ease(clamp((q - 0.98) / 0.8));
+      const registrationIn = ease(textAssembly);
       const registrationVisibility = registrationIn;
       setStyle(
         conferenceRegister,
@@ -1399,22 +1483,29 @@ export function startScene({
           const x = sx + (tx - sx) * drift + point.dx * arc,
             y = sy + (ty - sy) * drift;
           const emergence = ease(clamp((scatter - point.delay) / 0.2));
-          const alpha = emergence * (0.62 + 0.38 * drift) * dissolve;
+          const alpha = Math.min(
+            1,
+            emergence *
+              (0.62 + 0.38 * drift) *
+              dissolve *
+              (mobile.matches ? 1.22 : 1),
+          );
           if (alpha < 0.002) continue;
           if (point.symbol && glyphPresence > 0) {
             stageCtx.globalAlpha = alpha * glyphPresence;
             stageCtx.drawImage(
               morphGlyphs[point.symbol],
-              x - 12,
-              y - 12,
-              24,
-              24,
+              x - (mobile.matches ? 14 : 12),
+              y - (mobile.matches ? 14 : 12),
+              mobile.matches ? 28 : 24,
+              mobile.matches ? 28 : 24,
             );
           }
           const dotPresence = point.symbol ? 1 - glyphPresence : 1;
           if (dotPresence > 0) {
             stageCtx.globalAlpha = alpha * dotPresence;
-            const diameter = 7 + point.size * 2;
+            const diameter =
+              (mobile.matches ? 8.5 : 7) + point.size * 2;
             stageCtx.drawImage(
               morphDot,
               x - diameter / 2,
@@ -1438,23 +1529,8 @@ export function startScene({
         rasters[1].width / dpr,
         rasters[1].height / dpr,
       );
-      if (textAssembly < 1) {
-        const lightLength = Math.max(30, targetY - sourceY),
-          feather = Math.min(120, lightLength * 0.22);
-        const front = sourceY + (lightLength + feather) * textAssembly;
-        const textLight = stageCtx.createLinearGradient(
-          0,
-          front - feather,
-          0,
-          front,
-        );
-        textLight.addColorStop(0, "#000");
-        textLight.addColorStop(1, "#0000");
-        stageCtx.globalCompositeOperation = "destination-in";
-        stageCtx.globalAlpha = 1;
-        stageCtx.fillStyle = textLight;
-        stageCtx.fillRect(0, 0, w, h);
-      }
+      // A uniform fade also covers the bottom pills. A moving mask based on
+      // the receiver height left them clipped until its abrupt removal at 1.
       stageCtx.restore();
     }
     renderInvitation = paint;
@@ -1648,7 +1724,8 @@ export function startScene({
     typeof ResizeObserver === "function"
       ? new ResizeObserver(scheduleResize)
       : null;
-  if (sceneObserver) sceneObserver.observe(scene);
+  // The fixed beam stays visible after the mobile content scene scrolls away.
+  if (sceneObserver) sceneObserver.observe(canvas);
   if (sceneResizeObserver) sceneResizeObserver.observe(scene);
   scope.listen(document, "visibilitychange", syncSceneActivity);
   scope.listen(window, "scene-effects-active", (event) => {
@@ -1664,7 +1741,7 @@ export function startScene({
   });
   scope.listen(window, "pageshow", () => {
     pageActive = true;
-    if (sceneObserver) sceneObserver.observe(scene);
+    if (sceneObserver) sceneObserver.observe(canvas);
     if (sceneResizeObserver) sceneResizeObserver.observe(scene);
     resize();
     syncSceneActivity();

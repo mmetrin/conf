@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { extname, join } from "node:path";
 import { promisify } from "node:util";
 import { brotliCompress, constants, gzip } from "node:zlib";
+import { loaderLensSrc } from "../src/loader-lens.js";
 const output = "outputs";
 const rootStaticFiles = [
   "favicon.svg",
@@ -12,6 +13,7 @@ const rootStaticFiles = [
   "favicon-32.png",
   "favicon-48.png",
   "apple-touch-icon.png",
+  "robots.txt",
 ];
 const brotli = promisify(brotliCompress);
 const gzipAsync = promisify(gzip);
@@ -103,6 +105,23 @@ const entryOutput = Object.entries(result.metafile.outputs).find(
 if (!entryOutput) throw new Error("JavaScript entry output was not generated");
 const jsPath = entryOutput[0].replace(/^outputs\//, "");
 const jsBytes = entryOutput[1].bytes;
+// Discover only synchronous imports; optional scene modules stay deferred.
+const criticalModules = new Set();
+function collectModules(path) {
+  if (criticalModules.has(path)) return;
+  criticalModules.add(path);
+  for (const dependency of result.metafile.outputs[path]?.imports || [])
+    if (dependency.kind === "import-statement" && !dependency.external)
+      collectModules(dependency.path);
+}
+collectModules(entryOutput[0]);
+const modulePreloads = [...criticalModules].map((path) =>
+  `<link rel="modulepreload" href="${path.replace(/^outputs\//, "")}">`,
+).join("");
+const criticalIconPreloads = [
+  "logos/main-mts.svg", "inline-edcfeadab87b.svg",
+  "fact-address.svg", "fact-cinema.svg", "fact-online.svg", "fact-time.svg",
+].map((path) => `<link rel="preload" href="assets/${path}" as="image">`).join("");
 const totalJsBytes = result.outputFiles.reduce(
   (sum, file) => sum + file.contents.length,
   0,
@@ -136,16 +155,20 @@ await fs.rm(output + "/assets", { recursive: true, force: true });
 await fs.cp("public/assets", output + "/assets", { recursive: true });
 for (const file of rootStaticFiles)
   await fs.copyFile(`public/${file}`, `${output}/${file}`);
+const loadingShell = (await fs.readFile("src/loading-shell.html", "utf8"))
+  .replace("__LOADER_LENS_SRC__", loaderLensSrc);
 const entryHtml = `<!doctype html>
-<html lang="ru" class="opening-locked" style="background:#030307"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030307"><title>Свет становится данными — МТС Ads</title><style>html,body{margin:0;background:#030307;color-scheme:dark}</style>
-<link rel="preload" href="assets/MTSWide-Regular.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="assets/MTSWide-Medium.otf" as="font" type="font/otf" crossorigin><link rel="preload" href="assets/MTSUltraExtended-Bold.otf" as="font" type="font/otf" crossorigin>
+<html lang="ru" class="opening-locked" style="background:#030307"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030307"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Флагманская конференция МТС Ads о технологиях будущего рекламной индустрии</title><style>html,body{margin:0;background:#030307;color-scheme:dark}</style>
+<link rel="preload" href="${cssPath}" as="style">
+${modulePreloads}${criticalIconPreloads}
+<link rel="preload" href="assets/MTSWide-Regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/MTSWide-Medium.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/MTSUltraExtended-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon.ico" sizes="any">
 <link rel="icon" href="favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="favicon-16.png" type="image/png" sizes="16x16">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<link rel="preload" href="assets/projector-realistic.webp" as="image" fetchpriority="high"><link rel="preload" href="assets/projector-downward.webp" as="image" fetchpriority="high"><link rel="preload" href="assets/receiver-frames/01.webp?v=webp-q92-v2" as="image" fetchpriority="high">
-<link rel="stylesheet" href="${cssPath}"><script type="module" src="${jsPath}"></script></head><body style="margin:0;background:#030307"><div id="root"></div><noscript>Для интерактивной страницы включите JavaScript.</noscript></body></html>`;
+<link rel="preload" href="assets/projector-realistic.webp" as="image" fetchpriority="high"><link rel="preload" href="assets/projector-downward.webp" as="image" fetchpriority="high"><link rel="preload" href="assets/receiver-frames/01.webp?v=webp-q92-v2" as="image" fetchpriority="high" media="(min-width: 600px)"><link rel="preload" href="assets/receiver-frames/mobile/01.webp?v=webp-720-q88-v1" as="image" fetchpriority="high" media="(max-width: 599px)">
+<link id="site-styles" rel="stylesheet" href="${cssPath}" media="print" onload="this.media='all'" onerror="this.dataset.failed='true'"><script type="module" src="${jsPath}"></script></head><body style="margin:0;background:#030307">${loadingShell}<div id="root"></div><noscript><style>#bootstrap-loader{display:none}</style>Для интерактивной страницы включите JavaScript.</noscript></body></html>`;
 await Promise.all([
   fs.writeFile(output + "/mts-ads-portrait-frames-current.html", entryHtml),
   fs.writeFile(output + "/index.html", entryHtml),

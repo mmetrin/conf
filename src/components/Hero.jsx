@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import { ThreeParticleShape } from "./ThreeParticleShape.jsx";
 export function Hero() {
   return (
@@ -126,8 +127,13 @@ export function Hero() {
           id="photo-dimmer"
           aria-hidden="true"
         ></div>
-        <canvas id="abstract-lights" aria-hidden="true"></canvas>
-        <canvas id="abstract-data" aria-hidden="true"></canvas>
+        {createPortal(
+          <>
+            <canvas id="abstract-lights" aria-hidden="true"></canvas>
+            <canvas id="abstract-data" aria-hidden="true"></canvas>
+          </>,
+          document.body,
+        )}
         <div className="intro-accessible" aria-hidden="true"></div>
       </div>
     </section>

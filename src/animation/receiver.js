@@ -19,6 +19,9 @@ export function receiverFrameAt(elapsed, count = FRAME_COUNT) {
 }
 
 export function createReceiverPlayer(canvas, scope) {
+  // Keep the selected family for this session, including orientation changes.
+  const mobile = globalThis.innerWidth <= 599;
+  const sourceWidth = mobile ? 720 : FRAME_SOURCE_WIDTH;
   const ctx = canvas.getContext("2d"),
     frames = new Array(FRAME_COUNT);
   let last = -1,
@@ -28,6 +31,7 @@ export function createReceiverPlayer(canvas, scope) {
 
   const requestedWidth = () =>
     Math.min(
+      sourceWidth,
       navigator.deviceMemory && navigator.deviceMemory <= 4
         ? 1130
         : FRAME_SOURCE_WIDTH,
@@ -42,7 +46,7 @@ export function createReceiverPlayer(canvas, scope) {
   canvas.height = height;
 
   const frameUrl = (index, attempt = 0) =>
-    `assets/receiver-frames/${String(index + 1).padStart(2, "0")}.webp?v=${FRAME_VERSION}${attempt ? `&retry=${attempt}` : ""}`;
+    `assets/receiver-frames/${mobile ? "mobile/" : ""}${String(index + 1).padStart(2, "0")}.webp?v=${mobile ? "webp-720-q88-v1" : FRAME_VERSION}${attempt ? `&retry=${attempt}` : ""}`;
 
   function timed(promise, timeoutMs, onTimeout) {
     return new Promise((resolve, reject) => {
@@ -178,13 +182,16 @@ export function createReceiverPlayer(canvas, scope) {
         resolveAll({ ready: false, failed: [0] });
         return;
       }
+      if (
+        navigator.connection?.saveData ||
+        /(^|-)2g$/.test(navigator.connection?.effectiveType || "")
+      ) {
+        resolveAll({ ready: false, failed: [], static: true });
+        return;
+      }
       let next = 1;
       const failed = [];
-      const connection = navigator.connection;
-      const concurrency =
-        connection?.saveData || /(^|-)2g$/.test(connection?.effectiveType || "")
-          ? 1
-          : 2;
+      const concurrency = 2;
       async function worker() {
         while (next < FRAME_COUNT && !scope.disposed) {
           const index = next++;

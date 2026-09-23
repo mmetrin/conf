@@ -49,10 +49,17 @@ export function Programme() {
                 >
                   <div className="programme__focus-content">
                     {topic.icon ? (
-                      <div
+                      <picture
                         className="programme__portrait programme__portrait--icon"
                         aria-hidden="true"
                       >
+                        {topic.mobileImage && (
+                          <source
+                            media="(max-width: 599px)"
+                            srcSet={portraitSrcSet(topic.mobileImage)}
+                            sizes="58px"
+                          />
+                        )}
                         <img
                           src={topic.image}
                           width="44"
@@ -61,7 +68,7 @@ export function Programme() {
                           loading={index === 0 ? "eager" : "lazy"}
                           decoding="async"
                         />
-                      </div>
+                      </picture>
                     ) : (
                       <img
                         className="programme__portrait"

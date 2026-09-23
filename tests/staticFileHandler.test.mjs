@@ -68,6 +68,7 @@ async function staticFixture(t, options = {}) {
     "export const stable = true;\n".repeat(100),
   );
   await writeFile(join(root, "assets", "hero.webp"), "webp");
+  await writeFile(join(root, "assets", "font.woff2"), "wOF2");
   await writeFile(join(root, "assets", "ribbon.avif"), "avif");
   await writeFile(join(root, "assets", "receiver-frames", "01.webp"), "frame");
   await writeFile(join(root, "favicon-32.png"), "png");
@@ -118,6 +119,10 @@ test("serves entry document, static MIME types and conservative cache policies",
   assert.equal(home.headers["cache-control"], "no-cache");
   assert.equal(home.headers["x-content-type-options"], "nosniff");
   assert.equal(
+    home.headers["x-robots-tag"],
+    "noindex, nofollow, noarchive, nosnippet, noimageindex",
+  );
+  assert.equal(
     home.headers["referrer-policy"],
     "strict-origin-when-cross-origin",
   );
@@ -140,6 +145,8 @@ test("serves entry document, static MIME types and conservative cache policies",
   const image = await fixture.request("/assets/hero.webp");
   assert.equal(image.headers["content-type"], "image/webp");
   assert.equal(image.headers["cache-control"], "public, max-age=86400");
+  const font = await fixture.request("/assets/font.woff2");
+  assert.equal(font.headers["content-type"], "font/woff2");
 
   const avif = await fixture.request("/assets/ribbon.avif");
   assert.equal(avif.headers["content-type"], "image/avif");

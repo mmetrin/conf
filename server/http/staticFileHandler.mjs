@@ -9,8 +9,10 @@ const MIME_TYPES = {
   ".ico": "image/x-icon",
   ".js": "text/javascript; charset=utf-8",
   ".otf": "font/otf",
+  ".woff2": "font/woff2",
   ".png": "image/png",
   ".svg": "image/svg+xml",
+  ".txt": "text/plain; charset=utf-8",
   ".webp": "image/webp",
 };
 
@@ -187,6 +189,7 @@ export function createStaticFileHandler({
       "Referrer-Policy": "strict-origin-when-cross-origin",
       "X-Content-Type-Options": "nosniff",
       "X-Frame-Options": "SAMEORIGIN",
+      "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet, noimageindex",
     };
     if (COMPRESSIBLE_EXTENSIONS.has(extension))
       headers.Vary = "Accept-Encoding";

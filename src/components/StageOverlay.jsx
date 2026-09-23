@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { loaderLensSrc } from "../loader-lens.js";
 export function StageOverlay() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingError, setLoadingError] = useState(false);
+  useLayoutEffect(() => {
+    // Replace the HTML shell only after the React loader is in the DOM.
+    document.getElementById("bootstrap-loader")?.remove();
+  }, []);
   useEffect(() => {
     const failed = () => setLoadingError(true);
     const recovered = () => setLoadingError(false);
@@ -37,6 +42,7 @@ export function StageOverlay() {
   return createPortal(
     <>
       <i id="cursor-dot" aria-hidden="true" />
+      <div className="viewport-top-fade" aria-hidden="true" />
       <nav className="scene-nav" aria-label="Навигация">
         <img
           src="assets/logos/main-mts.svg"
@@ -95,7 +101,7 @@ export function StageOverlay() {
             </button>
             <button
               type="button"
-              onClick={() => navigateTo("#programme")}
+              onClick={() => navigateTo("#programme-title")}
             >
               Программа
             </button>
@@ -198,7 +204,7 @@ export function StageOverlay() {
         <span className="lens-loader" aria-hidden="true">
           <img
             className="lens-loader__image"
-            src="assets/inline-9537aceeaf6a.webp"
+            src={loaderLensSrc}
             width="516"
             height="488"
             alt=""

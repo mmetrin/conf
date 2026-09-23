@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T00:21:11.815Z",
+  "generatedAt": "2026-09-23T16:28:23.914Z",
   "settings": {
     "webp": {
       "quality": 82,
@@ -15,7 +15,7 @@
     "avifMinimumSaving": 0.15,
     "metadata": "stripped by Sharp (withMetadata is intentionally not used)",
     "sequence": {
-      "action": "rebuilt from PNG originals",
+      "action": "validated existing; no re-encode",
       "webp": {
         "quality": 92,
         "alphaQuality": 100,
@@ -25,15 +25,15 @@
     }
   },
   "totals": {
-    "beforeBytes": 39602084,
-    "beforeFiles": 39,
-    "sourceBytes": 39420256,
+    "beforeBytes": 40865868,
+    "beforeFiles": 40,
+    "sourceBytes": 40684040,
     "passthroughBytes": 181828,
-    "usedBeforeBytes": 38247456,
-    "afterBytes": 5057789,
-    "afterFiles": 48,
-    "savingPercent": 87.2,
-    "usedSavingPercent": 86.8
+    "usedBeforeBytes": 39511240,
+    "afterBytes": 5059753,
+    "afterFiles": 50,
+    "savingPercent": 87.6,
+    "usedSavingPercent": 87.2
   },
   "inventory": [
     {
@@ -73,6 +73,14 @@
       "bytes": 301000,
       "width": 500,
       "height": 500,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/light-on-mobile.png",
+      "bytes": 1263784,
+      "width": 1254,
+      "height": 1254,
       "hasAlpha": false,
       "format": "png"
     },
@@ -554,6 +562,41 @@
     },
     {
       "source": {
+        "path": "assets-source/programme/light-on-mobile.png",
+        "bytes": 1263784,
+        "width": 1254,
+        "height": 1254,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (mobile-only responsive <picture>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/light-on-mobile-96.webp",
+          "bytes": 636,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/light-on-mobile.webp",
+          "bytes": 1328,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": null,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
         "path": "assets-source/registration/light-ribbon.png",
         "bytes": 564668,
         "width": 1710,
@@ -612,8 +655,8 @@
     "height": 810,
     "sourceWidth": 2012,
     "sourceHeight": 1132,
-    "decodeMs": 508.9,
-    "averageDecodeMs": 17,
+    "decodeMs": 583,
+    "averageDecodeMs": 19.4,
     "psnr": 43.02,
     "frameMaeRange": [
       1.175,
@@ -866,7 +909,7 @@
       "scripts/build.mjs (frame 01 preload)"
     ],
     "decision": "WebP q92 sequence generated consistently from the PNG originals; normal pipeline runs validate it without another lossy encode.",
-    "rebuilt": true
+    "rebuilt": false
   },
   "unused": [
     {
@@ -990,6 +1033,22 @@
     {
       "path": "public/assets/programme/first-frame.webp",
       "bytes": 3808,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/light-on-mobile-96.webp",
+      "bytes": 636,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/light-on-mobile.webp",
+      "bytes": 1328,
       "width": 192,
       "height": 192,
       "hasAlpha": false,

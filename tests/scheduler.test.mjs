@@ -54,9 +54,10 @@ test("all 30 frames play forward, hold, reverse and loop with the original timin
   assert.equal(receiverFrameAt(4.0), 29);
 });
 
-test("receiver loads only frame 1 before background loading is explicitly started", async () => {
+for (const [viewportWidth, saveData] of [[1600, false], [375, false], [375, true]])
+test(`receiver stages loading at ${viewportWidth}px, saveData=${saveData}`, async () => {
   const descriptors = Object.fromEntries(
-    ["window", "navigator", "devicePixelRatio", "Image", "createImageBitmap", "ResizeObserver"].map(
+    ["window", "navigator", "innerWidth", "devicePixelRatio", "Image", "createImageBitmap", "ResizeObserver"].map(
       (key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)],
     ),
   );
@@ -89,8 +90,9 @@ test("receiver loads only frame 1 before background loading is explicitly starte
     },
     navigator: {
       configurable: true,
-      value: { connection: { effectiveType: "4g", saveData: false } },
+      value: { connection: { effectiveType: "4g", saveData } },
     },
+    innerWidth: { configurable: true, value: viewportWidth },
     devicePixelRatio: { configurable: true, value: 1 },
     Image: { configurable: true, value: MockImage },
     createImageBitmap: {
@@ -123,9 +125,10 @@ test("receiver loads only frame 1 before background loading is explicitly starte
     assert.equal(urls.length, 1);
     assert.match(urls[0], /01\.webp/);
     const completion = await receiver.startBackground();
-    assert.equal(completion.ready, true);
-    assert.equal(urls.length, 30);
-    assert.match(urls.at(-1), /30\.webp/);
+    assert.equal(completion.ready, !saveData);
+    assert.equal(urls.length, saveData ? 1 : 30);
+    if (!saveData) assert.match(urls.at(-1), /30\.webp/);
+    assert(urls.every((url) => url.includes("/mobile/") === (viewportWidth < 600)));
   } finally {
     scope.disposed = true;
     for (const dispose of disposers.reverse()) dispose();

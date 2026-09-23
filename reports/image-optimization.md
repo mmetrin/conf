@@ -1,20 +1,20 @@
 # Image optimization report
 
-Generated: 2026-09-23T00:21:11.815Z
+Generated: 2026-09-23T16:28:23.914Z
 
 ## Summary
 
-- Original PNG/JPG/JPEG inventory: **37.59 MiB** (39 files).
+- Original PNG/JPG/JPEG inventory: **38.80 MiB** (40 files).
 - Already-optimized passthrough WebP in the baseline: **177.6 KiB** (3 files).
-- Public production raster after optimization: **4.82 MiB** (48 files, including responsive/format alternatives).
-- Disk saving versus the complete production raster baseline: **87.2%**.
-- Used-source-only saving: **86.8%** (36.48 MiB → 4.82 MiB).
+- Public production raster after optimization: **4.83 MiB** (50 files, including responsive/format alternatives).
+- Disk saving versus the complete production raster baseline: **87.6%**.
+- Used-source-only saving: **87.2%** (37.68 MiB → 4.83 MiB).
 
 ## Frame sequence
 
 - 30 WebP frames; numbering and order preserved; 2012×1132 → 1440×810.
-- Rebuilt once from PNG originals with one WebP q92 profile: 28.42 MiB → 4.54 MiB (84.0% smaller).
-- Serial Sharp decode benchmark: 508.9 ms total / 17 ms average per frame.
+- Existing first-screen frames were **not re-encoded** during this run: 28.42 MiB → 4.54 MiB (84.0% smaller).
+- Serial Sharp decode benchmark: 583 ms total / 19.4 ms average per frame.
 - Visual validation: 43.02 dB PSNR; per-frame RGB MAE 1.175–1.222. Consistent dimensions and the narrow error range reduce flicker risk.
 
 ## Usage and format decisions
@@ -25,6 +25,7 @@ Generated: 2026-09-23T00:21:11.815Z
 - `assets-source/programme/public-talk.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
 - `assets-source/programme/big-data.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
 - `assets-source/programme/campaign.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/light-on-mobile.png` — src/components/Programme.jsx (mobile-only responsive <picture>); AVIF omitted: aggregate saving was below 15%.
 - `assets-source/registration/light-ribbon.png` — src/styles/site.css (.registration__ribbon); AVIF retained: aggregate variants are 46.3% smaller than WebP.
 - `assets-source/main-mts-particle.png` — Unused: no production reference; original retained in assets-source.
 - `assets-source/programme/light-on.png` — Unused: the programme uses light-on-icon.svg; original PNG retained and SVG left untouched.
@@ -41,6 +42,7 @@ Generated: 2026-09-23T00:21:11.815Z
 - `assets-source/programme/public-talk.png`: 1024×1024 → 96×96, 192×192
 - `assets-source/programme/big-data.png`: 1024×1024 → 96×96, 192×192
 - `assets-source/programme/campaign.png`: 1024×1024 → 96×96, 192×192
+- `assets-source/programme/light-on-mobile.png`: 1254×1254 → 96×96, 192×192
 - `assets-source/registration/light-ribbon.png`: 1710×794 → 700×325, 1400×650
 - `assets-source/receiver-frames/*.png`: 2012×1132 → 1440×810
 
@@ -54,6 +56,8 @@ Generated: 2026-09-23T00:21:11.815Z
 - `public/assets/programme/campaign.webp` — 2.8 KiB
 - `public/assets/programme/first-frame-96.webp` — 1.5 KiB
 - `public/assets/programme/first-frame.webp` — 3.7 KiB
+- `public/assets/programme/light-on-mobile-96.webp` — 636 B
+- `public/assets/programme/light-on-mobile.webp` — 1.3 KiB
 - `public/assets/programme/new-light-96.webp` — 1.4 KiB
 - `public/assets/programme/new-light.webp` — 3.6 KiB
 - `public/assets/programme/public-talk-96.webp` — 1.9 KiB

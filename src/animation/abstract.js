@@ -76,15 +76,14 @@ export function startAbstractLights(scope) {
   const dataCanvas = document.querySelector("#abstract-data");
   const dataCtx = dataCanvas.getContext("2d");
   const dataTokens = ["0", "1", "·", "+", "▯"];
-  // A denser, airier field gives the programme screen a stronger sense of
-  // movement without competing with the schedule copy.
-  const dataPoints = Array.from({ length: 210 }, (_, i) => ({
+  // Keep the background sparse and subdued behind the schedule copy.
+  const dataPoints = Array.from({ length: 140 }, (_, i) => ({
     phase: ((i * 29) % 157) / 156,
     lane: ((i * 37) % 101) / 100,
     side: i % 2 ? -1 : 1,
-    edge: i >= 72,
+    edge: i >= 36,
     speed: 0.008 + (i % 4) * 0.002,
-    size: 14 + (i % 7) * 2,
+    size: 10 + (i % 7) * 1.5,
     token: dataTokens[i % dataTokens.length],
   }));
   let dataWidth = 0,
@@ -113,7 +112,7 @@ export function startAbstractLights(scope) {
       const fade = Math.pow(Math.sin(t * Math.PI), 2);
       const accent = point.token === "+" || point.token === "▯";
       dataCtx.globalAlpha =
-        fade * (accent ? 0.44 : 0.2 + 0.18 * point.lane);
+        fade * (accent ? 0.16 : 0.055 + 0.075 * point.lane);
       dataCtx.fillStyle = point.token === "+" ? "#f0b7cf" : point.token === "▯" ? "#dbc5ff" : "#f1e9ff";
       dataCtx.font = `${point.size}px monospace`;
       dataCtx.fillText(point.token, x, y);
@@ -131,7 +130,8 @@ export function startAbstractLights(scope) {
   }
   const res = gl.getUniformLocation(program, "resolution"),
     clock = gl.getUniformLocation(program, "time");
-  const reduced = matchMedia("(prefers-reduced-motion: reduce)");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
+    mobile = matchMedia("(max-width: 599px)");
   let lastOpacity = -1,
     visible = false,
     inView = true,
@@ -139,13 +139,15 @@ export function startAbstractLights(scope) {
     last = 0,
     elapsed = 0,
     lost = false,
-    suspended = false;
+    suspended = false,
+    scrolling = false,
+    scrollResumeTimer = 0;
   function resizeEffect() {
-    dataWidth = canvas.clientWidth;
-    dataHeight = canvas.clientHeight;
+    dataWidth = mobile.matches ? 0 : canvas.clientWidth;
+    dataHeight = mobile.matches ? 0 : canvas.clientHeight;
     dataRatio = Math.min(devicePixelRatio || 1, 1.5);
-    dataCanvas.width = Math.round(dataWidth * dataRatio);
-    dataCanvas.height = Math.round(dataHeight * dataRatio);
+    dataCanvas.width = Math.max(1, Math.round(dataWidth * dataRatio));
+    dataCanvas.height = Math.max(1, Math.round(dataHeight * dataRatio));
     const width = Math.max(
         1,
         Math.round(Math.min(480, canvas.clientWidth * 0.65)),
@@ -173,20 +175,48 @@ export function startAbstractLights(scope) {
   resizeEffect();
   function draw(now) {
     raf = 0;
-    if (!visible || !inView || document.hidden || lost || suspended) return;
+    if (
+      !visible ||
+      !inView ||
+      document.hidden ||
+      lost ||
+      suspended ||
+      scrolling
+    )
+      return;
     if (now - last >= 1000 / 24 || !last) {
       elapsed += last ? Math.min((now - last) / 1000, 0.1) : 0;
       last = now;
       gl.uniform1f(clock, reduced.matches ? 0 : elapsed);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      drawData(reduced.matches ? 0 : elapsed);
+      if (!mobile.matches) drawData(reduced.matches ? 0 : elapsed);
     }
     if (!reduced.matches) raf = requestAnimationFrame(draw);
   }
   function wake() {
-    if (!raf && visible && inView && !document.hidden && !lost && !suspended)
+    if (
+      !raf &&
+      visible &&
+      inView &&
+      !document.hidden &&
+      !lost &&
+      !suspended &&
+      !scrolling
+    )
       raf = requestAnimationFrame(draw);
   }
+  scope.listen(window, "scroll", () => {
+    scrolling = true;
+    cancelAnimationFrame(raf);
+    raf = 0;
+    scope.clearTimeout(scrollResumeTimer);
+    scrollResumeTimer = scope.timeout(() => {
+      scrollResumeTimer = 0;
+      scrolling = false;
+      last = 0;
+      wake();
+    }, 120);
+  });
   const controller = {
     setSuspended(value) {
       if (value === suspended) return;
@@ -221,6 +251,7 @@ export function startAbstractLights(scope) {
     last = 0;
     wake();
   });
+  scope.listen(mobile, "change", resizeEffect);
   scope.observe(
     new IntersectionObserver((entries) => {
       inView = entries[0].isIntersecting;
@@ -239,6 +270,7 @@ export function startAbstractLights(scope) {
   scope.listen(window, "pagehide", () => controller.setSuspended(true));
   scope.listen(window, "pageshow", () => controller.setSuspended(false));
   scope.defer(() => {
+    scope.clearTimeout(scrollResumeTimer);
     cancelAnimationFrame(raf);
     gl.deleteBuffer(buffer);
     gl.deleteProgram(program);

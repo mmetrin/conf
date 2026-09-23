@@ -52,7 +52,9 @@ function environment(width, height, reduced = false, options = {}) {
     addEventListener() {},
     removeEventListener() {},
   };
-  globalThis.matchMedia = () => media;
+  globalThis.matchMedia = (query) => query === "(max-width: 599px)"
+    ? { ...media, get matches() { return width <= 599; } }
+    : media;
   window.matchMedia = globalThis.matchMedia;
   Object.defineProperty(window, "scrollY", {
     get: () => scrollY,
@@ -140,6 +142,9 @@ function environment(width, height, reduced = false, options = {}) {
     } else if (node.id === "programme") {
       y = programmeTop;
       h = 2800;
+    } else if (node.id === "programme-title") {
+      y = programmeTop + 64;
+      h = 30;
     } else if (node.id === "registration") {
       y = programmeTop + 2800;
       h = 940;
@@ -231,9 +236,9 @@ function environment(width, height, reduced = false, options = {}) {
   function onError(e) {
     errors.push(e);
   }
-  async function step(count) {
+  async function step(count, frameMs = 1000 / 60) {
     for (let i = 0; i < count; i++) {
-      now += 1000 / 60;
+      now += frameMs;
       const callbacks = [...pending.values()];
       pending.clear();
       await act(async () => {
@@ -272,6 +277,8 @@ test("mobile loader waits for the second projector image to decode", async () =>
         ? projectorReady
         : Promise.resolve(),
   });
+  document.body.insertAdjacentHTML("afterbegin", await fs.readFile("src/loading-shell.html", "utf8"));
+  assert(document.querySelector("#bootstrap-loader"), "HTML includes a loader before React starts");
   const root = createRoot(document.getElementById("root"));
 
   try {
@@ -286,6 +293,8 @@ test("mobile loader waits for the second projector image to decode", async () =>
     assert(!document.documentElement.classList.contains("content-ready"));
     assert(!document.documentElement.classList.contains("loader-finished"));
     assert(document.querySelector("#page-loader"));
+    assert.equal(document.querySelector("#bootstrap-loader"), null,
+      "React takes over the loading screen without leaving two overlays");
 
     await act(async () => {
       releaseProjector();
@@ -327,6 +336,8 @@ test("later screens prepare while background sequence is still pending", async (
       await new Promise((resolve) => setTimeout(resolve, 550));
     });
     await env.step(100);
+    assert.equal(prefetched, false, "optional animation work waits until opening finishes");
+    await env.step(130);
     assert(document.documentElement.classList.contains("loader-finished"));
     assert.equal(completed, false);
     assert.equal(prefetched, true);
@@ -341,6 +352,46 @@ test("later screens prepare while background sequence is still pending", async (
     env.dispose();
   }
 });
+
+for (const frameMs of [1000 / 60, 100])
+  test(`mobile starts without delay and preserves animation timing at ${Math.round(1000 / frameMs)} fps`, async () => {
+    const requestedFrames = [];
+    const env = environment(375, 812, false, {
+      decodeImage: (image) => {
+        if (image.src?.includes("receiver-frames/")) requestedFrames.push(image.src);
+        return Promise.resolve();
+      },
+    });
+    const root = createRoot(document.getElementById("root"));
+    try {
+      await act(async () => {
+        root.render(React.createElement(App));
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      await env.step(4);
+      assert(document.documentElement.classList.contains("content-ready"),
+        "cached assets do not incur a minimum 500ms loading delay");
+      assert.equal(requestedFrames.length, 1,
+        "only the initial frame is loaded during opening");
+      assert.match(requestedFrames[0], /receiver-frames\/mobile\/01\.webp/);
+      await env.step(Math.ceil(1650 / frameMs), frameMs);
+      assert(document.documentElement.classList.contains("opening-locked"),
+        "the opening animation keeps its original pace instead of finishing in 1.5 seconds");
+      assert.equal(requestedFrames.length, 1,
+        "background frames still wait for the full opening animation");
+      await env.step(Math.ceil(1500 / frameMs), frameMs);
+      assert(!document.documentElement.classList.contains("opening-locked"),
+        "opening finishes without stretching its timing on dropped frames");
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      });
+      assert(document.querySelector("#programme"), "lower content is available after opening");
+      assert.equal(env.errors.length, 0);
+    } finally {
+      await act(async () => root.unmount());
+      env.dispose();
+    }
+  });
 
 test("critical resource failure keeps loader closed and offers recovery", async () => {
   const env = environment(375, 812);
@@ -365,6 +416,8 @@ for (const [width, height, reduced] of [
   [1600, 940, false],
   [768, 1024, false],
   [375, 812, true],
+  [599, 812, false],
+  [600, 812, false],
 ])
   test(`React scene lifecycle ${width}×${height}, reduced=${reduced}`, async () => {
     const originalFetch = globalThis.fetch,
@@ -456,7 +509,7 @@ for (const [width, height, reduced] of [
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
       await env.step(3);
-      // Loader timing is wall-clock based; bypass only the wait, not the scene's state machine.
+      // Exercise the scene state machine independently of async asset readiness.
       document.documentElement.classList.add("content-ready");
       window.dispatchEvent(new window.Event("opening-ready"));
       await env.step(380);
@@ -480,9 +533,18 @@ for (const [width, height, reduced] of [
       await env.step(4);
       assert.equal(
         document.querySelector("#photo-dimmer").style.opacity,
-        "1.000",
-        "the hero timeline finishes exactly as the sticky section releases",
+        width <= 599 ? "0.000" : "1.000",
+        "only desktop scroll advances the hero timeline",
+
       );
+      if (width <= 599) {
+        assert(!document.querySelector("#scene").classList.contains("programme-pinned"));
+        assert(!document.querySelector("#scene").classList.contains("programme-exiting"));
+        for (const selector of ["#photo-title", "#photo-subtitle", "#photo-roles"]) {
+          assert.equal(document.querySelector(selector).getAttribute("aria-hidden"), "false");
+          assert.equal(document.querySelector(selector).style.visibility, "visible");
+        }
+      }
       window.scrollTo({ top: 0 });
       await env.step(4);
       assert.equal(
@@ -492,6 +554,8 @@ for (const [width, height, reduced] of [
       );
       for (const top of [
         height,
+        height * 2.8 - 100,
+        height * 2.8,
         3 * height,
         5 * height,
         7 * height,
@@ -500,12 +564,62 @@ for (const [width, height, reduced] of [
       ]) {
         window.scrollTo({ top });
         await env.step(4);
+        if (width <= 599) {
+          const track = document.querySelector(".programme__track");
+          assert.equal(
+            track.style.getPropertyValue("--programme-line-y"),
+            (height * 0.5 - track.getBoundingClientRect().top).toFixed(1) + "px",
+            "mobile line highlight follows scrolling at the viewport focus",
+          );
+          const smoke = document.querySelector("#abstract-lights");
+          assert.equal(smoke.parentElement, document.body,
+            "the smoke background is outside the clipped mobile scene");
+          const titleTop = document.querySelector("#programme-title").getBoundingClientRect().top;
+          if (titleTop >= 80) {
+            assert.equal(Number(smoke.style.opacity || 0), 0,
+              "smoke stays hidden until the programme heading reaches the top zone");
+          } else if (titleTop > 0) {
+            assert(Number(smoke.style.opacity) > 0 && Number(smoke.style.opacity) < 0.55,
+              "smoke appears gradually as the heading crosses the top zone");
+          }
+          if (top >= 3 * height) {
+            assert.equal(smoke.style.opacity, "0.55",
+              "smoke remains visible from programme through footer");
+          } else if (top === 0) {
+            assert.equal(smoke.style.opacity, "0",
+              "smoke hides when returning above programme");
+          }
+        }
+        if (width > 599) {
+          assert(
+            !document.querySelector("#scene").classList.contains("is-suspended"),
+            "registration and footer must not suspend the fixed beam",
+          );
+        }
+      }
+      if (width > 599) {
+        window.scrollTo({ top: height * 2.8 });
+        await env.step(4);
+        // The DOM fixture does not apply CSS transforms; settle entry offsets.
+        window.dispatchEvent(new window.Event("scroll"));
+        await env.step(4);
+        const content = document.querySelector(".programme__inner");
+        const litEdge = parseFloat(content.style.getPropertyValue("--programme-lit-edge"));
+        const darkEdge = parseFloat(content.style.getPropertyValue("--programme-dark-edge"));
+        assert(Math.abs(litEdge + content.getBoundingClientRect().top - height * 0.18) < 1, "fading begins near the top edge");
+        assert(Math.abs(litEdge - darkEdge - height * 0.36) < 1, "fading has a broad gradual range");
+        window.scrollTo({ top: height * 2.8 + 2800 + 940 });
+        await env.step(4);
       }
       env.resize(height, width);
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 120));
       });
       await env.step(4);
+      if (width > 599) {
+        assert(!document.querySelector("#scene").classList.contains("is-suspended"),
+          "resizing at the footer keeps the beam renderer active");
+      }
       for (const node of document.querySelectorAll("[style]"))
         assert(!/NaN|undefinedpx/.test(node.getAttribute("style")), node.id);
       assert.equal(

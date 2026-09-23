@@ -74,7 +74,7 @@ export function useSceneRuntime() {
       Promise.all(
         [
           ...document.querySelectorAll(
-            ".scene-logo, .menu-trigger img, .lens-loader__image",
+            ".scene-logo, .menu-trigger__menu-icon, .lens-loader__image",
           ),
         ].map(waitForDecodedImage),
       ),
@@ -97,6 +97,13 @@ export function useSceneRuntime() {
       "hero-visible",
       () => {
         heroVisible = true;
+      },
+      { once: true },
+    );
+    scope.listen(
+      window,
+      "opening-complete",
+      () => {
         // The next screen must not wait for every optional sequence frame.
         window.dispatchEvent(new window.Event("audience-prefetch"));
         window.dispatchEvent(new window.Event("lower-content-request"));
@@ -111,11 +118,9 @@ export function useSceneRuntime() {
       { once: true },
     );
     scope.listen(window, "audience-prepare", prepareAbstractLights);
-    const delay = (ms) => new Promise((resolve) => scope.timeout(resolve, ms));
-    const previewReady = Promise.all([
-      delay(500),
-      waitForDecodedImage(document.querySelector(".projector-front")),
-    ]).then(() => {
+    const previewReady = waitForDecodedImage(
+      document.querySelector(".projector-front"),
+    ).then(() => {
       if (!scope.disposed) root.classList.add("projector-preview");
     });
     const criticalReady = Promise.all([

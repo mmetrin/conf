@@ -26,6 +26,12 @@ html.content-ready main {
 html.content-ready #invitation-particles {
   opacity: 1;
 }
+@media (max-width: 599px) {
+  html.content-ready.opening-locked #invitation-particles {
+    opacity: 1;
+    transition: none;
+  }
+}
 html.content-ready #projector {
   opacity: 1;
   transition: opacity 0.55s ease;
@@ -63,7 +69,7 @@ html {
     visibility 0.2s ease;
   pointer-events: none;
 }
-html.projector-preview #page-loader {
+html.content-ready.projector-preview #page-loader {
   background: transparent;
   opacity: 0.65;
 }
@@ -86,7 +92,7 @@ html.loader-finished #page-loader {
   object-fit: contain;
   transition: opacity 0.35s ease;
 }
-html.projector-preview .lens-loader__image {
+html.content-ready.projector-preview .lens-loader__image {
   opacity: 0;
 }
 .lens-loader__lines {
@@ -162,35 +168,35 @@ html.projector-preview .lens-loader__image {
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("assets/MTSWide-Regular.otf") format("opentype");
+  src: url("assets/MTSWide-Regular.woff2") format("woff2");
 }
 @font-face {
   font-family: "MTS Wide";
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url("assets/MTSWide-Medium.otf") format("opentype");
+  src: url("assets/MTSWide-Medium.woff2") format("woff2");
 }
 @font-face {
   font-family: "MTS Wide";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("assets/MTSWide-Bold.otf") format("opentype");
+  src: url("assets/MTSWide-Bold.woff2") format("woff2");
 }
 @font-face {
   font-family: "MTS Text";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("assets/MTSText-Regular.otf") format("opentype");
+  src: url("assets/MTSText-Regular.woff2") format("woff2");
 }
 @font-face {
   font-family: "MTS Ultra Extended";
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("assets/MTSUltraExtended-Bold.otf") format("opentype");
+  src: url("assets/MTSUltraExtended-Bold.woff2") format("woff2");
 }
 :root {
   color-scheme: dark;
@@ -852,13 +858,14 @@ body.cursor-pointer #cursor-data {
 }
 @media (max-width: 599px) {
   .scene-menu {
-    padding: 64px 16px;
+    padding: 64px 16px 0;
   }
   .scene-menu__links button + button {
     margin-top: 24px;
   }
   .scene-menu__details {
-    margin-top: 80px;
+    margin-top: 70px;
+    gap: 70px;
   }
   .scene-menu__links button {
     font-size: 20px;
@@ -1336,6 +1343,16 @@ body.cursor-active #cursor-dot {
 .three-particle-shape {
   border: 0;
 }
+.three-particle-mobile-frames {
+  display: none;
+}
+.three-particle-shape.is-requested {
+  background: center / contain no-repeat
+    url("assets/particle-human-reference.webp");
+}
+.three-particle-shape.is-animated {
+  background-image: none;
+}
 .three-particle-shape canvas {
   display: block;
   width: 100%;
@@ -1413,7 +1430,7 @@ body.cursor-active #cursor-dot {
   body > #conference-register {
     left: 16px;
     right: 16px;
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     width: auto;
     transform: none;
     min-width: 0;
@@ -1431,6 +1448,10 @@ body.cursor-active #cursor-dot {
 @media (max-width: 599px) {
   #programme {
     padding-top: 48px;
+  }
+
+  #programme-title {
+    scroll-margin-top: 112px;
   }
 }
 
@@ -1502,15 +1523,18 @@ body > #conference-register:active {
   color: #fff;
 }
 body > #conference-register,
+.scene-menu__register,
 .registration__submit {
   color: #fff;
 }
 body > #conference-register:hover,
+.scene-menu__register:hover,
 .registration__submit:hover {
   background: #cc0028;
   color: #fff;
 }
 body > #conference-register:active,
+.scene-menu__register:active,
 .registration__submit:active {
   background: #ff244f;
   color: #fff;
@@ -1974,6 +1998,11 @@ html.content-ready #projector.lamp-loop-finished .projector-lamp {
     transparent 100%
   );
 }
+/* Background canvases live outside the scrolling scene to avoid clipping. */
+body > #abstract-lights,
+body > #abstract-data {
+  z-index: 1;
+}
 #abstract-lights {
   filter: blur(2px);
   will-change: opacity, filter;
@@ -2070,7 +2099,6 @@ html:not(.content-ready) body > #projector-final {
 #scene.programme-exiting .photo-copy {
   transform: translateY(var(--copy-exit-y));
   opacity: var(--copy-exit-opacity);
-  filter: brightness(var(--copy-exit-brightness));
 }
 #scene.programme-pinned .photo-copy {
   visibility: hidden !important;
@@ -2425,13 +2453,12 @@ body > #light {
   max-width: 870px;
   transform: translateY(var(--programme-entry-y, 0px));
   opacity: var(--programme-entry-opacity, 1);
-  filter: brightness(var(--programme-entry-light, 1));
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
   --programme-top-mask: linear-gradient(
     to bottom,
     transparent var(--programme-dark-edge, -300px),
-    rgba(0, 0, 0, 0.1) var(--programme-dim-edge, -200px),
-    rgba(0, 0, 0, 0.55) var(--programme-soft-edge, -100px),
+    rgba(0, 0, 0, 0.35) var(--programme-dim-edge, -200px),
+    rgba(0, 0, 0, 0.8) var(--programme-soft-edge, -100px),
     #000 var(--programme-lit-edge, 0px)
   );
   mask-image: var(--programme-top-mask);
@@ -2741,8 +2768,8 @@ body > #light {
   --registration-top-mask: linear-gradient(
     to bottom,
     transparent var(--registration-dark-edge, -300px),
-    rgba(0, 0, 0, 0.1) var(--registration-dim-edge, -200px),
-    rgba(0, 0, 0, 0.55) var(--registration-soft-edge, -100px),
+    rgba(0, 0, 0, 0.35) var(--registration-dim-edge, -200px),
+    rgba(0, 0, 0, 0.8) var(--registration-soft-edge, -100px),
     #000 var(--registration-lit-edge, 0px)
   );
   mask-image: var(--registration-top-mask);
@@ -3268,7 +3295,7 @@ body.registration-visible > #conference-register {
 }
 @media (max-width: 599px) {
   .site-footer {
-    padding: 48px 16px 64px;
+    padding: 80px 16px 64px;
     font-size: 15px;
     line-height: 20px;
   }
@@ -3926,7 +3953,7 @@ h2 {
   body > #conference-register {
     left: 50%;
     right: auto;
-    bottom: 24px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
     width: 218px;
     min-width: 218px;
     min-height: 49px;
@@ -3941,13 +3968,27 @@ h2 {
 
   #scene .three-particle-shape--left {
     display: block;
-    top: 76%;
+    top: 82%;
     left: 50%;
-    width: 53.8svh;
+    width: 45.6svh;
     max-width: none;
-    height: 52svh;
+    height: 44svh;
     transform: translate(-50%, -50%);
     opacity: calc(var(--three-particle-opacity, 1) * 0.68);
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 66%,
+      rgba(0, 0, 0, 0.72) 78%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 66%,
+      rgba(0, 0, 0, 0.72) 78%,
+      transparent 100%
+    );
   }
 
   #scene .three-particle-shape--right {
@@ -3957,7 +3998,7 @@ h2 {
   #scene .photo-copy__mobile-symbols {
     position: absolute;
     z-index: 2;
-    top: max(72px, 10svh);
+    top: max(64px, calc(50% - 260px));
     left: 50%;
     display: block;
     width: min(320px, calc(100% - 48px));
@@ -3972,7 +4013,7 @@ h2 {
   #scene .photo-copy__mobile-symbols span {
     position: absolute;
     text-shadow: 0 0 10px currentColor;
-    animation: photo-mobile-symbol-drift 3.8s ease-in-out infinite;
+    animation: none;
   }
 
   #scene .photo-copy__mobile-symbols span:nth-child(1) {
@@ -4030,10 +4071,10 @@ h2 {
     inset: 0;
     z-index: 0;
     border-radius: 28px;
-    background: rgba(3, 3, 7, 0.78);
-    -webkit-backdrop-filter: blur(48px) brightness(0.42) saturate(0.76);
-    backdrop-filter: blur(48px) brightness(0.42) saturate(0.76);
-    box-shadow: 0 16px 72px rgba(0, 0, 0, 0.5);
+    background: rgba(0, 6, 15, 0.68);
+    -webkit-backdrop-filter: blur(36px) brightness(0.54) saturate(0.82);
+    backdrop-filter: blur(36px) brightness(0.54) saturate(0.82);
+    box-shadow: 0 16px 64px rgba(0, 6, 15, 0.38);
     opacity: calc(var(--photo-copy-backdrop-opacity, 0) * 0.98);
     pointer-events: none;
   }
@@ -4055,8 +4096,8 @@ h2 {
   }
 
   #scene .photo-roles {
-    width: 100%;
-    max-width: 420px;
+    width: 100vw;
+    max-width: none;
     margin-top: 40px;
     font:
       400 14px/20px "MTS Wide",
@@ -4178,7 +4219,7 @@ h2 {
     left: -8px;
     width: 2px;
     background: radial-gradient(
-      ellipse 2px 148px at 50% var(--programme-line-y, 50%),
+      ellipse 2px 80px at 50% var(--programme-line-y, 50%),
       #fff 0%,
       #e9d9ff 22%,
       rgba(191, 150, 236, 0.88) 48%,
@@ -4191,7 +4232,7 @@ h2 {
     left: -12px;
     width: 10px;
     background: radial-gradient(
-      ellipse 5px 132px at 50% var(--programme-line-y, 50%),
+      ellipse 5px 72px at 50% var(--programme-line-y, 50%),
       rgba(255, 255, 255, 0.9) 0%,
       rgba(216, 183, 255, 0.56) 34%,
       rgba(170, 120, 225, 0.16) 68%,
@@ -4209,10 +4250,9 @@ h2 {
 
   #programme .programme__focus-content {
     transform: none;
-    transition: filter 0.16s ease-out;
-    will-change: filter;
-    filter: brightness(calc(0.72 + var(--focus, 1) * 0.38))
-      drop-shadow(0 0 12px rgba(221, 197, 255, 0.16));
+    opacity: calc(0.12 + var(--focus, 1) * 0.88);
+    transition: opacity 0.14s linear;
+    will-change: opacity;
   }
 
   #programme .programme__track > .programme__item h3,
@@ -4268,10 +4308,276 @@ h2 {
   #programme
     .programme__topic--without-photo
     > .programme__focus-content {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 58px;
   }
 
   #programme .programme__topic--without-photo .programme__portrait--icon {
+    display: block;
+    background: none;
+  }
+
+  #programme .programme__topic--without-photo .programme__portrait--icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+/* Native mobile flow: opening, audience, programme, registration. */
+@media (max-width: 599px) {
+  html,
+  body {
+    /* Override the initial loading background set inline in the HTML shell. */
+    background: #00060f !important;
+  }
+
+  .journey {
+    height: auto;
+  }
+
+  .scene#scene {
+    position: relative;
+    inset: auto;
+    height: auto;
+    padding-top: 100svh;
+    overflow: clip;
+  }
+
+  #scene > #invitation-particles,
+  #scene > .vignette {
+    height: 100svh;
+  }
+
+  body > #conference-register {
+    position: fixed;
+    top: auto;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+
+  #scene .photo-copy {
+    position: relative;
+    inset: auto;
+    min-height: 0;
+    padding: 64px 16px 48px;
+    transform: none;
+    filter: none;
+    opacity: 1;
+    visibility: visible;
+    will-change: auto;
+  }
+
+  #scene .photo-copy__mobile-symbols {
+    position: relative;
+    inset: auto;
+    order: 0;
+    flex: 0 0 60px;
+    height: 60px;
+    transform: none;
+  }
+
+  #scene .photo-copy__mobile-symbols span:nth-child(2) {
+    top: 28px;
+  }
+
+  #scene .photo-copy__mobile-symbols span:nth-child(4) {
+    top: 34px;
+  }
+
+  #scene .photo-copy__mobile-symbols span:nth-child(6) {
+    top: 42px;
+  }
+
+  #scene .photo-copy__content {
+    order: 1;
+    flex: 0 0 auto;
+  }
+
+  #scene .photo-copy__content::before {
     display: none;
+  }
+
+  #scene .three-particle-shape--left {
+    position: relative;
+    inset: auto;
+    order: 2;
+    flex: 0 0 300px;
+    width: min(150vw, 650px);
+    max-width: none;
+    height: 300px;
+    transform: none;
+    opacity: var(--three-particle-opacity, 1);
+    filter: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+
+  #scene .three-particle-mobile-frames {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    bottom: 48px;
+    display: block;
+    width: min(150vw, 650px);
+    height: 300px;
+    transform: translateX(-50%);
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  #scene .three-particle-mobile-frame {
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    border: 1px solid rgba(235, 220, 255, 0.5);
+    color: rgba(240, 226, 255, 0.7);
+    box-shadow: 0 0 12px rgba(205, 166, 255, 0.09);
+    animation: mobile-scan-frame-drift 5.8s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+
+  #scene .three-particle-mobile-frame::after {
+    content: "";
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: 7px;
+    height: 7px;
+    border: 1px solid currentColor;
+    background: #00060f;
+  }
+
+  #scene .three-particle-mobile-frame i {
+    position: absolute;
+    top: 5px;
+    left: 6px;
+    padding: 3px 5px;
+    background: rgba(0, 6, 15, 0.84);
+    font: 500 8px/1 monospace;
+    font-style: normal;
+    white-space: nowrap;
+  }
+
+  #scene .three-particle-mobile-frame--one {
+    top: 17%;
+    left: 52%;
+    width: 19%;
+    height: 28%;
+  }
+
+  #scene .three-particle-mobile-frame--two {
+    top: 70%;
+    left: 29%;
+    width: 10%;
+    height: 15%;
+    animation-delay: -2.1s;
+  }
+
+  #scene .three-particle-mobile-frame--three {
+    top: 61%;
+    left: 54%;
+    width: 12%;
+    height: 18%;
+    animation-delay: -4s;
+  }
+
+  @keyframes mobile-scan-frame-drift {
+    0% {
+      transform: translate3d(-8px, 5px, 0);
+    }
+    48% {
+      transform: translate3d(7px, -5px, 0);
+    }
+    100% {
+      transform: translate3d(13px, 8px, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #scene .three-particle-mobile-frame {
+      animation: none;
+      will-change: auto;
+    }
+  }
+
+  #abstract-lights {
+    display: block;
+    top: 50svh;
+  }
+
+  #abstract-data,
+  #photo-dimmer {
+    display: none;
+  }
+
+  #programme {
+    /* The desktop overlap must not pull this section over the mobile audience. */
+    margin-top: 0;
+    background: transparent;
+    padding-top: 0;
+    padding-bottom: 64px;
+  }
+
+  .registration {
+    min-height: 0;
+    padding-top: 64px;
+  }
+
+  #programme .programme__inner,
+  .registration__inner,
+  #programme .programme__item {
+    transform: none;
+    opacity: 1;
+    filter: none;
+    mask-image: none;
+    -webkit-mask-image: none;
+    will-change: auto;
+  }
+
+}
+
+/* Fade scrolling content into the background beneath the fixed projector.
+   A single viewport layer covers every scrolling section, including the footer.
+   Fixed optics and navigation stay above it; no scroll-time updates are needed. */
+.viewport-top-fade {
+  position: fixed;
+  z-index: 19;
+  inset: 0 0 auto;
+  --top-fade-color: 3, 3, 7;
+  height: clamp(170px, 24svh, 220px);
+  opacity: 1;
+  transition: opacity 0.35s ease;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--top-fade-color), 1) 0%,
+    rgba(var(--top-fade-color), 0.98) 24%,
+    rgba(var(--top-fade-color), 0.85) 40%,
+    rgba(var(--top-fade-color), 0.55) 58%,
+    rgba(var(--top-fade-color), 0.24) 76%,
+    rgba(var(--top-fade-color), 0.06) 90%,
+    rgba(var(--top-fade-color), 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* The opening particles assemble the second projector at the top of the
+   viewport. Do not place the persistent reading fade above that animation. */
+html:not(.content-ready) .viewport-top-fade,
+html.opening-locked .viewport-top-fade {
+  opacity: 0;
+}
+
+@media (max-width: 599px) {
+  main {
+    position: relative;
+    z-index: 2;
+  }
+
+  .viewport-top-fade {
+    --top-fade-color: 0, 6, 15;
+  }
+
+  body > #conference-register {
+    /* Keep the first-screen CTA anchored above the mobile safe area. */
+    z-index: 18;
   }
 }
