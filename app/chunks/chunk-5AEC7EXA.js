@@ -1,0 +1,1 @@
+import{c as r}from"./chunk-ZM3EZUG6.js";r();var n=null;function i(e){return n=e,()=>{n===e&&(n=null)}}function o(e){return n?n.request(e):window.requestAnimationFrame(e)}function a(e){n?n.cancel(e):window.cancelAnimationFrame(e)}export{i as a,o as b,a as c};
