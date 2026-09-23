@@ -175,6 +175,7 @@ export function startScene({
     time = 0,
     raf = 0,
     dirty = true,
+    forceScenePaint = true,
     geometryDirty = true,
     sourceX = 0,
     sourceY = 0,
@@ -470,6 +471,8 @@ export function startScene({
     );
     canvas.width = Math.ceil(canvasWidth * renderScale);
     canvas.height = Math.ceil(h * renderScale);
+    // Resizing clears the bitmap, including after a frozen programme frame.
+    forceScenePaint = true;
     ctx.setTransform(
       renderScale,
       0,
@@ -1087,22 +1090,38 @@ export function startScene({
       openingComplete &&
       mobileBeamSpread >= 0.999 &&
       mobileSymbolVisibility <= 0.001;
-    const ambientInterval = 1000 / (now - lastScrollChangeAt < 150 ? 24 : 30);
+    // Once the desktop programme beam has reached its final state, retain its
+    // last bitmap. Continuing to repaint this full-screen canvas beneath a
+    // scrolling schedule has no visible benefit and costs scroll headroom.
+    const desktopSceneSettled =
+      !mobile.matches && openingComplete && programmeSpread >= 0.999;
+    const sceneSettled = mobileSceneSettled || desktopSceneSettled;
+    // The beam is visually secondary while the programme is entering. Draw it
+    // at 16 fps in that short interval, leaving the display-rate budget to the
+    // programme transform and mask.
+    const ambientRate =
+      programmeSpread > 0.001 && programmeSpread < 0.999
+        ? 16
+        : now - lastScrollChangeAt < 150
+          ? 24
+          : 30;
+    const ambientInterval = 1000 / ambientRate;
     if (
       now - lastAmbientFrame >= ambientInterval &&
-      (dirty || (!paused && !mobileSceneSettled))
+      (forceScenePaint || (!sceneSettled && (dirty || !paused)))
     ) {
       frameDelta = Math.min(ambientDelta, 0.1);
       ambientDelta = 0;
       lastAmbientFrame = now;
       draw();
       dirty = false;
+      forceScenePaint = false;
     }
     if (
       (openingReady && !openingComplete) ||
       (audienceStarted && audienceElapsed < audienceRevealDuration) ||
-      dirty ||
-      (!paused && !mobileSceneSettled)
+      forceScenePaint ||
+      (!sceneSettled && (dirty || !paused))
     )
       wake();
     else last = 0;
@@ -1133,6 +1152,7 @@ export function startScene({
   scope.listen(reduced, "change", () => {
     paused = reduced.matches;
     dirty = true;
+    forceScenePaint = true;
     updateDecorativeState();
     wake();
   });

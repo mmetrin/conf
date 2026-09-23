@@ -215,7 +215,10 @@ export function startAbstractLights(scope) {
       scrolling = false;
       last = 0;
       wake();
-    }, 120);
+    // Trackpads often leave 100–200ms gaps between scroll events. Resume only
+    // once the page is clearly idle, otherwise this WebGL pass competes with
+    // the programme transition while the user is still scrolling.
+    }, 240);
   });
   const controller = {
     setSuspended(value) {

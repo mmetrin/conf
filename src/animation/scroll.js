@@ -11,6 +11,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     track = programme.querySelector(".programme__track");
   const registration = document.querySelector("#registration"),
     registrationContent = registration.querySelector(".registration__inner"),
+    registrationTitle = registration.querySelector("#registration-title"),
     items = [...programme.querySelectorAll(".programme__item")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
     mobile = matchMedia("(max-width: 599px)"),
@@ -49,6 +50,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     if (mobile.matches) {
       const height = window.innerHeight;
       const programmeTitleTop = programmeTitle.getBoundingClientRect().top;
+      const registrationTitleTop = registrationTitle.getBoundingClientRect().top;
       const trackTop = track.getBoundingClientRect().top;
       const focus = height * 0.5;
       if (!metrics)
@@ -60,7 +62,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
         const distance = Math.abs((item.top + item.bottom) / 2 + trackTop - focus);
         // Match the reference's moving reflection: the active row is fully lit,
         // adjacent rows retain a soft spill, and distant rows settle near dark.
-        const sigma = Math.min(170, height * 0.2);
+        const sigma = Math.min(150, height * 0.18);
         return Math.exp(-(distance * distance) / (2 * sigma * sigma)).toFixed(3);
       });
       // Reveal only as the heading enters the top 80px, after the audience.
@@ -74,10 +76,15 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       writeFrame = scope.request(() => {
         commit(track, "--programme-line-y", (focus - trackTop).toFixed(1) + "px");
         items.forEach((item, index) => commit(item, "--focus", levels[index]));
+        document.body.classList.toggle(
+          "mobile-registration-heading-visible",
+          registrationTitleTop < height - 24,
+        );
         abstractLights?.show(smokeReveal);
       });
       return;
     }
+    document.body.classList.remove("mobile-registration-heading-visible");
     // All layout reads are performed together, before any of this frame's writes.
     const height = scene.clientHeight,
       heroScale = getHeroScale(scene.clientWidth, height),
@@ -265,7 +272,10 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   scope.defer(() => {
     setParticleTransitionActive(true);
     delete window.programmeBeam;
-    document.body.classList.remove("registration-visible");
+    document.body.classList.remove(
+      "registration-visible",
+      "mobile-registration-heading-visible",
+    );
     registration.classList.remove("assets-ready");
   });
 }

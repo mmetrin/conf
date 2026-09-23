@@ -121,6 +121,17 @@ export function Hero() {
               </div>
             </div>
           </div>
+          <div
+            className="photo-copy__mobile-symbols photo-copy__mobile-symbols--bottom"
+            aria-hidden="true"
+          >
+            <span>01</span>
+            <span>{"λ"}</span>
+            <span>{"<>"}</span>
+            <span>{"{}"}</span>
+            <span>{"Σ"}</span>
+            <span>{"/+"}</span>
+          </div>
         </section>
         <div
           className="photo-dimmer"

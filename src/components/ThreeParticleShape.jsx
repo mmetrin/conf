@@ -13,7 +13,7 @@ export function ThreeParticleShape({ side = "right", seedOffset = 0 }) {
       transitionActive = true,
       prefetched = false;
 
-    const enabled = () => desktop.matches || side === "left";
+    const enabled = () => desktop.matches;
 
     function load() {
       if (disposed || loading || controller || !enabled()) return;

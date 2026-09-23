@@ -1,9 +1,9 @@
 {
-  "jsBytes": 272480,
-  "initialJsBytes": 272480,
-  "asyncJsBytes": 56801,
-  "totalJsBytes": 329281,
-  "cssBytes": 74120,
+  "jsBytes": 272898,
+  "initialJsBytes": 272898,
+  "asyncJsBytes": 57065,
+  "totalJsBytes": 329963,
+  "cssBytes": 73911,
   "precompressedAssets": [
     {
       "path": "app/chunks/BelowFold-R2NLSQK2.js.br",
@@ -14,12 +14,12 @@
       "bytes": 7524
     },
     {
-      "path": "app/chunks/abstract-KVONEWZF.js.br",
+      "path": "app/chunks/abstract-4V67ZJO7.js.br",
       "bytes": 2588
     },
     {
-      "path": "app/chunks/abstract-KVONEWZF.js.gz",
-      "bytes": 2712
+      "path": "app/chunks/abstract-4V67ZJO7.js.gz",
+      "bytes": 2713
     },
     {
       "path": "app/chunks/chunk-7IMM3BQH.js.br",
@@ -38,20 +38,20 @@
       "bytes": 3851
     },
     {
-      "path": "app/chunks/scroll-GSDZE56Z.js.br",
-      "bytes": 1751
+      "path": "app/chunks/scroll-MUIZAIBK.js.br",
+      "bytes": 1802
     },
     {
-      "path": "app/chunks/scroll-GSDZE56Z.js.gz",
-      "bytes": 1858
+      "path": "app/chunks/scroll-MUIZAIBK.js.gz",
+      "bytes": 1912
     },
     {
-      "path": "app/site-GBHN3UEV.js.br",
-      "bytes": 84579
+      "path": "app/site-VD6TETLH.js.br",
+      "bytes": 84457
     },
     {
-      "path": "app/site-GBHN3UEV.js.gz",
-      "bytes": 89909
+      "path": "app/site-VD6TETLH.js.gz",
+      "bytes": 89969
     },
     {
       "path": "assets/fact-address.svg.br",
@@ -159,7 +159,7 @@
     },
     {
       "path": "index.html.br",
-      "bytes": 6394
+      "bytes": 6396
     },
     {
       "path": "index.html.gz",
@@ -167,19 +167,19 @@
     },
     {
       "path": "mts-ads-portrait-frames-current.html.br",
-      "bytes": 6394
+      "bytes": 6396
     },
     {
       "path": "mts-ads-portrait-frames-current.html.gz",
       "bytes": 6762
     },
     {
-      "path": "site-6bf29becdf.css.br",
-      "bytes": 14253
+      "path": "site-b979735e9d.css.br",
+      "bytes": 14133
     },
     {
-      "path": "site-6bf29becdf.css.gz",
-      "bytes": 15183
+      "path": "site-b979735e9d.css.gz",
+      "bytes": 15091
     }
   ],
   "metafile": {
@@ -387,7 +387,7 @@
         "format": "cjs"
       },
       "src/components/ThreeParticleShape.jsx": {
-        "bytes": 3362,
+        "bytes": 3343,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -413,7 +413,7 @@
         "format": "esm"
       },
       "src/components/Hero.jsx": {
-        "bytes": 5317,
+        "bytes": 5666,
         "imports": [
           {
             "path": "node_modules/react-dom/index.js",
@@ -546,7 +546,7 @@
         "format": "esm"
       },
       "src/animation/scene.js": {
-        "bytes": 63207,
+        "bytes": 64161,
         "imports": [
           {
             "path": "src/animation/typography.js",
@@ -577,7 +577,7 @@
         "format": "esm"
       },
       "src/animation/abstract.js": {
-        "bytes": 9185,
+        "bytes": 9411,
         "imports": [
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -588,7 +588,7 @@
         "format": "esm"
       },
       "src/animation/scroll.js": {
-        "bytes": 11073,
+        "bytes": 11510,
         "imports": [
           {
             "path": "src/utils/desktopScale.js",
@@ -929,7 +929,7 @@
       }
     },
     "outputs": {
-      "outputs/app/site-GBHN3UEV.js": {
+      "outputs/app/site-VD6TETLH.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-C6BZTBNO.js",
@@ -952,11 +952,11 @@
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/abstract-KVONEWZF.js",
+            "path": "outputs/app/chunks/abstract-4V67ZJO7.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/scroll-GSDZE56Z.js",
+            "path": "outputs/app/chunks/scroll-MUIZAIBK.js",
             "kind": "dynamic-import"
           },
           {
@@ -980,7 +980,7 @@
             "bytesInOutput": 257
           },
           "node_modules/react-dom/cjs/react-dom-client.production.js": {
-            "bytesInOutput": 205635
+            "bytesInOutput": 205668
           },
           "node_modules/react-dom/client.js": {
             "bytesInOutput": 257
@@ -992,10 +992,10 @@
             "bytesInOutput": 828
           },
           "src/components/Hero.jsx": {
-            "bytesInOutput": 5434
+            "bytesInOutput": 5772
           },
           "src/components/ThreeParticleShape.jsx": {
-            "bytesInOutput": 1997
+            "bytesInOutput": 1985
           },
           "src/components/StageOverlay.jsx": {
             "bytesInOutput": 6352
@@ -1013,7 +1013,7 @@
             "bytesInOutput": 472
           },
           "src/animation/scene.js": {
-            "bytesInOutput": 25900
+            "bytesInOutput": 25959
           },
           "src/animation/typography.js": {
             "bytesInOutput": 3052
@@ -1022,7 +1022,7 @@
             "bytesInOutput": 3194
           }
         },
-        "bytes": 272480
+        "bytes": 272898
       },
       "outputs/app/chunks/particles-HJ35N7TW.js": {
         "imports": [
@@ -1069,7 +1069,7 @@
         },
         "bytes": 1012
       },
-      "outputs/app/chunks/abstract-KVONEWZF.js": {
+      "outputs/app/chunks/abstract-4V67ZJO7.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
@@ -1087,7 +1087,7 @@
         },
         "bytes": 5161
       },
-      "outputs/app/chunks/scroll-GSDZE56Z.js": {
+      "outputs/app/chunks/scroll-MUIZAIBK.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-4Z3KZ6LL.js",
@@ -1104,10 +1104,10 @@
         "entryPoint": "src/animation/scroll.js",
         "inputs": {
           "src/animation/scroll.js": {
-            "bytesInOutput": 4151
+            "bytesInOutput": 4415
           }
         },
-        "bytes": 4271
+        "bytes": 4535
       },
       "outputs/app/chunks/chunk-4Z3KZ6LL.js": {
         "imports": [
