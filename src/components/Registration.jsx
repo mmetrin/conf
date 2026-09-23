@@ -1,6 +1,12 @@
 import { useState, useRef, useLayoutEffect } from "react";
 import { formatPhone } from "../utils/phone.js";
 import { registrationFields, validateField } from "../utils/validation.js";
+import {
+  canUseTestModeFallback,
+  notifyOrganizer,
+  submitConferenceRegistration,
+} from "../services/registration/registrationSubmission.js";
+import { SendsayFormError } from "../services/sendsay/sendsayFormClient.js";
 export function RegistrationField({
   field,
   value,
@@ -13,7 +19,8 @@ export function RegistrationField({
 }) {
   const id = "registration-" + field.name;
   const [focused, setFocused] = useState(false);
-  const inputRef = useRef(null), caret = useRef(null);
+  const inputRef = useRef(null),
+    caret = useRef(null);
   useLayoutEffect(() => {
     if (caret.current !== null && inputRef.current) {
       inputRef.current.setSelectionRange(caret.current, caret.current);
@@ -27,10 +34,14 @@ export function RegistrationField({
     const position = input.selectionStart ?? raw.length;
     const formatted = formatPhone(raw);
     const digitsBefore = raw.slice(0, position).replace(/\D/g, "").length;
-    let next = 3, count = 0;
+    let next = 3,
+      count = 0;
     for (let i = 0; i < formatted.length; i++) {
       if (/\d/.test(formatted[i])) count++;
-      if (count >= digitsBefore) { next = Math.max(3, i + 1); break; }
+      if (count >= digitsBefore) {
+        next = Math.max(3, i + 1);
+        break;
+      }
     }
     if (position === raw.length) next = formatted.length;
     caret.current = next;
@@ -43,7 +54,9 @@ export function RegistrationField({
       className={
         "registration-field" +
         (field.full ? " registration-field--full" : "") +
-        (value && !(field.name === "phone" && value.trim() === "+7") ? " is-filled" : "") +
+        (value && !(field.name === "phone" && value.trim() === "+7")
+          ? " is-filled"
+          : "") +
         (error ? " is-invalid" : "") +
         (loading ? " is-skeleton" : "")
       }
@@ -59,23 +72,39 @@ export function RegistrationField({
           name={field.name}
           type={field.type}
           autoComplete={field.autoComplete}
-          placeholder={focused ? (field.placeholder || field.label) : field.label}
+          minLength={field.minLength}
+          placeholder={focused ? field.placeholder || field.label : field.label}
           required
           value={value}
           disabled={disabled}
           readOnly={readOnly}
           onChange={phoneChange}
           onKeyDown={(event) => {
-            if (field.name !== "phone" || readOnly || !["Backspace", "Delete"].includes(event.key)) return;
-            const input = event.currentTarget, start = input.selectionStart, end = input.selectionEnd;
+            if (
+              field.name !== "phone" ||
+              readOnly ||
+              !["Backspace", "Delete"].includes(event.key)
+            )
+              return;
+            const input = event.currentTarget,
+              start = input.selectionStart,
+              end = input.selectionEnd;
             if (start !== end) return;
-            if (event.key === "Backspace" && start <= 3) { event.preventDefault(); return; }
+            if (event.key === "Backspace" && start <= 3) {
+              event.preventDefault();
+              return;
+            }
             const offset = event.key === "Backspace" ? start - 1 : start;
             if (/[ -]/.test(value[offset] || "")) {
               event.preventDefault();
               let index = offset;
               const direction = event.key === "Backspace" ? -1 : 1;
-              while (index >= 3 && index < value.length && /[ -]/.test(value[index])) index += direction;
+              while (
+                index >= 3 &&
+                index < value.length &&
+                /[ -]/.test(value[index])
+              )
+                index += direction;
               if (index < 3 || index >= value.length) return;
               input.value = value.slice(0, index) + value.slice(index + 1);
               input.setSelectionRange(index, index);
@@ -84,18 +113,22 @@ export function RegistrationField({
           }}
           onFocus={() => {
             setFocused(true);
-            if (field.name === "phone" && !value) onChange({ target: { value: "+7 " } });
+            if (field.name === "phone" && !value)
+              onChange({ target: { value: "+7 " } });
           }}
           onBlur={(event) => {
             setFocused(false);
-            if (field.name === "phone" && value.trim() === "+7") onChange({ target: { value: "" } });
+            if (field.name === "phone" && value.trim() === "+7")
+              onChange({ target: { value: "" } });
             onBlur(event);
           }}
           aria-invalid={!!error}
           aria-describedby={id + "-error"}
         />
         {field.name === "phone" && focused && value.trim() === "+7" && (
-          <span className="registration-field__phone-hint" aria-hidden="true">913 123-45-67</span>
+          <span className="registration-field__phone-hint" aria-hidden="true">
+            913 123-45-67
+          </span>
         )}
       </div>
       <p
@@ -144,6 +177,15 @@ export function Registration() {
       ),
     }));
   }
+  function finishSubmission(fields, organizerAlreadyNotified = false) {
+    setSubmitted(true);
+    setValues(
+      Object.fromEntries(registrationFields.map((field) => [field.name, ""])),
+    );
+    if (!organizerAlreadyNotified)
+      void notifyOrganizer(fields, attempt.current.key);
+    attempt.current = null;
+  }
   async function submit(event) {
     event.preventDefault();
     if (submitting.current) return;
@@ -171,31 +213,64 @@ export function Registration() {
       form.current.elements.namedItem(first.name).focus();
       return;
     }
-    const payload = Object.fromEntries(new FormData(form.current));
-    const signature = JSON.stringify(payload);
+    const formData = Object.fromEntries(new FormData(form.current));
+    const honeypot =
+      typeof formData.website === "string" ? formData.website : "";
+    const signature = JSON.stringify({ ...entered, website: honeypot });
     if (!attempt.current || attempt.current.signature !== signature)
       attempt.current = { signature, key: crypto.randomUUID() };
     submitting.current = true;
     setSending(true);
     setStatus("");
     try {
-      if (location.protocol !== "https:" && !["127.0.0.1", "localhost"].includes(location.hostname)) throw new Error();
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": attempt.current.key },
-        credentials: "same-origin",
-        body: signature,
-        signal: AbortSignal.timeout(15000),
+      if (
+        location.protocol !== "https:" &&
+        !["127.0.0.1", "localhost"].includes(location.hostname)
+      )
+        throw new Error();
+      const result = await submitConferenceRegistration({
+        fields: entered,
+        honeypot,
       });
-      if (!response.ok || (await response.json()).ok !== true) {
-        setStatus(response.status === 429 ? "Слишком много попыток. Попробуйте через 10 минут." : "Не удалось отправить заявку. Попробуйте ещё раз позже.");
+      if (!result.ok) {
+        if (result.kind === "validation") setErrors(result.fieldErrors);
         return;
       }
-      setSubmitted(true);
-      setValues(Object.fromEntries(registrationFields.map(field => [field.name, ""])));
-      attempt.current = null;
-    } catch {
-      setStatus("Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.");
+      finishSubmission(result.fields);
+    } catch (error) {
+      if (canUseTestModeFallback(error)) {
+        const fallbackSent = await notifyOrganizer(
+          entered,
+          attempt.current.key,
+          { sendsayFallback: true },
+        );
+        if (fallbackSent) {
+          finishSubmission(entered, true);
+          return;
+        }
+      }
+      if (error instanceof SendsayFormError && error.kind === "invalid_email") {
+        setErrors((current) => ({
+          ...current,
+          email: "Проверьте адрес почты",
+        }));
+        form.current?.elements.namedItem("email")?.focus();
+        setStatus("");
+      } else if (
+        error instanceof SendsayFormError &&
+        error.kind === "configuration"
+      ) {
+        setStatus("Регистрация временно недоступна. Попробуйте ещё раз позже.");
+      } else if (
+        error instanceof SendsayFormError &&
+        error.kind === "form_error"
+      ) {
+        setStatus("Проверьте введённые данные и попробуйте ещё раз.");
+      } else {
+        setStatus(
+          "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
+        );
+      }
     } finally {
       submitting.current = false;
       setSending(false);
@@ -215,78 +290,122 @@ export function Registration() {
           в «Художественном»
         </h2>
         {submitted ? (
-          <div className="registration__form registration__success" role="status" aria-live="polite">
+          <div
+            className="registration__form registration__success"
+            role="status"
+            aria-live="polite"
+          >
             <div className="registration__success-heading">
               <div className="registration__success-check">
-                <img src="assets/registration/check.svg" width="32" height="32" alt="" />
+                <img
+                  src="assets/registration/check.svg"
+                  width="32"
+                  height="32"
+                  alt=""
+                />
               </div>
-              <h3>Вы зарегистрированы<br />на конференцию МТС ADS</h3>
+              <h3>
+                Вы зарегистрированы
+                <br />
+                на конференцию МТС ADS
+              </h3>
             </div>
             <div className="registration__success-details">
               <p>Отправим вам адрес и дату на почту</p>
-              <div className="registration__success-meta">
-                <div className="registration__success-line">
-                  <img src="assets/registration/map-pin.svg" width="24" height="24" alt="" />
-                  <span>Арбатская площадь, 14, строение 1</span>
-                  <i aria-hidden="true" />
-                  <span>Кинотеатр «Художественный»</span>
+              <div
+                className="registration__success-facts"
+                aria-label="Детали мероприятия"
+              >
+                <div className="registration__success-facts-row">
+                  <span className="registration__success-fact">
+                    <img
+                      src="assets/fact-address.svg"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <span>Арбатская площадь, 14, строение 1</span>
+                  </span>
+                  <span className="registration__success-fact">
+                    <img
+                      src="assets/fact-cinema.svg"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <span>Кинотеатр «Художественный»</span>
+                  </span>
                 </div>
-                <div className="registration__success-line">
-                  <img src="assets/registration/waiting.svg" width="24" height="24" alt="" />
-                  <span>Только офлайн</span><i aria-hidden="true" />
-                  <span>19 ноября</span><i aria-hidden="true" /><span>17:00</span>
+                <div className="registration__success-facts-row">
+                  <span className="registration__success-fact">
+                    <img
+                      src="assets/fact-online.svg"
+                      alt=""
+                      aria-hidden="true"
+                    />
+                    <span>Только офлайн</span>
+                  </span>
+                  <span className="registration__success-fact">
+                    <img src="assets/fact-time.svg" alt="" aria-hidden="true" />
+                    <span>19 ноября 17:00</span>
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         ) : (
-        <form
-          className="registration__form"
-          id="registration-form"
-          ref={form}
-          noValidate
-          onSubmit={submit}
-          aria-busy={sending}
-        >
-          <h3>Участие по предварительной регистрации</h3>
-          <div className="registration__honeypot" aria-hidden="true">
-            <label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label>
-          </div>
-          <div className="registration__fields">
-            {registrationFields.map((field) => (
-              <RegistrationField
-                key={field.name}
-                field={field}
-                readOnly={sending}
-                value={values[field.name]}
-                error={errors[field.name]}
-                onChange={(event) => change(field.name, event.target.value)}
-                onBlur={() => blur(field.name)}
-              />
-            ))}
-          </div>
-          <button className="registration__submit" type="submit" disabled={sending}>
-            {sending ? "Отправляем…" : "Принять участие"}
-          </button>
-          <p className="registration__policy">
-            Продолжая, вы соглашаетесь с&nbsp;
-            <a
-              href="https://marketolog.mts.ru/cabinet/assets/docs/soglasie_na_obrabotku.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Политикой обработки персональных данных
-            </a>
-          </p>
-          <p
-            className="registration__status"
-            role="status"
-            aria-live="polite"
-            hidden={!status}
+          <form
+            className="registration__form"
+            id="registration-form"
+            ref={form}
+            noValidate
+            onSubmit={submit}
+            aria-busy={sending}
           >
-            {status}
-          </p>
-        </form>
+            <h3>Участие по предварительной регистрации</h3>
+            <div className="registration__honeypot" aria-hidden="true">
+              <label>
+                Website
+                <input name="website" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
+            <div className="registration__fields">
+              {registrationFields.map((field) => (
+                <RegistrationField
+                  key={field.name}
+                  field={field}
+                  readOnly={sending}
+                  value={values[field.name]}
+                  error={errors[field.name]}
+                  onChange={(event) => change(field.name, event.target.value)}
+                  onBlur={() => blur(field.name)}
+                />
+              ))}
+            </div>
+            <button
+              className="registration__submit"
+              type="submit"
+              disabled={sending}
+            >
+              {sending ? "Отправляем…" : "Принять участие"}
+            </button>
+            <p className="registration__policy">
+              Продолжая, вы соглашаетесь с&nbsp;
+              <a
+                href="https://marketolog.mts.ru/cabinet/assets/docs/soglasie_na_obrabotku.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Политикой обработки персональных данных
+              </a>
+            </p>
+            <p
+              className="registration__status"
+              role="status"
+              aria-live="polite"
+              hidden={!status}
+            >
+              {status}
+            </p>
+          </form>
         )}
       </div>
     </section>

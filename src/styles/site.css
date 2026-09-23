@@ -282,10 +282,6 @@ h1 span {
   will-change: transform;
   filter: drop-shadow(0 12px 20px #000);
 }
-.projector svg {
-  width: 100%;
-  display: block;
-}
 .object {
   position: absolute;
   z-index: 3;
@@ -298,11 +294,6 @@ h1 span {
   filter: brightness(var(--object-light, 0.3))
     drop-shadow(0 0 var(--object-glow, 1px) #9a64ff70);
   will-change: transform, opacity;
-}
-.object svg {
-  display: block;
-  width: 100%;
-  overflow: visible;
 }
 button {
   border: 0;
@@ -331,7 +322,7 @@ output {
   color: #b6a9cc;
   min-width: 30px;
 }
-@media (max-width: 850px) {
+@media (max-width: 599px) {
   h1 {
     font-size: 34px;
   }
@@ -393,7 +384,7 @@ output {
     transparent 100%
   );
 }
-@media (max-width: 850px) {
+@media (max-width: 599px) {
   .object {
     width: 110vw;
   }
@@ -409,9 +400,6 @@ output {
 .projector {
   width: clamp(390px, 59vw, 820px);
   filter: drop-shadow(0 14px 19px #0009);
-}
-.projector svg:first-child {
-  display: none;
 }
 @media (max-width: 560px) {
   .projector {
@@ -445,9 +433,6 @@ output {
   isolation: isolate;
   transform-origin: 50% 0%;
   transform-style: preserve-3d;
-}
-.projector svg {
-  display: none !important;
 }
 .projector-render {
   display: block;
@@ -651,7 +636,7 @@ output {
 .object::before {
   display: none;
 }
-@media (max-width: 850px) {
+@media (max-width: 599px) {
   .object {
     width: 94.6vw;
     top: calc(64% - 130px);
@@ -678,7 +663,7 @@ output {
   inset: 0;
   width: 100%;
   height: 100%;
-  z-index: 20;
+  z-index: 31;
   pointer-events: none;
 }
 .scene-nav {
@@ -792,25 +777,27 @@ output {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
+  padding: 4px 20px;
   border-radius: 50px;
   background: rgba(7, 6, 9, 0.84);
   color: rgba(255, 255, 255, 0.8);
   font: 400 15px/24px "MTS Wide", Arial, sans-serif;
 }
 .scene-menu__facts img {
+  display: block;
   width: 18px;
   height: 18px;
+  margin-bottom: 1px;
   opacity: 0.6;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .scene-menu { padding: 88px 16px 24px; }
   .scene-menu__panel { min-height: calc(100svh - 112px); }
   .scene-menu__links button { font-size: 20px; }
 }
 #cursor-dot {
   position: fixed;
-  z-index: 30;
+  z-index: 32;
   top: 0;
   left: 0;
   width: 13px;
@@ -860,9 +847,6 @@ output {
 body.cursor-active #cursor-dot {
   opacity: 1;
 }
-body.cursor-active #journey * {
-  cursor: none !important;
-}
 #cursor-dot.is-text {
   width: 23px;
   height: 23px;
@@ -874,8 +858,9 @@ body.cursor-active #journey * {
   height: 150px;
 }
 @media (hover: hover) and (pointer: fine) {
-  body.cursor-active {
-    cursor: none;
+  body.cursor-active,
+  body.cursor-active * {
+    cursor: none !important;
   }
 }
 @media (hover: none), (pointer: coarse) {
@@ -883,7 +868,7 @@ body.cursor-active #journey * {
     display: none;
   }
 }
-@media (max-width: 850px) {
+@media (max-width: 599px) {
   .scene-nav {
     top: 24px;
     left: 24px;
@@ -912,7 +897,7 @@ body.cursor-active #journey * {
   height: 717.4svh;
 }
 
-@media (max-width: 850px) {
+@media (max-width: 599px) {
   .scene {
     --content-width: calc(100% - 48px);
     --content-gutter: 24px;
@@ -1022,7 +1007,7 @@ body.cursor-active #journey * {
 .programme__guest .programme__time {
   color: #ecdbff;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .programme {
     padding: 72px 22px 100px;
   }
@@ -1089,7 +1074,7 @@ body.cursor-active #journey * {
   object-fit: contain;
   pointer-events: none;
 }
-@media (max-width: 760px) {
+@media (max-width: 599px) {
   .scene .object {
     width: 100vw;
     top: 62%;
@@ -1147,7 +1132,7 @@ body.cursor-active #journey * {
 .scene .photo-copy > .photo-roles { position: relative; z-index: 3; }
 .three-particle-shape { border: 0; }
 .three-particle-shape canvas { display: block; width: 100%; height: 100%; }
-@media (max-width: 900px) { .three-particle-shape { display: none; } }
+@media (max-width: 599px) { .three-particle-shape { display: none; } }
 .scene .photo-title {
   font-family: "MTS Wide", Arial, sans-serif;
   font-weight: 700;
@@ -1222,7 +1207,7 @@ body.cursor-active #journey * {
   margin-top: -75svh;
   padding-top: 64px;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   #programme {
     padding-top: 48px;
   }
@@ -1309,7 +1294,7 @@ body > #conference-register:active,
   background: #ff244f;
   color: #fff;
 }
-@media (max-width: 759px) {
+@media (max-width: 599px) {
   body > .scene-nav {
     left: 24px;
     right: 24px;
@@ -1379,7 +1364,7 @@ body > #conference-register:active,
   -webkit-mask-image: none;
   mask-image: none;
 }
-@media (max-width: 760px) {
+@media (max-width: 599px) {
   .object {
     width: 92vw;
   }
@@ -1451,21 +1436,6 @@ body > #conference-register:active,
   filter: none;
   text-shadow: none;
 }
-.photo-roles__dot {
-  display: inline-block;
-  width: 4px;
-  height: 4px;
-  margin: 0 11px;
-  vertical-align: middle;
-  position: relative;
-  top: -1px;
-  border-radius: 50%;
-  background: #fff5ff;
-  box-shadow:
-    0 0 4px 2px #dec4ff,
-    0 0 10px 4px #ad80dd99;
-}
-
 .photo-title {
   position: relative;
   width: min(780px, calc(100% - 48px));
@@ -1688,7 +1658,8 @@ html.content-ready #projector.lamp-loop-finished .projector-lamp {
 }
 
 .journey {
-  height: 260svh;
+  height: 280vh;
+  height: 280svh;
 }
 #projector {
   animation: none !important;
@@ -1714,13 +1685,6 @@ html.content-ready #projector.lamp-loop-finished .projector-lamp {
     #030307 100%
   );
 }
-#audience,
-#audience * {
-  filter: none !important;
-  text-shadow: none !important;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
 #photo-title,
 #conference-register {
   filter: none !important;
@@ -1738,6 +1702,7 @@ html.content-ready #projector.lamp-loop-finished .projector-lamp {
   transform: translate(-50%, -50%) scale(0.85);
   z-index: 6;
   opacity: 0;
+  will-change: opacity;
   pointer-events: none;
   mask-image: radial-gradient(
     ellipse 50% 50% at center,
@@ -1753,6 +1718,13 @@ html.content-ready #projector.lamp-loop-finished .projector-lamp {
     rgba(0, 0, 0, 0.35) 70%,
     transparent 100%
   );
+}
+#abstract-lights {
+  filter: blur(2px);
+  will-change: opacity, filter;
+}
+#abstract-data {
+  filter: none;
 }
 .programme {
   z-index: 2;
@@ -1846,7 +1818,7 @@ html:not(.content-ready) body > #projector-final {
   opacity: 0 !important;
   pointer-events: none !important;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .programme {
     padding-top: 130px;
   }
@@ -1939,7 +1911,7 @@ html:not(.content-ready) body > #projector-final {
 .programme__business .programme__topics .programme__item:last-child {
   border-bottom: 0;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .programme__business {
     padding: 24px 16px;
   }
@@ -1989,7 +1961,7 @@ html:not(.content-ready) body > #projector-final {
   padding: 32px 0 40px !important;
   margin: 0 auto;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .programme__track {
     padding-left: 20px;
     padding-right: 12px;
@@ -2030,7 +2002,7 @@ html:not(.content-ready) body > #projector-final {
   font-size: clamp(14px, 1.08vw, 16px);
   line-height: 1.65;
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .programme .programme__topics {
     padding-left: 20px;
     padding-right: 0;
@@ -2118,11 +2090,10 @@ body > #light {
   margin-top: 30px;
 }
 #scene .photo-roles {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  grid-auto-flow: row;
   justify-content: center;
-  align-content: flex-start;
-  align-items: flex-start;
   gap: 4px;
   width: min(540px, 100%);
   flex: none;
@@ -2143,23 +2114,24 @@ body > #light {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
+  padding: 4px 16px;
   border-radius: 50px;
   background: rgba(21, 18, 23, 0.76);
   max-width: 100%;
   overflow: visible;
   text-align: left;
+  white-space: nowrap;
 }
 #scene .photo-roles__icon {
   display: block;
   flex: 0 0 18px;
   width: 18px;
   height: 18px;
-  margin: 0;
+  margin: 0 0 1px;
   object-fit: contain;
   opacity: 0.6;
 }
-@media (max-width: 760px) {
+@media (max-width: 599px) {
   #scene .photo-title {
     font-size: clamp(26px, 5.3vw, 40px);
   }
@@ -2212,7 +2184,7 @@ body > #light {
   box-sizing: border-box;
   width: fit-content;
   max-width: 100%;
-  margin: 0 auto 60px;
+  margin: 0 auto 68px;
   text-align: center;
   font:
     500 48px/1.1 "MTS Wide",
@@ -2286,7 +2258,7 @@ body > #light {
   display: block;
   margin: 0;
   font:
-    500 22px/29px "MTS Wide",
+    400 22px/29px "MTS Wide",
     Arial,
     sans-serif;
   letter-spacing: 0;
@@ -2297,7 +2269,7 @@ body > #light {
 #programme .programme__evening > .programme__item h3 {
   margin: 4px 0 0;
   font:
-    400 17px/24px "MTS Text",
+    400 17px/24px "MTS Wide",
     Arial,
     sans-serif;
   letter-spacing: 0;
@@ -2342,7 +2314,7 @@ body > #light {
   display: flex;
   flex: 1 1 0;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   min-width: 0;
   padding-top: 0;
 }
@@ -2352,9 +2324,10 @@ body > #light {
   gap: 2px;
 }
 #programme .programme__author {
-  font: 500 12px/16px "MTS Compact", "MTS Text", Arial, sans-serif;
+  font: 400 14px/20px "MTS Text", Arial, sans-serif;
+  font-feature-settings: "liga" off, "clig" off;
   color: rgba(255, 255, 255, 0.6);
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0;
 }
 #programme .programme__topics .programme__topic h3 {
@@ -2429,10 +2402,10 @@ body > #light {
   );
   box-shadow: 0 0 12px 1px rgba(200, 163, 249, 0.22);
 }
-@media (max-width: 760px) {
+@media (max-width: 599px) {
   #programme h2 {
     font-size: clamp(26px, 5.3vw, 40px);
-    margin-bottom: 24px;
+    margin-bottom: 28px;
   }
   #programme .programme__intro-note {
     font-size: 17px;
@@ -2440,7 +2413,7 @@ body > #light {
     margin-top: 24px;
   }
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   #programme {
     padding: 76px 20px 100px;
   }
@@ -2483,26 +2456,7 @@ body > #light {
   padding: 181px 24px 151px;
   scroll-margin-top: 0;
   color: rgba(255, 255, 255, 0.93);
-  font:
-    400 17px/24px "MTS Text",
-    Arial,
-    sans-serif;
-}
-.registration::after {
-  content: "";
-  position: absolute;
-  z-index: 3;
-  inset: 0 0 auto;
-  height: 260px;
-  pointer-events: none;
-  opacity: var(--registration-scroll-fade, 0);
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.94) 0%,
-    rgba(0, 0, 0, 0.72) 42%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  transition: opacity 120ms linear;
+  font: 400 17px/24px "MTS Text", Arial, sans-serif;
 }
 .registration__inner {
   position: relative;
@@ -2511,6 +2465,16 @@ body > #light {
   margin: auto;
   transform: translateY(var(--registration-entry-y, 0px));
   opacity: var(--registration-entry-opacity, 1);
+  --registration-top-mask: linear-gradient(
+    to bottom,
+    transparent var(--registration-dark-edge, -300px),
+    rgba(0, 0, 0, 0.1) var(--registration-dim-edge, -200px),
+    rgba(0, 0, 0, 0.55) var(--registration-soft-edge, -100px),
+    #000 var(--registration-lit-edge, 0px)
+  );
+  mask-image: var(--registration-top-mask);
+  -webkit-mask-image: var(--registration-top-mask);
+  will-change: transform, opacity, mask-image;
 }
 .registration h2 {
   width: fit-content;
@@ -2555,7 +2519,7 @@ body > #light {
   margin: 0;
   text-align: center;
   font:
-    500 20px/29px "MTS Wide",
+    400 20px/29px "MTS Wide",
     Arial,
     sans-serif;
   letter-spacing: 0;
@@ -2642,7 +2606,10 @@ body > #light {
   left: 48px;
   top: 14px;
   color: #7f8c9f;
-  font: 400 17px/24px "MTS Text", Arial, sans-serif;
+  font:
+    400 17px/24px "MTS Text",
+    Arial,
+    sans-serif;
   pointer-events: none;
 }
 @media (hover: hover) {
@@ -2771,8 +2738,16 @@ body > #light {
   transform: translateX(-50%);
   width: min(1042px, 100%);
   aspect-ratio: 1042/471;
-  background: url("assets/registration/light-ribbon.png") center bottom/100%
-    102.72% no-repeat;
+  background-position: center bottom;
+  background-size: 100% 102.72%;
+  background-repeat: no-repeat;
+}
+.registration.assets-ready .registration__ribbon {
+  background-image: url("assets/registration/light-ribbon.webp");
+  background-image: image-set(
+    url("assets/registration/light-ribbon.avif") type("image/avif"),
+    url("assets/registration/light-ribbon.webp") type("image/webp")
+  );
   mask: url("assets/registration/light-ribbon-mask.svg") center/100% 100%
     no-repeat;
   -webkit-mask: url("assets/registration/light-ribbon-mask.svg") center/100%
@@ -2783,7 +2758,7 @@ body.registration-visible > #conference-register {
   visibility: hidden !important;
   pointer-events: none !important;
 }
-@media (max-width: 760px) {
+@media (max-width: 599px) {
   .registration {
     min-height: 100svh;
     padding: 160px 20px 110px;
@@ -2803,6 +2778,15 @@ body.registration-visible > #conference-register {
   .registration__ribbon {
     top: auto;
     bottom: 0;
+  }
+  .registration.assets-ready .registration__ribbon {
+    background-image: url("assets/registration/light-ribbon-700.webp");
+    background-image: image-set(
+      url("assets/registration/light-ribbon-700.avif") type("image/avif") 1x,
+      url("assets/registration/light-ribbon.avif") type("image/avif") 2x,
+      url("assets/registration/light-ribbon-700.webp") type("image/webp") 1x,
+      url("assets/registration/light-ribbon.webp") type("image/webp") 2x
+    );
   }
 }
 @media (max-width: 480px) {
@@ -2837,6 +2821,12 @@ body.registration-visible > #conference-register {
 #root {
   display: contents;
 }
+.below-fold-placeholder {
+  position: relative;
+  z-index: 2;
+  min-height: 4300px;
+  background: #030307;
+}
 .site-footer {
   position: relative;
   z-index: 2;
@@ -2848,68 +2838,69 @@ body.registration-visible > #conference-register {
 }
 .site-footer__inner {
   display: flex;
-  align-items: flex-start;
+  align-items: baseline;
   justify-content: space-between;
   gap: 48px;
 }
-.site-footer__left { min-width: 0; }
-.site-footer__nav {
+.site-footer__left {
   display: flex;
-  align-items: center;
-  gap: 24px;
-}
-.site-footer__nav img {
-  display: block;
-  width: auto;
-  height: 34px;
-}
-.site-footer__nav a {
-  color: inherit;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
 }
 .site-footer__copyright {
-  margin: 16px 0 0;
-  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+  color: rgba(255, 255, 255, 0.5);
+  font: 400 17px/24px "MTS Text", Arial, sans-serif;
 }
 .site-footer__facts {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 24px;
+  gap: 4px;
+  margin-left: auto;
   padding-top: 8px;
   text-align: right;
-  color: rgba(255, 255, 255, 0.72);
+}
+.site-footer__facts-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 4px;
+  max-width: 100%;
 }
 .site-footer__fact {
-  display: flex;
+  box-sizing: border-box;
+  display: inline-flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
+  gap: 8px;
+  max-width: 100%;
+  padding: 4px 16px;
+  border-radius: 50px;
+  background: rgba(28, 26, 32, 0.84);
+  color: rgba(255, 255, 255, 0.8);
+  font: 400 15px/24px "MTS Wide", Arial, sans-serif;
   white-space: nowrap;
 }
 .site-footer__fact img {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   object-fit: contain;
+  opacity: 0.6;
 }
-.site-footer__fact i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.9);
-}
-@media (max-width: 900px) {
+@media (max-width: 599px) {
   .site-footer__inner { flex-direction: column; }
-  .site-footer__facts { align-items: flex-start; text-align: left; }
-  .site-footer__fact { justify-content: flex-start; white-space: normal; }
+  .site-footer__facts {
+    align-self: flex-end;
+    align-items: flex-end;
+    width: 100%;
+    text-align: right;
+  }
+  .site-footer__fact { white-space: normal; text-align: left; }
 }
-@media (max-width: 600px) {
+@media (max-width: 599px) {
   .site-footer { padding: 132px 24px 64px; font-size: 15px; line-height: 20px; }
-  .site-footer__nav { gap: 16px; }
-  .site-footer__facts { gap: 16px; }
-  .site-footer__fact { flex-wrap: wrap; gap: 10px; }
+  .site-footer__facts { gap: 4px; }
 }
 .registration-field input {
   cursor: text;
@@ -2934,12 +2925,21 @@ body.registration-visible > #conference-register {
   place-items: center;
   padding: 20px;
   border-radius: 40px;
-  background: rgba(255,255,255,.12);
+  background: rgba(255, 255, 255, 0.12);
 }
-.registration__success img { display: block; flex-shrink: 0; }
+.registration__success img {
+  display: block;
+  flex-shrink: 0;
+}
 .registration__success-heading h3 {
   width: min(380px, 100%);
-  background: linear-gradient(90deg,rgba(255,255,255,.2) 10.577%,#fff 43.75%,#fff 61.058%,rgba(255,255,255,.2) 89.904%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2) 10.577%,
+    #fff 43.75%,
+    #fff 61.058%,
+    rgba(255, 255, 255, 0.2) 89.904%
+  );
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
@@ -2952,8 +2952,11 @@ body.registration-visible > #conference-register {
   gap: 20px;
   padding-bottom: 20px;
   width: 100%;
-  color: rgba(255,255,255,.8);
-  font: 400 17px/24px "MTS Text", Arial, sans-serif;
+  color: rgba(255, 255, 255, 0.8);
+  font:
+    400 17px/24px "MTS Wide",
+    Arial,
+    sans-serif;
   animation: registration-success-copy-in 0.42s
     cubic-bezier(0.22, 0.61, 0.36, 1) 0.28s both;
 }
@@ -2967,13 +2970,53 @@ body.registration-visible > #conference-register {
     transform: translateY(0);
   }
 }
-.registration__success-details p { margin: 0; }
-.registration__success-meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 24px; }
-.registration__success-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px; }
-.registration__success-line i { width: 8px; height: 8px; margin: 0 4px; border-radius: 50%; background: #f2f2f8; filter: blur(2px); }
-@media (max-width: 600px) {
-  .registration__success { padding: 32px 20px; }
-  .registration__success-details { font-size: 15px; }
+.registration__success-details p {
+  margin: 0;
+}
+.registration__success-facts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+.registration__success-facts-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+}
+.registration__success-fact {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 4px 16px;
+  border-radius: 50px;
+  background: rgba(28, 26, 32, 0.84);
+  color: rgba(255, 255, 255, 0.8);
+  font: 400 15px/24px "MTS Wide", Arial, sans-serif;
+  white-space: nowrap;
+}
+.registration__success-fact img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  opacity: 0.6;
+}
+@media (max-width: 599px) {
+  .registration__success {
+    padding: 32px 20px;
+  }
+  .registration__success-details {
+    font-size: 15px;
+  }
+  .registration__success-fact {
+    white-space: normal;
+    text-align: left;
+  }
 }
 /* Единый шрифт и размер заголовков по макету. */
 h1,
@@ -3005,13 +3048,26 @@ h2 {
   }
 }
 
-.registration__honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
-.registration__submit:disabled { opacity: .6; cursor: wait; }
+.registration__honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.registration__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
 
 #programme .programme__portrait--icon {
   display: grid;
   place-items: center;
-  background: linear-gradient(44.1697deg, #211b2d 5.9546%, rgba(113, 91, 150, 0.4) 99.724%);
+  background: linear-gradient(
+    44.1697deg,
+    #211b2d 5.9546%,
+    rgba(113, 91, 150, 0.4) 99.724%
+  );
 }
 #programme .programme__portrait--icon img {
   display: block;
@@ -3031,16 +3087,519 @@ h2 {
   transform: translate(-50%, -50%);
   width: max(110%, 340px);
   height: calc(100% + 110px);
-  background: radial-gradient(ellipse at center,
+  background: radial-gradient(
+    ellipse at center,
     rgba(255, 252, 255, 0.88) 0%,
     rgba(244, 235, 255, 0.8) 24%,
     rgba(222, 205, 244, 0.56) 43%,
     rgba(204, 179, 233, 0.27) 61%,
     rgba(190, 162, 224, 0.08) 77%,
-    rgba(190, 162, 224, 0) 100%);
+    rgba(190, 162, 224, 0) 100%
+  );
   filter: blur(24px);
 }
 #programme .programme__guest > .programme__focus-content::after {
   content: none;
   display: none;
+}
+
+/*
+ * Desktop scaling architecture
+ *
+ * 1400px is the authored desktop canvas. Between 600px and 1399px every
+ * composition token follows viewport width, while the sticky scene and its
+ * fullscreen canvas/background layers keep their real viewport geometry.
+ * The <=599px rules above remain the separate, intentionally untouched mobile
+ * architecture.
+ */
+@media (min-width: 600px) and (max-width: 1399px) {
+  :root {
+    --hero-projector-width: 54.285714vw;
+    --hero-final-projector-width: 36.785714vw;
+    --hero-object-width: 57.142857vw;
+    --hero-copy-width: 64.285714vw;
+    --hero-title-size: 3.142857vw;
+    --hero-subtitle-size: 1.5vw;
+    --hero-subtitle-line: 2.071429vw;
+    --hero-particle-right-width: 58.571429vw;
+    --hero-particle-right-height: 50vw;
+    --hero-particle-left-width: 62.857143vw;
+    --hero-particle-left-height: 53.428571vw;
+  }
+
+  /* Content-bound Hero composition. */
+  #scene .projector {
+    width: var(--hero-projector-width);
+  }
+  body > #projector-final {
+    width: var(--hero-final-projector-width);
+  }
+  #scene .object {
+    width: var(--hero-object-width);
+  }
+  #scene .photo-copy {
+    padding: 1px 1.714286vw 1.428571vw;
+  }
+  #scene .photo-title {
+    width: min(var(--hero-copy-width), 100%) !important;
+    font-size: var(--hero-title-size) !important;
+  }
+  #scene .photo-subtitle {
+    width: min(62.142857vw, 100%);
+    margin-top: 2.142857vw;
+    font-size: var(--hero-subtitle-size) !important;
+    line-height: var(--hero-subtitle-line) !important;
+  }
+  #scene .photo-roles {
+    width: min(38.571429vw, 100%);
+    gap: 0.285714vw;
+    margin-top: 4.285714vw;
+    font-size: 1.071429vw;
+    line-height: 1.714286vw;
+  }
+  #scene .photo-roles__item {
+    gap: 0.571429vw;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+  }
+  #scene .photo-roles__icon {
+    flex-basis: 1.285714vw;
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+  .three-particle-shape {
+    width: var(--hero-particle-right-width);
+    height: var(--hero-particle-right-height);
+  }
+  .three-particle-shape--left {
+    width: var(--hero-particle-left-width);
+    height: var(--hero-particle-left-height);
+  }
+
+  /* Overlay visuals scale, but interactive hit areas stay at least 44px. */
+  body > .scene-nav {
+    top: 1.428571vw;
+    left: 1.714286vw;
+    right: 1.714286vw;
+    height: max(44px, 4vw);
+  }
+  .scene-nav .scene-logo {
+    width: 8.857143vw;
+    height: 3.428571vw;
+  }
+  .scene-nav .menu-trigger {
+    width: max(44px, 4vw);
+    height: max(44px, 4vw);
+    min-width: max(44px, 4vw);
+  }
+  .scene-nav .menu-trigger img {
+    width: max(18px, 2vw);
+    height: max(18px, 2vw);
+  }
+  body > #conference-register {
+    bottom: 5.714286vw;
+    min-height: 44px;
+    padding: max(12px, 1.142857vw) 2.285714vw max(12px, 1.285714vw);
+    border-radius: 2.857143vw;
+    font-size: max(12px, 1.142857vw);
+  }
+
+  /* Programme uses real, fluid layout dimensions for scroll measurements. */
+  #programme {
+    padding: 7.142857vw 1.714286vw 10vw;
+    font-size: max(10px, 1.214286vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  #programme .programme__inner {
+    max-width: 62.142857vw;
+  }
+  #programme h2 {
+    margin-bottom: 4.857143vw;
+    font-size: 3.142857vw !important;
+  }
+  #programme .programme__intro-note {
+    width: min(62.142857vw, 100%);
+    margin: 2.142857vw auto 4.285714vw;
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__track {
+    gap: 5.714286vw;
+    width: min(40vw, 100%);
+  }
+  #programme .programme__time {
+    font-size: max(10px, 1.571429vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__track > .programme__item h3,
+  #programme .programme__business-heading h3,
+  #programme .programme__evening > .programme__item h3 {
+    margin-top: 0.285714vw;
+    font-size: max(10px, 1.214286vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  #programme .programme__business,
+  #programme .programme__topics {
+    gap: 4.285714vw;
+  }
+  #programme .programme__topic > .programme__focus-content {
+    gap: 2.285714vw;
+  }
+  #programme .programme__portrait {
+    flex-basis: 6.571429vw;
+    width: 6.571429vw;
+    height: 6.571429vw;
+    border-radius: 1.142857vw 0 1.142857vw 1.142857vw;
+  }
+  #programme .programme__topic-copy {
+    gap: 0.714286vw;
+  }
+  #programme .programme__topic-heading {
+    gap: 0.142857vw;
+  }
+  #programme .programme__author {
+    font-size: max(10px, 1vw);
+    line-height: max(14px, 1.428571vw);
+  }
+  #programme .programme__topics .programme__topic h3 {
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__topics .programme__topic p {
+    font-size: max(9px, 1vw);
+    line-height: max(12px, 1.428571vw);
+  }
+  #programme .programme__guest > .programme__focus-content::before {
+    width: max(110%, 24.285714vw);
+    height: calc(100% + 7.857143vw);
+    filter: blur(1.714286vw);
+  }
+
+  /* Registration also scales through layout, with safe form controls. */
+  .registration {
+    min-height: 67.142857vw;
+    padding: 12.928571vw 1.714286vw 10.785714vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration__inner {
+    max-width: 62.142857vw;
+  }
+  .registration h2 {
+    margin-bottom: 3.571429vw;
+    font-size: 3.142857vw !important;
+  }
+  .registration__form {
+    gap: 2.285714vw;
+    width: min(46.428571vw, 100%);
+    padding: 2.285714vw;
+    border-radius: 4.285714vw;
+  }
+  .registration__form h3 {
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  .registration__fields {
+    gap: 0.714286vw 1.142857vw;
+  }
+  .registration-field {
+    padding-top: 0.5vw;
+  }
+  .registration-field__control {
+    height: max(44px, 3.714286vw);
+    border-radius: 2.857143vw;
+  }
+  .registration-field input {
+    padding: max(10px, 1vw) 1.714286vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration-field label {
+    top: -0.5vw;
+    left: 1.428571vw;
+    max-width: calc(100% - 2.857143vw);
+    padding-inline: 0.285714vw;
+    font-size: max(9px, 0.857143vw);
+    line-height: max(11px, 1.142857vw);
+  }
+  .registration-field__phone-hint {
+    left: 3.428571vw;
+    top: max(10px, 1vw);
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration-field__error {
+    margin-top: 0.571429vw;
+    font-size: max(9px, 0.857143vw);
+    line-height: max(11px, 1.142857vw);
+  }
+  .registration__submit {
+    min-height: max(44px, 3.571429vw);
+    padding: max(12px, 1.142857vw) 1.714286vw;
+    border-radius: 2.857143vw;
+    font-size: max(12px, 1.142857vw);
+    line-height: max(14px, 1.285714vw);
+  }
+  .registration__policy {
+    font-size: max(10px, 0.857143vw);
+    line-height: max(12px, 1.142857vw);
+  }
+  .registration__status {
+    font-size: max(10px, 1vw);
+    line-height: max(14px, 1.428571vw);
+  }
+  .registration__ribbon {
+    top: 38.357143vw;
+    width: min(74.428571vw, 100%);
+  }
+  .registration__success {
+    min-height: 32.285714vw;
+    gap: 3.142857vw;
+  }
+  .registration__success-heading {
+    gap: 1.714286vw;
+  }
+  .registration__success-check {
+    padding: 1.428571vw;
+    border-radius: 2.857143vw;
+  }
+  .registration__success-details {
+    gap: 1.428571vw;
+    padding-bottom: 1.428571vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration__success-facts {
+    gap: 0.285714vw;
+  }
+  .registration__success-fact {
+    gap: 0.571429vw;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+    font-size: max(10px, 1.071429vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .registration__success-fact img {
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+
+  /* Footer keeps the desktop row rather than switching at the old 900px cut. */
+  .site-footer {
+    padding: 10vw 1.714286vw 5.142857vw;
+    font-size: max(10px, 1.285714vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .site-footer__inner {
+    gap: 3.428571vw;
+  }
+  .site-footer__copyright {
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .site-footer__facts {
+    gap: 4px;
+    padding-top: 0.571429vw;
+  }
+  .site-footer__fact {
+    gap: 0.571429vw;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+    font-size: max(10px, 1.071429vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .site-footer__fact img {
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+}
+
+/* Width remains primary; only Hero composition receives short-viewport safety. */
+@media (min-width: 600px) and (max-width: 1399px) and (max-height: 700px) {
+  :root {
+    --hero-projector-width: min(54.285714vw, 108.571429svh);
+    --hero-final-projector-width: min(36.785714vw, 73.571429svh);
+    --hero-object-width: min(57.142857vw, 114.285714svh);
+    --hero-copy-width: min(64.285714vw, 128.571429svh);
+    --hero-title-size: min(3.142857vw, 6.285714svh);
+    --hero-subtitle-size: min(1.5vw, 3svh);
+    --hero-subtitle-line: min(2.071429vw, 4.142857svh);
+    --hero-particle-right-width: min(58.571429vw, 117.142857svh);
+    --hero-particle-right-height: min(50vw, 100svh);
+    --hero-particle-left-width: min(62.857143vw, 125.714286svh);
+    --hero-particle-left-height: min(53.428571vw, 106.857143svh);
+  }
+}
+
+@media (min-width: 601px) {
+  .scene-nav .menu-trigger,
+  .scene-menu {
+    display: none;
+  }
+}
+
+/* Mobile Hero follows the 360px composition while preserving the desktop pills. */
+@media (max-width: 599px) {
+  html,
+  body,
+  .scene#scene {
+    background: #00060f;
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  .scene#scene {
+    --content-width: calc(100% - 32px);
+    --content-gutter: 16px;
+  }
+
+  #programme {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  #programme .programme__inner {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  #abstract-lights,
+  #abstract-data {
+    width: 100vw;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  body > .scene-nav {
+    top: 8px;
+    left: 16px;
+    right: 16px;
+    height: 40px;
+  }
+
+  .scene-nav .scene-logo {
+    width: 77.5px;
+    height: 30px;
+  }
+
+  .scene-nav .menu-trigger {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    border-left-width: 1px;
+    border-right-width: 1px;
+    border-radius: 30px;
+    backdrop-filter: blur(2px);
+  }
+
+  .scene-nav .menu-trigger img {
+    width: 20px;
+    height: 20px;
+  }
+
+  body > #projector-final {
+    top: 24px;
+    left: 50%;
+    width: min(calc(108vw - 1px), 388px);
+  }
+
+  #scene .object {
+    left: 50%;
+    top: calc(50svh - 5px);
+    width: min(175vw, 650px);
+  }
+
+  #scene .vignette {
+    background:
+      linear-gradient(180deg, transparent 56%, rgba(0, 6, 15, 0.22) 72%, #00060f 100%),
+      radial-gradient(ellipse at 50% 48%, transparent 34%, rgba(0, 6, 15, 0.28) 70%, #00060f 100%);
+  }
+
+  body > #conference-register {
+    left: 50%;
+    right: auto;
+    bottom: 24px;
+    width: 218px;
+    min-width: 218px;
+    min-height: 49px;
+    padding: 16px 24px 18px;
+    transform: translateX(-50%);
+    font-size: 16px;
+  }
+
+  #scene .photo-copy {
+    padding-inline: 16px;
+  }
+
+  #scene .photo-title {
+    max-width: 328px;
+    font-size: clamp(23px, 4.52vw, 27px) !important;
+    line-height: 1.1 !important;
+  }
+
+  #scene .photo-subtitle {
+    max-width: 328px;
+    margin-top: 12px;
+    font-size: 15px !important;
+    line-height: 20px !important;
+  }
+
+  #scene .photo-roles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: calc(100vw - 32px);
+    max-width: 420px;
+    margin-top: 40px;
+    font: 400 14px/20px "MTS Wide", Arial, sans-serif;
+    gap: 4px;
+  }
+
+  #scene .photo-roles__item {
+    gap: 8px;
+    padding: 4px 13px;
+    border-radius: 14px;
+  }
+
+  #scene .photo-roles__icon {
+    flex-basis: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  #programme h2 {
+    margin-bottom: 44px;
+    font-size: 27px !important;
+    line-height: 1.1 !important;
+  }
+
+  .registration h2 {
+    font-size: clamp(20px, 4.52vw, 27px) !important;
+    line-height: 1.1 !important;
+  }
+}
+
+/* Pills always hug their content instead of stretching to a row or grid track. */
+#scene .photo-roles {
+  justify-items: center;
+  align-items: center;
+}
+
+#scene .photo-roles__item,
+.scene-menu__facts > span,
+.site-footer__fact,
+.registration__success-fact {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.site-footer__facts-row,
+.registration__success-facts-row {
+  width: fit-content;
 }

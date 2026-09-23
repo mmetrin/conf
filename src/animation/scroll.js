@@ -1,3 +1,5 @@
+import { getHeroScale } from "../utils/desktopScale.js";
+
 const clamp = (value) => Math.max(0, Math.min(1, value));
 const ease = (value) => value * value * (3 - 2 * value);
 export function startScrollTransitions(scope, fontsReady, abstractLights) {
@@ -8,15 +10,18 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     content = programme.querySelector(".programme__inner"),
     track = programme.querySelector(".programme__track");
   const registration = document.querySelector("#registration"),
+    registrationContent = registration.querySelector(".registration__inner"),
     items = [...programme.querySelectorAll(".programme__item")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
     written = new WeakMap();
   let metrics = null,
     previousEntryY = 0,
+    previousRegistrationEntryY = 0,
     pending = 0,
     writeFrame = 0,
     abstractLocked = false,
-    previousScrollY = window.scrollY;
+    previousScrollY = window.scrollY,
+    sceneEffectsActive = true;
   function commit(node, key, value) {
     let cache = written.get(node);
     if (!cache) {
@@ -32,6 +37,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     if (scope.disposed) return;
     // All layout reads are performed together, before any of this frame's writes.
     const height = scene.clientHeight,
+      heroScale = getHeroScale(scene.clientWidth, height),
       remaining = journey.getBoundingClientRect().bottom - height;
     const programmeRect = programme.getBoundingClientRect(),
       programmeTitleRect = programmeTitle.getBoundingClientRect(),
@@ -43,8 +49,12 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       ),
       entryY = height * 0.16 * (1 - entry);
     const formEntry = ease(
-      clamp((height * 0.9 - registrationRect.top) / Math.max(1, height * 0.5)),
-    );
+        clamp(
+          (height * 0.9 - registrationRect.top) /
+            Math.max(1, height * 0.5),
+        ),
+      ),
+      formEntryY = height * 0.16 * (1 - formEntry);
     const active =
       programmeRect.top < height + 100 && programmeRect.bottom > -100;
     const titleCenterOffset = programmeTitleRect.top + programmeTitleRect.height / 2 - height / 2;
@@ -58,7 +68,15 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       abstractLocked = true;
     if (abstractLocked && scrollDirection < 0 && titleCenterOffset >= 0)
       abstractLocked = false;
-    let focusState = null;
+    const darkEdge =
+        Math.max(0, window.programmeBeam?.y ?? Math.min(80, height * 0.1)) +
+        8,
+      litEdge = Math.max(
+        darkEdge + 60,
+        Math.min(height * 0.36, height * 0.48 - 24),
+      );
+    let focusState = null,
+      registrationEdges = null;
     if (active) {
       const rect = track.getBoundingClientRect(),
         contentRect = content.getBoundingClientRect();
@@ -70,12 +88,6 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       const trackTop = rect.top - previousEntryY + entryY,
         contentTop = contentRect.top - previousEntryY + entryY,
         focus = height * 0.48;
-      const darkEdge =
-        Math.max(0, window.programmeBeam?.y ?? Math.min(80, height * 0.1)) + 8;
-      const litEdge = Math.max(
-        darkEdge + 60,
-        Math.min(height * 0.36, focus - 24),
-      );
       focusState = {
         edges: [
           darkEdge,
@@ -102,12 +114,29 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
         }),
       };
     }
+    if (
+      registrationRect.top < height + 100 &&
+      registrationRect.bottom > -100
+    ) {
+      const registrationContentRect =
+        registrationContent.getBoundingClientRect();
+      const contentTop =
+        registrationContentRect.top -
+        previousRegistrationEntryY +
+        formEntryY;
+      registrationEdges = [
+        darkEdge,
+        darkEdge + (litEdge - darkEdge) * 0.45,
+        darkEdge + (litEdge - darkEdge) * 0.75,
+        litEdge,
+      ].map((value) => (value - contentTop).toFixed(1) + "px");
+    }
     scope.cancel(writeFrame);
     writeFrame = scope.request(() => {
       commit(
         scene,
         "--copy-exit-y",
-        (-height * 0.38 * progress).toFixed(2) + "px",
+        (-height * 0.38 * heroScale * progress).toFixed(2) + "px",
       );
       commit(scene, "--copy-exit-opacity", (1 - fade).toFixed(4));
       commit(scene, "--copy-exit-brightness", (1 - 0.85 * fade).toFixed(4));
@@ -128,18 +157,36 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       commit(
         registration,
         "--registration-entry-y",
-        (height * 0.16 * (1 - formEntry)).toFixed(2) + "px",
+        formEntryY.toFixed(2) + "px",
       );
       commit(
         registration,
         "--registration-entry-opacity",
         String(0.35 + 0.65 * formEntry),
       );
+      previousRegistrationEntryY = formEntryY;
+      if (registrationEdges)
+        ["dark", "dim", "soft", "lit"].forEach((name, index) =>
+          commit(
+            registrationContent,
+            `--registration-${name}-edge`,
+            registrationEdges[index],
+          ),
+        );
       document.body.classList.toggle(
         "registration-visible",
         registrationRect.top < height * 0.7 &&
           registrationRect.bottom > height * 0.2,
       );
+      const nextSceneEffectsActive = registrationRect.top > height * 0.95;
+      if (nextSceneEffectsActive !== sceneEffectsActive) {
+        sceneEffectsActive = nextSceneEffectsActive;
+        window.dispatchEvent(
+          new window.CustomEvent("scene-effects-active", {
+            detail: { active: sceneEffectsActive },
+          }),
+        );
+      }
       if (abstractLights) abstractLights.show(abstractLocked ? 1 : active ? abstractReveal : 0);
       if (focusState) {
         ["dark", "dim", "soft", "lit"].forEach((name, i) =>
@@ -165,21 +212,24 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   const observer = new ResizeObserver(invalidate);
   [journey, programme, registration].forEach((node) => observer.observe(node));
   scope.defer(() => observer.disconnect());
+  if (typeof IntersectionObserver === "function") {
+    const assetObserver = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0].isIntersecting) return;
+        registration.classList.add("assets-ready");
+        assetObserver.disconnect();
+      },
+      { rootMargin: "1200px 0px" },
+    );
+    scope.observe(assetObserver, registration);
+  } else registration.classList.add("assets-ready");
   fontsReady.then(() => {
     if (!scope.disposed) invalidate();
   });
   schedule();
-  scope.listen(document.querySelector("#conference-register"), "click", () => {
-    registration.scrollIntoView({
-      behavior: reduced.matches ? "instant" : "smooth",
-      block: "start",
-    });
-    document
-      .querySelector("#registration-title")
-      .focus({ preventScroll: true });
-  });
   scope.defer(() => {
     delete window.programmeBeam;
     document.body.classList.remove("registration-visible");
+    registration.classList.remove("assets-ready");
   });
 }

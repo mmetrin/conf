@@ -1,16 +1,212 @@
 {
-  "jsBytes": 299019,
-  "cssBytes": 49967,
+  "jsBytes": 259305,
+  "initialJsBytes": 259305,
+  "asyncJsBytes": 52285,
+  "totalJsBytes": 311590,
+  "cssBytes": 59939,
+  "precompressedAssets": [
+    {
+      "path": "app/chunks/BelowFold-SI3HBDWZ.js.br",
+      "bytes": 7088
+    },
+    {
+      "path": "app/chunks/BelowFold-SI3HBDWZ.js.gz",
+      "bytes": 7299
+    },
+    {
+      "path": "app/chunks/abstract-SVEFSO6O.js.br",
+      "bytes": 2483
+    },
+    {
+      "path": "app/chunks/abstract-SVEFSO6O.js.gz",
+      "bytes": 2603
+    },
+    {
+      "path": "app/chunks/chunk-7IMM3BQH.js.br",
+      "bytes": 3237
+    },
+    {
+      "path": "app/chunks/chunk-7IMM3BQH.js.gz",
+      "bytes": 3369
+    },
+    {
+      "path": "app/chunks/particles-ICWMECFF.js.br",
+      "bytes": 3125
+    },
+    {
+      "path": "app/chunks/particles-ICWMECFF.js.gz",
+      "bytes": 3266
+    },
+    {
+      "path": "app/chunks/scroll-IRH2MEIV.js.br",
+      "bytes": 1557
+    },
+    {
+      "path": "app/chunks/scroll-IRH2MEIV.js.gz",
+      "bytes": 1654
+    },
+    {
+      "path": "app/site-3AFV3IM5.js.br",
+      "bytes": 77947
+    },
+    {
+      "path": "app/site-3AFV3IM5.js.gz",
+      "bytes": 82311
+    },
+    {
+      "path": "assets/fact-address.svg.br",
+      "bytes": 673
+    },
+    {
+      "path": "assets/fact-address.svg.gz",
+      "bytes": 707
+    },
+    {
+      "path": "assets/fact-cinema.svg.br",
+      "bytes": 616
+    },
+    {
+      "path": "assets/fact-cinema.svg.gz",
+      "bytes": 654
+    },
+    {
+      "path": "assets/fact-online.svg.br",
+      "bytes": 1198
+    },
+    {
+      "path": "assets/fact-online.svg.gz",
+      "bytes": 1221
+    },
+    {
+      "path": "assets/fact-time.svg.br",
+      "bytes": 480
+    },
+    {
+      "path": "assets/fact-time.svg.gz",
+      "bytes": 521
+    },
+    {
+      "path": "assets/logos/main-mts.svg.br",
+      "bytes": 1943
+    },
+    {
+      "path": "assets/logos/main-mts.svg.gz",
+      "bytes": 1966
+    },
+    {
+      "path": "assets/programme/light-on-icon.svg.br",
+      "bytes": 1059
+    },
+    {
+      "path": "assets/programme/light-on-icon.svg.gz",
+      "bytes": 1098
+    },
+    {
+      "path": "assets/registration/map-pin.svg.br",
+      "bytes": 693
+    },
+    {
+      "path": "assets/registration/map-pin.svg.gz",
+      "bytes": 744
+    },
+    {
+      "path": "assets/registration/waiting.svg.br",
+      "bytes": 523
+    },
+    {
+      "path": "assets/registration/waiting.svg.gz",
+      "bytes": 574
+    },
+    {
+      "path": "assets/roles-agencies.svg.br",
+      "bytes": 1010
+    },
+    {
+      "path": "assets/roles-agencies.svg.gz",
+      "bytes": 1029
+    },
+    {
+      "path": "assets/roles-c-level.svg.br",
+      "bytes": 808
+    },
+    {
+      "path": "assets/roles-c-level.svg.gz",
+      "bytes": 843
+    },
+    {
+      "path": "assets/roles-digital.svg.br",
+      "bytes": 695
+    },
+    {
+      "path": "assets/roles-digital.svg.gz",
+      "bytes": 722
+    },
+    {
+      "path": "assets/roles-marketing.svg.br",
+      "bytes": 1179
+    },
+    {
+      "path": "assets/roles-marketing.svg.gz",
+      "bytes": 1203
+    },
+    {
+      "path": "favicon.svg.br",
+      "bytes": 853
+    },
+    {
+      "path": "favicon.svg.gz",
+      "bytes": 883
+    },
+    {
+      "path": "index.html.br",
+      "bytes": 601
+    },
+    {
+      "path": "index.html.gz",
+      "bytes": 711
+    },
+    {
+      "path": "mts-ads-portrait-frames-current.html.br",
+      "bytes": 601
+    },
+    {
+      "path": "mts-ads-portrait-frames-current.html.gz",
+      "bytes": 711
+    },
+    {
+      "path": "site-4fb36b21a8.css.br",
+      "bytes": 11683
+    },
+    {
+      "path": "site-4fb36b21a8.css.gz",
+      "bytes": 12358
+    }
+  ],
   "metafile": {
     "inputs": {
+      "<define:__SENDSAY_PUBLIC_CONFIG__>": {
+        "bytes": 181,
+        "imports": []
+      },
       "node_modules/scheduler/cjs/scheduler.production.js": {
         "bytes": 10181,
-        "imports": [],
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "cjs"
       },
       "node_modules/scheduler/index.js": {
         "bytes": 194,
         "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "node_modules/scheduler/cjs/scheduler.production.js",
             "kind": "require-call",
@@ -21,12 +217,23 @@
       },
       "node_modules/react/cjs/react.production.js": {
         "bytes": 18040,
-        "imports": [],
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "cjs"
       },
       "node_modules/react/index.js": {
         "bytes": 186,
         "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "node_modules/react/cjs/react.production.js",
             "kind": "require-call",
@@ -39,6 +246,11 @@
         "bytes": 7326,
         "imports": [
           {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "node_modules/react/index.js",
             "kind": "require-call",
             "original": "react"
@@ -50,6 +262,11 @@
         "bytes": 1359,
         "imports": [
           {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "node_modules/react-dom/cjs/react-dom.production.js",
             "kind": "require-call",
             "original": "./cjs/react-dom.production.js"
@@ -60,6 +277,11 @@
       "node_modules/react-dom/cjs/react-dom-client.production.js": {
         "bytes": 625168,
         "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "node_modules/scheduler/index.js",
             "kind": "require-call",
@@ -82,6 +304,11 @@
         "bytes": 1373,
         "imports": [
           {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "node_modules/react-dom/cjs/react-dom-client.production.js",
             "kind": "require-call",
             "original": "./cjs/react-dom-client.production.js"
@@ -89,14 +316,52 @@
         ],
         "format": "cjs"
       },
+      "src/animation/frameHost.js": {
+        "bytes": 435,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/particles.js": {
+        "bytes": 14588,
+        "imports": [
+          {
+            "path": "src/animation/frameHost.js",
+            "kind": "import-statement",
+            "original": "./frameHost.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
       "node_modules/react/cjs/react-jsx-runtime.production.js": {
         "bytes": 976,
-        "imports": [],
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "cjs"
       },
       "node_modules/react/jsx-runtime.js": {
         "bytes": 210,
         "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "node_modules/react/cjs/react-jsx-runtime.production.js",
             "kind": "require-call",
@@ -106,12 +371,22 @@
         "format": "cjs"
       },
       "src/components/ThreeParticleShape.jsx": {
-        "bytes": 12371,
+        "bytes": 2083,
         "imports": [
           {
             "path": "node_modules/react/index.js",
             "kind": "import-statement",
             "original": "react"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "src/animation/particles.js",
+            "kind": "dynamic-import",
+            "original": "../animation/particles.js"
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -122,12 +397,17 @@
         "format": "esm"
       },
       "src/components/Hero.jsx": {
-        "bytes": 3901,
+        "bytes": 3978,
         "imports": [
           {
             "path": "src/components/ThreeParticleShape.jsx",
             "kind": "import-statement",
             "original": "./ThreeParticleShape.jsx"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -137,18 +417,214 @@
         ],
         "format": "esm"
       },
+      "src/components/StageOverlay.jsx": {
+        "bytes": 4326,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "node_modules/react-dom/index.js",
+            "kind": "import-statement",
+            "original": "react-dom"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/scheduler.js": {
+        "bytes": 1078,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/runtime.js": {
+        "bytes": 2078,
+        "imports": [
+          {
+            "path": "src/animation/scheduler.js",
+            "kind": "import-statement",
+            "original": "./scheduler.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/utils/desktopScale.js": {
+        "bytes": 570,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/typography.js": {
+        "bytes": 6667,
+        "imports": [
+          {
+            "path": "src/utils/desktopScale.js",
+            "kind": "import-statement",
+            "original": "../utils/desktopScale.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/receiver.js": {
+        "bytes": 7599,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/scene.js": {
+        "bytes": 58135,
+        "imports": [
+          {
+            "path": "src/animation/typography.js",
+            "kind": "import-statement",
+            "original": "./typography.js"
+          },
+          {
+            "path": "src/animation/receiver.js",
+            "kind": "import-statement",
+            "original": "./receiver.js"
+          },
+          {
+            "path": "src/utils/desktopScale.js",
+            "kind": "import-statement",
+            "original": "../utils/desktopScale.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/abstract.js": {
+        "bytes": 8370,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/animation/scroll.js": {
+        "bytes": 8617,
+        "imports": [
+          {
+            "path": "src/utils/desktopScale.js",
+            "kind": "import-statement",
+            "original": "../utils/desktopScale.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/hooks/useSceneRuntime.js": {
+        "bytes": 4294,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "src/animation/frameHost.js",
+            "kind": "import-statement",
+            "original": "../animation/frameHost.js"
+          },
+          {
+            "path": "src/animation/runtime.js",
+            "kind": "import-statement",
+            "original": "../animation/runtime.js"
+          },
+          {
+            "path": "src/animation/scene.js",
+            "kind": "import-statement",
+            "original": "../animation/scene.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "src/animation/abstract.js",
+            "kind": "dynamic-import",
+            "original": "../animation/abstract.js"
+          },
+          {
+            "path": "src/animation/scroll.js",
+            "kind": "dynamic-import",
+            "original": "../animation/scroll.js"
+          }
+        ],
+        "format": "esm"
+      },
       "src/data/programme.js": {
-        "bytes": 3047,
-        "imports": [],
+        "bytes": 3052,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "esm"
       },
       "src/components/Programme.jsx": {
-        "bytes": 2665,
+        "bytes": 2997,
         "imports": [
           {
             "path": "src/data/programme.js",
             "kind": "import-statement",
             "original": "../data/programme.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -160,16 +636,92 @@
       },
       "src/utils/phone.js": {
         "bytes": 469,
-        "imports": [],
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "shared/registrationValidation.js": {
+        "bytes": 2155,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "esm"
       },
       "src/utils/validation.js": {
-        "bytes": 1884,
-        "imports": [],
+        "bytes": 97,
+        "imports": [
+          {
+            "path": "shared/registrationValidation.js",
+            "kind": "import-statement",
+            "original": "../../shared/registrationValidation.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/services/sendsay/sendsayConfig.js": {
+        "bytes": 2652,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/services/sendsay/sendsayFormClient.js": {
+        "bytes": 3073,
+        "imports": [
+          {
+            "path": "src/services/sendsay/sendsayConfig.js",
+            "kind": "import-statement",
+            "original": "./sendsayConfig.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/services/registration/registrationSubmission.js": {
+        "bytes": 2074,
+        "imports": [
+          {
+            "path": "shared/registrationValidation.js",
+            "kind": "import-statement",
+            "original": "../../../shared/registrationValidation.js"
+          },
+          {
+            "path": "src/services/sendsay/sendsayFormClient.js",
+            "kind": "import-statement",
+            "original": "../sendsay/sendsayFormClient.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
         "format": "esm"
       },
       "src/components/Registration.jsx": {
-        "bytes": 11273,
+        "bytes": 14115,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -187,25 +739,19 @@
             "original": "../utils/validation.js"
           },
           {
-            "path": "node_modules/react/jsx-runtime.js",
+            "path": "src/services/registration/registrationSubmission.js",
             "kind": "import-statement",
-            "original": "react/jsx-runtime"
-          }
-        ],
-        "format": "esm"
-      },
-      "src/components/StageOverlay.jsx": {
-        "bytes": 3509,
-        "imports": [
-          {
-            "path": "node_modules/react/index.js",
-            "kind": "import-statement",
-            "original": "react"
+            "original": "../services/registration/registrationSubmission.js"
           },
           {
-            "path": "node_modules/react-dom/index.js",
+            "path": "src/services/sendsay/sendsayFormClient.js",
             "kind": "import-statement",
-            "original": "react-dom"
+            "original": "../services/sendsay/sendsayFormClient.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -216,8 +762,13 @@
         "format": "esm"
       },
       "src/components/Footer.jsx": {
-        "bytes": 1854,
+        "bytes": 2082,
         "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "node_modules/react/jsx-runtime.js",
             "kind": "import-statement",
@@ -226,60 +777,8 @@
         ],
         "format": "esm"
       },
-      "src/animation/scheduler.js": {
-        "bytes": 1078,
-        "imports": [],
-        "format": "esm"
-      },
-      "src/animation/runtime.js": {
-        "bytes": 2078,
-        "imports": [
-          {
-            "path": "src/animation/scheduler.js",
-            "kind": "import-statement",
-            "original": "./scheduler.js"
-          }
-        ],
-        "format": "esm"
-      },
-      "src/animation/typography.js": {
-        "bytes": 7129,
-        "imports": [],
-        "format": "esm"
-      },
-      "src/animation/receiver.js": {
-        "bytes": 4291,
-        "imports": [],
-        "format": "esm"
-      },
-      "src/animation/scene.js": {
-        "bytes": 56167,
-        "imports": [
-          {
-            "path": "src/animation/typography.js",
-            "kind": "import-statement",
-            "original": "./typography.js"
-          },
-          {
-            "path": "src/animation/receiver.js",
-            "kind": "import-statement",
-            "original": "./receiver.js"
-          }
-        ],
-        "format": "esm"
-      },
-      "src/animation/abstract.js": {
-        "bytes": 8215,
-        "imports": [],
-        "format": "esm"
-      },
-      "src/animation/scroll.js": {
-        "bytes": 6878,
-        "imports": [],
-        "format": "esm"
-      },
-      "src/hooks/useSceneRuntime.js": {
-        "bytes": 2340,
+      "src/components/BelowFold.jsx": {
+        "bytes": 399,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -287,45 +786,45 @@
             "original": "react"
           },
           {
-            "path": "src/animation/runtime.js",
+            "path": "src/components/Programme.jsx",
             "kind": "import-statement",
-            "original": "../animation/runtime.js"
+            "original": "./Programme.jsx"
           },
           {
-            "path": "src/animation/scene.js",
+            "path": "src/components/Registration.jsx",
             "kind": "import-statement",
-            "original": "../animation/scene.js"
+            "original": "./Registration.jsx"
           },
           {
-            "path": "src/animation/abstract.js",
+            "path": "src/components/Footer.jsx",
             "kind": "import-statement",
-            "original": "../animation/abstract.js"
+            "original": "./Footer.jsx"
           },
           {
-            "path": "src/animation/scroll.js",
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
-            "original": "../animation/scroll.js"
+            "external": true
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
           }
         ],
         "format": "esm"
       },
       "src/App.jsx": {
-        "bytes": 557,
+        "bytes": 1477,
         "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
           {
             "path": "src/components/Hero.jsx",
             "kind": "import-statement",
             "original": "./components/Hero.jsx"
-          },
-          {
-            "path": "src/components/Programme.jsx",
-            "kind": "import-statement",
-            "original": "./components/Programme.jsx"
-          },
-          {
-            "path": "src/components/Registration.jsx",
-            "kind": "import-statement",
-            "original": "./components/Registration.jsx"
           },
           {
             "path": "src/components/StageOverlay.jsx",
@@ -333,14 +832,19 @@
             "original": "./components/StageOverlay.jsx"
           },
           {
-            "path": "src/components/Footer.jsx",
-            "kind": "import-statement",
-            "original": "./components/Footer.jsx"
-          },
-          {
             "path": "src/hooks/useSceneRuntime.js",
             "kind": "import-statement",
             "original": "./hooks/useSceneRuntime.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "src/components/BelowFold.jsx",
+            "kind": "dynamic-import",
+            "original": "./components/BelowFold.jsx"
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -364,6 +868,11 @@
             "original": "./App.jsx"
           },
           {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "node_modules/react/jsx-runtime.js",
             "kind": "import-statement",
             "original": "react/jsx-runtime"
@@ -373,100 +882,290 @@
       }
     },
     "outputs": {
-      "main.js": {
-        "imports": [],
+      "outputs/app/site-3AFV3IM5.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-5AEC7EXA.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-4Z3KZ6LL.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-7IMM3BQH.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/particles-ICWMECFF.js",
+            "kind": "dynamic-import"
+          },
+          {
+            "path": "outputs/app/chunks/abstract-SVEFSO6O.js",
+            "kind": "dynamic-import"
+          },
+          {
+            "path": "outputs/app/chunks/scroll-IRH2MEIV.js",
+            "kind": "dynamic-import"
+          },
+          {
+            "path": "outputs/app/chunks/BelowFold-SI3HBDWZ.js",
+            "kind": "dynamic-import"
+          }
+        ],
         "exports": [],
         "entryPoint": "src/main.jsx",
         "inputs": {
           "node_modules/scheduler/cjs/scheduler.production.js": {
-            "bytesInOutput": 3662
+            "bytesInOutput": 3666
           },
           "node_modules/scheduler/index.js": {
-            "bytesInOutput": 51
+            "bytesInOutput": 55
           },
+          "node_modules/react-dom/cjs/react-dom.production.js": {
+            "bytesInOutput": 3670
+          },
+          "node_modules/react-dom/index.js": {
+            "bytesInOutput": 257
+          },
+          "node_modules/react-dom/cjs/react-dom-client.production.js": {
+            "bytesInOutput": 205581
+          },
+          "node_modules/react-dom/client.js": {
+            "bytesInOutput": 257
+          },
+          "src/main.jsx": {
+            "bytesInOutput": 117
+          },
+          "src/App.jsx": {
+            "bytesInOutput": 828
+          },
+          "src/components/Hero.jsx": {
+            "bytesInOutput": 4776
+          },
+          "src/components/ThreeParticleShape.jsx": {
+            "bytesInOutput": 1106
+          },
+          "src/components/StageOverlay.jsx": {
+            "bytesInOutput": 4295
+          },
+          "src/hooks/useSceneRuntime.js": {
+            "bytesInOutput": 2278
+          },
+          "src/animation/runtime.js": {
+            "bytesInOutput": 905
+          },
+          "src/animation/scheduler.js": {
+            "bytesInOutput": 472
+          },
+          "src/animation/scene.js": {
+            "bytesInOutput": 23824
+          },
+          "src/animation/typography.js": {
+            "bytesInOutput": 2986
+          },
+          "src/animation/receiver.js": {
+            "bytesInOutput": 3067
+          }
+        },
+        "bytes": 259305
+      },
+      "outputs/app/chunks/particles-ICWMECFF.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-5AEC7EXA.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "startParticleShape"
+        ],
+        "entryPoint": "src/animation/particles.js",
+        "inputs": {
+          "src/animation/particles.js": {
+            "bytesInOutput": 6350
+          }
+        },
+        "bytes": 6473
+      },
+      "outputs/app/chunks/chunk-5AEC7EXA.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "a",
+          "b",
+          "c"
+        ],
+        "inputs": {
+          "src/animation/frameHost.js": {
+            "bytesInOutput": 189
+          }
+        },
+        "bytes": 259
+      },
+      "outputs/app/chunks/abstract-SVEFSO6O.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "startAbstractLights"
+        ],
+        "entryPoint": "src/animation/abstract.js",
+        "inputs": {
+          "src/animation/abstract.js": {
+            "bytesInOutput": 4815
+          }
+        },
+        "bytes": 4889
+      },
+      "outputs/app/chunks/scroll-IRH2MEIV.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-4Z3KZ6LL.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "startScrollTransitions"
+        ],
+        "entryPoint": "src/animation/scroll.js",
+        "inputs": {
+          "src/animation/scroll.js": {
+            "bytesInOutput": 3542
+          }
+        },
+        "bytes": 3660
+      },
+      "outputs/app/chunks/chunk-4Z3KZ6LL.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "a",
+          "b"
+        ],
+        "inputs": {
+          "src/utils/desktopScale.js": {
+            "bytesInOutput": 126
+          }
+        },
+        "bytes": 189
+      },
+      "outputs/app/chunks/BelowFold-SI3HBDWZ.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-7IMM3BQH.js",
+            "kind": "import-statement"
+          },
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "default"
+        ],
+        "entryPoint": "src/components/BelowFold.jsx",
+        "inputs": {
+          "src/components/BelowFold.jsx": {
+            "bytesInOutput": 230
+          },
+          "src/components/Programme.jsx": {
+            "bytesInOutput": 2001
+          },
+          "src/data/programme.js": {
+            "bytesInOutput": 6166
+          },
+          "src/components/Registration.jsx": {
+            "bytesInOutput": 9584
+          },
+          "src/utils/phone.js": {
+            "bytesInOutput": 272
+          },
+          "src/utils/validation.js": {
+            "bytesInOutput": 4
+          },
+          "shared/registrationValidation.js": {
+            "bytesInOutput": 2593
+          },
+          "src/services/registration/registrationSubmission.js": {
+            "bytesInOutput": 939
+          },
+          "src/services/sendsay/sendsayFormClient.js": {
+            "bytesInOutput": 1557
+          },
+          "src/services/sendsay/sendsayConfig.js": {
+            "bytesInOutput": 1400
+          },
+          "src/components/Footer.jsx": {
+            "bytesInOutput": 2183
+          }
+        },
+        "bytes": 27053
+      },
+      "outputs/app/chunks/chunk-7IMM3BQH.js": {
+        "imports": [
+          {
+            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "kind": "import-statement"
+          }
+        ],
+        "exports": [
+          "a",
+          "b"
+        ],
+        "inputs": {
           "node_modules/react/cjs/react.production.js": {
-            "bytesInOutput": 7969
+            "bytesInOutput": 7839
           },
           "node_modules/react/index.js": {
             "bytesInOutput": 51
           },
-          "node_modules/react-dom/cjs/react-dom.production.js": {
-            "bytesInOutput": 3666
-          },
-          "node_modules/react-dom/index.js": {
-            "bytesInOutput": 253
-          },
-          "node_modules/react-dom/cjs/react-dom-client.production.js": {
-            "bytesInOutput": 205728
-          },
-          "node_modules/react-dom/client.js": {
-            "bytesInOutput": 253
-          },
           "node_modules/react/cjs/react-jsx-runtime.production.js": {
-            "bytesInOutput": 364
+            "bytesInOutput": 359
           },
           "node_modules/react/jsx-runtime.js": {
             "bytesInOutput": 51
-          },
-          "src/main.jsx": {
-            "bytesInOutput": 113
-          },
-          "src/components/ThreeParticleShape.jsx": {
-            "bytesInOutput": 5779
-          },
-          "src/components/Hero.jsx": {
-            "bytesInOutput": 4698
-          },
-          "src/data/programme.js": {
-            "bytesInOutput": 6159
-          },
-          "src/components/Programme.jsx": {
-            "bytesInOutput": 1836
-          },
-          "src/components/Registration.jsx": {
-            "bytesInOutput": 8804
-          },
-          "src/utils/phone.js": {
-            "bytesInOutput": 269
-          },
-          "src/utils/validation.js": {
-            "bytesInOutput": 2356
-          },
-          "src/components/StageOverlay.jsx": {
-            "bytesInOutput": 3806
-          },
-          "src/components/Footer.jsx": {
-            "bytesInOutput": 2374
-          },
-          "src/hooks/useSceneRuntime.js": {
-            "bytesInOutput": 1451
-          },
-          "src/animation/scheduler.js": {
-            "bytesInOutput": 468
-          },
-          "src/animation/runtime.js": {
-            "bytesInOutput": 901
-          },
-          "src/animation/typography.js": {
-            "bytesInOutput": 3043
-          },
-          "src/animation/receiver.js": {
-            "bytesInOutput": 1587
-          },
-          "src/animation/scene.js": {
-            "bytesInOutput": 23129
-          },
-          "src/animation/abstract.js": {
-            "bytesInOutput": 4791
-          },
-          "src/animation/scroll.js": {
-            "bytesInOutput": 3117
-          },
-          "src/App.jsx": {
-            "bytesInOutput": 205
           }
         },
-        "bytes": 299019
+        "bytes": 8997
+      },
+      "outputs/app/chunks/chunk-ZM3EZUG6.js": {
+        "imports": [],
+        "exports": [
+          "a",
+          "b",
+          "c",
+          "d"
+        ],
+        "inputs": {
+          "<define:__SENDSAY_PUBLIC_CONFIG__>": {
+            "bytesInOutput": 172
+          }
+        },
+        "bytes": 765
       }
     }
   }

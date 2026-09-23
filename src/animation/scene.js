@@ -1,6 +1,7 @@
 import { buildFigmaOpeningTypography } from "./typography.js";
 
 import { createReceiverPlayer } from "./receiver.js";
+import { getHeroScale } from "../utils/desktopScale.js";
 
 export function startScene({
   scope,
@@ -89,7 +90,10 @@ export function startScene({
     prepareInvitation = null,
     resizeExtras = null;
   let sceneInView = true,
-    pageActive = true;
+    pageActive = true,
+    contentEffectsActive = true,
+    audiencePreparationRequested = false,
+    audienceEffectActive = false;
   const automaticEnd = 2.65;
   const openingHoldDuration = 0.6;
   const projectorTravelDuration = 2.2,
@@ -109,7 +113,8 @@ export function startScene({
   }
   let openingElapsed = 0,
     openingReady = false,
-    openingComplete = false;
+    openingComplete = false,
+    heroVisibleDispatched = false;
   scope.listen(
     window,
     "opening-ready",
@@ -123,8 +128,13 @@ export function startScene({
   function advanceOpening(dt) {
     if (!openingReady || openingComplete) return;
     openingElapsed += dt;
-    if (openingElapsed >= openingHoldDuration - 0.2)
+    if (openingElapsed >= openingHoldDuration - 0.2) {
       document.documentElement.classList.add("loader-finished");
+      if (!heroVisibleDispatched) {
+        heroVisibleDispatched = true;
+        window.dispatchEvent(new window.Event("hero-visible"));
+      }
+    }
 
     const elapsed = Math.max(0, openingElapsed - openingHoldDuration);
     // Start the light and content as the second projector begins to appear.
@@ -223,13 +233,14 @@ export function startScene({
     textRevealStart = photoFadeStart + photoFadeDuration,
     textRevealDuration = 0.36,
     firstScreenHold = 0.2,
-    audienceExtraHold = 0.15,
+    audienceExtraHold = 0.33,
     scrollEnd =
       introDuration +
       textRevealStart +
       textRevealDuration +
       firstScreenHold +
-      audienceExtraHold;
+      audienceExtraHold,
+    scrollChapterCount = scrollEnd - automaticEnd;
   // Extra data gathers toward the receiver, crossing the photograph's feathered edge.
   const lowerData = Array.from({ length: 72 }, () => ({
     x: random() + random() - 1,
@@ -379,7 +390,6 @@ export function startScene({
     const objectStyle = getComputedStyle(object);
     layout = {
       top: window.scrollY + journey.getBoundingClientRect().top,
-      range: h * 0.8,
       pw: projector.clientWidth,
       ph: projector.offsetHeight,
       fpw: finalProjector.clientWidth,
@@ -391,8 +401,8 @@ export function startScene({
       py: projector.offsetTop,
       fpx: finalProjector.offsetLeft,
       fpy: finalProjector.offsetTop,
+      heroScale: getHeroScale(nextW, nextH),
     };
-    layout.registrationHeight = conferenceRegister.offsetHeight;
     layout.sceneBounds = scene.getBoundingClientRect();
     // Use the loader's real center, including viewport gutters and fractional CSS sizes.
     const loaderBounds = document
@@ -411,6 +421,11 @@ export function startScene({
     layout.openingImageWidth = 1777 * openingImageFit;
     layout.openingImageHeight = 885 * openingImageFit;
     layout.stickyEnd = layout.top + journey.offsetHeight - h;
+    // Spread every scroll-driven chapter across the full sticky distance. The
+    // former fixed 0.8vh/chapter scale completed early and left a dead pinned
+    // tail, while also making the short transitions easy to skip on trackpads.
+    layout.range =
+      Math.max(1, layout.stickyEnd - layout.top) / scrollChapterCount;
     // Commit writes only after collecting geometry for this resize.
     alignOpeningProjector();
     canvasWidth = w;
@@ -475,14 +490,22 @@ export function startScene({
       clamp((scrollChapter - photoFadeStart) / photoFadeDuration),
     );
     setStyle(scene, "--photo-presence", reveal * (1 - photoFade));
-    setStyle(scene, "--opening-exit-y", `${-h * 0.65 * photoFade}px`);
+    setStyle(
+      scene,
+      "--opening-exit-y",
+      `${-h * 0.65 * layout.heroScale * photoFade}px`,
+    );
     setStyle(scene, "--opening-light", 1 - 0.98 * photoFade);
-    setStyle(scene, "--next-copy-y", `${h * 0.45 * (1 - photoTitleReveal)}px`);
+    setStyle(
+      scene,
+      "--next-copy-y",
+      `${h * 0.45 * layout.heroScale * (1 - photoTitleReveal)}px`,
+    );
     setStyle(scene, "--next-copy-light", 0.12 + 0.88 * photoTitleReveal);
     setStyle(
       object,
       "transform",
-      `translate3d(-50%,calc(-40% - ${h * 0.32 * photoFade}px),0) scale(${scale})`,
+      `translate3d(-50%,calc(-40% - ${h * 0.32 * layout.heroScale * photoFade}px),0) scale(${scale})`,
     );
     setStyle(object, "filter", `brightness(${1 - 0.85 * photoFade})`);
     setStyle(photoDimmer, "opacity", photoFade.toFixed(3));
@@ -538,6 +561,16 @@ export function startScene({
     setAttribute(photoRoles, "aria-hidden", !rolesVisible);
     setAttribute(photoTitle, "aria-hidden", photoTitleReveal <= 0);
     setAttribute(object, "aria-hidden", false);
+    const nextAudienceEffectActive =
+      scrollChapter >= photoFadeStart - 0.3 && programmeSpread < 0.02;
+    if (nextAudienceEffectActive !== audienceEffectActive) {
+      audienceEffectActive = nextAudienceEffectActive;
+      window.dispatchEvent(
+        new window.CustomEvent("audience-active", {
+          detail: { active: audienceEffectActive },
+        }),
+      );
+    }
     sourceX = layout.fpx + layout.fpw * (lensCenter.x - 0.5) * finalScale;
     sourceY =
       layout.fpy + layout.fpw * 0.5 * lensCenter.y * finalScale + finalY;
@@ -571,14 +604,6 @@ export function startScene({
   }
   let programmeSpread = 0;
   function readScroll() {
-    // The form continues moving after the scene's animation progress reaches
-    // its final value, so update this fade directly on every scroll event.
-    const registrationRect = conferenceRegister.getBoundingClientRect();
-    const registrationFade = clamp((180 - registrationRect.top) / 260);
-    conferenceRegister.style.setProperty(
-      "--registration-scroll-fade",
-      registrationFade.toFixed(3),
-    );
     const nextSpread = ease(
       clamp((window.scrollY - layout.stickyEnd) / Math.max(1, h * 0.6)),
     );
@@ -586,14 +611,20 @@ export function startScene({
       programmeSpread = nextSpread;
       geometryDirty = true;
     }
-    if (resizeExtras) refreshGlint();
     const next = Math.max(
       0,
       Math.min(
-        scrollEnd - automaticEnd,
+        scrollChapterCount,
         (window.scrollY - layout.top) / Math.max(1, layout.range),
       ),
     );
+    if (
+      !audiencePreparationRequested &&
+      automaticEnd + next - introDuration >= photoFadeStart - 0.3
+    ) {
+      audiencePreparationRequested = true;
+      window.dispatchEvent(new window.Event("audience-prepare"));
+    }
     if (Math.abs(next - targetScrollChapter) > 0.00001 || geometryDirty) {
       targetScrollChapter = next;
       dirty = true;
@@ -931,7 +962,6 @@ export function startScene({
     advanceAudience(dt);
     if (scrollChanged) {
       lastScrollChangeAt = now;
-      refreshGlint();
     }
     // All pointer geometry is measured before animation writes in this frame.
     if (geometryDirty) apply();
@@ -944,8 +974,6 @@ export function startScene({
     ) {
       document.documentElement.classList.remove("opening-locked");
     }
-    if (cursorGlyphs.length) paintCursor(now);
-    if (glintPending) paintGlint();
     // Scroll transforms and text run at display refresh rate. Slow atmospheric
     // effects use 24 fps during scrolling and 30 fps at rest.
     ambientDelta += frameDelta;
@@ -961,15 +989,19 @@ export function startScene({
       (openingReady && !openingComplete) ||
       (audienceStarted && audienceElapsed < audienceRevealDuration) ||
       dirty ||
-      !paused ||
-      cursorGlyphs.length ||
-      glintPending
+      !paused
     )
       wake();
     else last = 0;
   }
   function wake() {
-    if (!raf && !document.hidden && sceneInView && pageActive)
+    if (
+      !raf &&
+      !document.hidden &&
+      sceneInView &&
+      pageActive &&
+      contentEffectsActive
+    )
       raf = requestAnimationFrame(frame);
   }
   let resizeTimer;
@@ -1038,7 +1070,7 @@ export function startScene({
           fact: true,
         },
         {
-          text: "19 ноября, 17:00",
+          text: "19 ноября 17:00",
           size: 22,
           gap: 0,
           icon: "time",
@@ -1054,7 +1086,6 @@ export function startScene({
     let sampledSource = null,
       sampledTarget = null;
     let registrationTop = 0,
-      registrationHeight = 0,
       morphParticles = [];
     // Cache tiny luminous stamps instead of blurring hundreds of paths every frame.
     const morphDot = document.createElement("canvas");
@@ -1095,12 +1126,12 @@ export function startScene({
     pagePreparationTasks.push(
       Promise.all([
         siteFontsReady,
-        factIcons.address.decode(),
-        factIcons.cinema.decode(),
-        factIcons.online.decode(),
-        factIcons.time.decode(),
+        factIcons.address.decode().catch(() => {}),
+        factIcons.cinema.decode().catch(() => {}),
+        factIcons.online.decode().catch(() => {}),
+        factIcons.time.decode().catch(() => {}),
         imageReady,
-        projector.querySelector("img").decode(),
+        projector.querySelector("img").decode().catch(() => {}),
       ]).then(() => {
         if (scope.disposed) return;
         preparationReady = true;
@@ -1109,7 +1140,6 @@ export function startScene({
     );
     function prepare() {
       if (!preparationReady || scope.disposed) return;
-      registrationHeight = layout.registrationHeight;
       // Text needs native display resolution, independently of the low-resolution light.
       dpr = devicePixelRatio || 1;
       stageCanvas.width = Math.ceil(w * dpr);
@@ -1408,7 +1438,8 @@ export function startScene({
   const cursorCanvas = document.querySelector("#cursor-data");
   const cursorCtx = cursorCanvas.getContext("2d"),
     cursorGlyphs = [];
-  let lastCursorSpawn = 0;
+  let lastCursorSpawn = 0,
+    cursorFrame = 0;
   function sizeCursor() {
     const dpr = Math.min(
       devicePixelRatio || 1,
@@ -1420,6 +1451,7 @@ export function startScene({
     cursorCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   function paintCursor(now) {
+    cursorFrame = 0;
     cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
     for (let i = cursorGlyphs.length - 1; i >= 0; i--) {
       const g = cursorGlyphs[i],
@@ -1437,9 +1469,21 @@ export function startScene({
       cursorCtx.fillText(g.text, g.x + g.dx * age, g.y - 24 * age);
     }
     cursorCtx.globalAlpha = 1;
+    if (
+      cursorGlyphs.length &&
+      pageActive &&
+      !document.hidden &&
+      !reduced.matches
+    )
+      cursorFrame = requestAnimationFrame(paintCursor);
   }
-  scope.listen(scene, "pointermove", (event) => {
-    if (event.pointerType === "touch" || reduced.matches || !sceneInView)
+  scope.listen(document, "pointermove", (event) => {
+    if (
+      event.pointerType === "touch" ||
+      reduced.matches ||
+      !pageActive ||
+      document.hidden
+    )
       return;
     const now = performance.now();
     if (now - lastCursorSpawn < 35) return;
@@ -1458,46 +1502,51 @@ export function startScene({
     }
     if (cursorGlyphs.length > 100)
       cursorGlyphs.splice(0, cursorGlyphs.length - 100);
-    wake();
+    if (!cursorFrame) cursorFrame = requestAnimationFrame(paintCursor);
+  });
+  scope.listen(reduced, "change", () => {
+    if (!reduced.matches) return;
+    cancelAnimationFrame(cursorFrame);
+    cursorFrame = 0;
+    cursorGlyphs.length = 0;
+    cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
   });
   sizeCursor();
   const cursorDot = document.querySelector("#cursor-dot");
-  let glintPending = false,
+  let glintFrame = 0,
     glintX = -1000,
     glintY = -1000;
   function paintGlint() {
-    glintPending = false;
+    glintFrame = 0;
     cursorDot.style.transform = `translate3d(${glintX}px,${glintY}px,0) translate(-50%,-50%)`;
   }
   scope.listen(document, "pointermove", (event) => {
-    if (event.pointerType === "touch" || !sceneInView) return;
+    if (event.pointerType === "touch" || !pageActive || document.hidden) return;
     glintX = event.clientX;
     glintY = event.clientY;
+    cursorDot.classList.toggle(
+      "is-text",
+      typeof event.target?.closest === "function" &&
+        !!event.target.closest("input, textarea, [contenteditable='true']"),
+    );
     document.body.classList.add("cursor-active");
-    glintPending = true;
-    wake();
+    if (!glintFrame) glintFrame = requestAnimationFrame(paintGlint);
   });
   function clearGlint() {
     glintX = glintY = -1000;
+    cancelAnimationFrame(glintFrame);
+    glintFrame = 0;
     document.body.classList.remove("cursor-active");
     cursorDot.classList.remove("is-text");
   }
   scope.listen(document.documentElement, "pointerleave", clearGlint);
   scope.listen(window, "blur", clearGlint);
-  function refreshGlint() {
-    if (document.body.classList.contains("cursor-active")) {
-      glintPending = true;
-      wake();
-    }
-  }
-  resizeExtras = () => {
-    sizeCursor();
-    refreshGlint();
-  };
+  resizeExtras = sizeCursor;
   let decorationPaused = null,
     lastSceneSuspended = null;
   function updateDecorativeState() {
-    const suspend = !sceneInView || !pageActive || document.hidden;
+    const suspend =
+      !sceneInView || !pageActive || !contentEffectsActive || document.hidden;
     if (suspend !== lastSceneSuspended) {
       lastSceneSuspended = suspend;
       scene.classList.toggle("is-suspended", suspend);
@@ -1515,13 +1564,16 @@ export function startScene({
     updateDecorativeState();
     last = 0;
     ambientDelta = 0;
-    if (!sceneInView || !pageActive || document.hidden) {
+    if (!sceneInView || !pageActive || !contentEffectsActive || document.hidden) {
       cancelAnimationFrame(raf);
       raf = 0;
-      cursorGlyphs.length = 0;
-      cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
-      clearGlint();
-      glintPending = false;
+      if (!pageActive || document.hidden) {
+        cancelAnimationFrame(cursorFrame);
+        cursorFrame = 0;
+        cursorGlyphs.length = 0;
+        cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
+        clearGlint();
+      }
     } else {
       dirty = true;
       readScroll();
@@ -1547,6 +1599,10 @@ export function startScene({
   if (sceneObserver) sceneObserver.observe(scene);
   if (sceneResizeObserver) sceneResizeObserver.observe(scene);
   scope.listen(document, "visibilitychange", syncSceneActivity);
+  scope.listen(window, "scene-effects-active", (event) => {
+    contentEffectsActive = !!event.detail?.active;
+    syncSceneActivity();
+  });
   scope.listen(window, "pagehide", () => {
     pageActive = false;
     clearTimeout(resizeTimer);
@@ -1567,10 +1623,17 @@ export function startScene({
     sceneObserver?.disconnect();
     sceneResizeObserver?.disconnect();
     cancelAnimationFrame(raf);
+    cancelAnimationFrame(cursorFrame);
+    cancelAnimationFrame(glintFrame);
     cursorCanvas.width = cursorCanvas.height = 1;
     floorCanvas.width = floorCanvas.height = 1;
     canvas.width = canvas.height = 1;
     inviteCanvas.width = inviteCanvas.height = 1;
     document.body.classList.remove("cursor-active");
   });
+  return {
+    startBackground() {
+      return receiver.startBackground();
+    },
+  };
 }

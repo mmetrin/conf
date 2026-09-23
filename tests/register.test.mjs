@@ -1,17 +1,404 @@
-import test from 'node:test';
-import assert from 'node:assert/strict';
-import http from 'node:http';
-import { createRegistrationHandler } from '../server/register.mjs';
-const data = {name:'Тест Тестов',email:'test@example.ru',phone:'+7 913 123-45-67',company:'Example',role:'Test',website:''};
+import test from "node:test";
+import assert from "node:assert/strict";
+import http from "node:http";
+import { createEmailService } from "../server/email/emailService.mjs";
+import { createResendEmailProvider } from "../server/email/providers/resendEmailProvider.mjs";
+import { EmailDeliveryError } from "../server/errors.mjs";
+import { createRegistrationHandler } from "../server/register.mjs";
+import { createRegistrationService } from "../server/registration/registrationService.mjs";
+import { createRateLimiter } from "../server/security/rateLimiter.mjs";
+
+const data = {
+  name: "Тест Тестов",
+  email: "test@example.ru",
+  phone: "+7 913 123-45-67",
+  company: "Example",
+  role: "Test",
+  website: "",
+};
+
+const defaultEnv = {
+  APP_ORIGIN: "https://example.test",
+  EMAIL_API_KEY: "test-only",
+  EMAIL_FROM: "events@example.test",
+};
+
 async function fixture(t, options = {}) {
- const messages=[];
- const handler=createRegistrationHandler({env:{APP_ORIGIN:'https://example.test',EMAIL_API_KEY:'test-only',EMAIL_FROM:'events@example.test'},fetchEmail:async (url, request)=>{messages.push(JSON.parse(request.body));return {ok:true};},...options});
- const server=http.createServer(handler);await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());
- return {messages, request:async (body=data, extra={})=>fetch(`http://127.0.0.1:${server.address().port}/api/register`,{method:'POST',headers:{Origin:'https://example.test','Content-Type':'application/json','Idempotency-Key':'test-request-12345678',...extra.headers},body:JSON.stringify(body),...extra})};
+  const requests = [];
+  const fetchEmail =
+    options.fetchEmail ||
+    (async (url, request) => {
+      requests.push({ url, ...request, json: JSON.parse(request.body) });
+      return { ok: true };
+    });
+  const handler = createRegistrationHandler({
+    env: options.env || defaultEnv,
+    fetchEmail,
+    now: options.now,
+  });
+  const server = http.createServer(handler);
+  await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+  t.after(() => server.close());
+  const url = `http://127.0.0.1:${server.address().port}/api/register`;
+
+  return {
+    requests,
+    async request(body = data, extra = {}) {
+      const method = extra.method || "POST";
+      const headers = {
+        Origin: "https://example.test",
+        "Content-Type": "application/json",
+        "Idempotency-Key": "test-request-12345678",
+        ...extra.headers,
+      };
+      for (const [name, value] of Object.entries(headers)) {
+        if (value === null) delete headers[name];
+      }
+      const requestBody =
+        extra.body !== undefined ? extra.body : JSON.stringify(body);
+      return fetch(url, {
+        method,
+        headers,
+        body: ["GET", "HEAD"].includes(method) ? undefined : requestBody,
+      });
+    },
+    requestChunked(body) {
+      return new Promise((resolve, reject) => {
+        const request = http.request(
+          url,
+          {
+            method: "POST",
+            headers: {
+              Origin: "https://example.test",
+              "Content-Type": "application/json",
+              "Idempotency-Key": "test-request-12345678",
+            },
+          },
+          (response) => {
+            response.resume();
+            response.on("end", () => resolve(response));
+          },
+        );
+        request.on("error", reject);
+        request.write(body.slice(0, 5000));
+        request.end(body.slice(5000));
+      });
+    },
+  };
 }
-test('valid registration sends only fixed recipient and subject, all fields',async t=>{const f=await fixture(t);assert.equal((await f.request()).status,200);assert.deepEqual(f.messages[0].to,['mmetrindesign@gmail.com']);assert.equal(f.messages[0].subject,'Новая регистрация на конференцию');for(const field of ['name','email','phone','company','role'])assert(f.messages[0].text.includes(data[field]));});
-test('test mode uses recipient from environment',async t=>{const f=await fixture(t,{env:{APP_ORIGIN:'https://example.test',EMAIL_API_KEY:'test-only',EMAIL_FROM:'events@example.test',EMAIL_TEST_MODE:'true',EMAIL_TEST_RECIPIENT:'qa-recipient@example.test'}});assert.equal((await f.request()).status,200);assert.deepEqual(f.messages[0].to,['qa-recipient@example.test']);});
-test('rejects unknown keys, honeypot, injection, invalid email and empty fields',async t=>{for(const patch of [{to:'other@example.ru'},{website:'bot'},{name:'x\r\nBcc: x@y.ru'},{email:'akk@vm'},{company:''}]){const f=await fixture(t);assert.equal((await f.request({...data,...patch})).status,400);assert.equal(f.messages.length,0);}});
-test('rate limit cannot be bypassed with spoofed forwarding header',async t=>{const f=await fixture(t);for(let i=0;i<5;i++)await f.request();assert.equal((await f.request()).status,429);});
-test('provider failures are generic',async t=>{const f=await fixture(t,{fetchEmail:async()=>{throw Error('secret provider error')}});const r=await f.request();assert.equal(r.status,500);assert.equal(await r.text(),'{"ok":false}');});
-test('rejects method, content type, malformed JSON, origin and oversized body',async t=>{for(const extra of [{method:'GET',body:undefined},{headers:{'Content-Type':'text/plain'}},{body:'{'},{headers:{Origin:'https://evil.test','Content-Type':'application/json'}},{body:'x'.repeat(9000)}]){const f=await fixture(t);const r=await f.request(data,extra);assert.equal(r.status,extra.method==='GET'?405:400);assert.equal(f.messages.length,0);}});
+
+test("valid POST keeps the public response and sends every normalized field", async (t) => {
+  const context = await fixture(t);
+  const response = await context.request({
+    ...data,
+    name: "  Тест   Тестов  ",
+  });
+
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "application/json");
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(await response.json(), { ok: true });
+  assert.equal(context.requests.length, 1);
+  const message = context.requests[0].json;
+  assert.deepEqual(message.to, ["mmetrindesign@gmail.com"]);
+  assert.equal(message.from, "events@example.test");
+  assert.equal(message.subject, "Новая регистрация на конференцию");
+  assert.match(message.text, /Тест Тестов/);
+  for (const field of ["email", "phone", "company", "role"]) {
+    assert(message.text.includes(data[field]));
+  }
+});
+
+test("test and production recipient selection is provider-independent", async () => {
+  const productionMessages = [];
+  const testMessages = [];
+  const provider = (messages) => ({
+    sendEmail: async (message) => messages.push(message),
+  });
+  const production = createEmailService({
+    provider: provider(productionMessages),
+    fromAddress: "events@example.test",
+    organizerAddress: "organizer@example.test",
+    testMode: false,
+    testRecipient: "ignored@example.test",
+  });
+  const testing = createEmailService({
+    provider: provider(testMessages),
+    fromAddress: "events@example.test",
+    organizerAddress: "organizer@example.test",
+    testMode: true,
+    testRecipient: "qa@example.test",
+  });
+
+  await production.sendEmail({
+    subject: "Subject",
+    text: "Body",
+    idempotencyKey: "request-key-123456",
+  });
+  await testing.sendEmail({
+    subject: "Subject",
+    text: "Body",
+    idempotencyKey: "request-key-123456",
+  });
+  assert.deepEqual(productionMessages[0].to, ["organizer@example.test"]);
+  assert.deepEqual(testMessages[0].to, ["qa@example.test"]);
+});
+
+test("EMAIL_TEST_MODE sends only to the server-side test recipient", async (t) => {
+  const context = await fixture(t, {
+    env: {
+      ...defaultEnv,
+      EMAIL_TEST_MODE: "true",
+      EMAIL_TEST_RECIPIENT: "qa-recipient@example.test",
+    },
+  });
+  assert.equal((await context.request()).status, 200);
+  assert.deepEqual(context.requests[0].json.to, ["qa-recipient@example.test"]);
+});
+
+test("Sendsay fallback is accepted only in email test mode", async (t) => {
+  const production = await fixture(t);
+  assert.equal(
+    (
+      await production.request(data, {
+        headers: { "X-Sendsay-Fallback": "true" },
+      })
+    ).status,
+    400,
+  );
+  assert.equal(production.requests.length, 0);
+
+  const testing = await fixture(t, {
+    env: {
+      ...defaultEnv,
+      EMAIL_TEST_MODE: "true",
+      EMAIL_TEST_RECIPIENT: "qa-recipient@example.test",
+    },
+  });
+  assert.equal(
+    (
+      await testing.request(data, {
+        headers: { "X-Sendsay-Fallback": "true" },
+      })
+    ).status,
+    200,
+  );
+  assert.deepEqual(testing.requests[0].json.to, ["qa-recipient@example.test"]);
+});
+
+test("client cannot override recipient or sender", async (t) => {
+  for (const patch of [
+    { to: "other@example.test" },
+    { recipient: "other@example.test" },
+    { emailTo: "other@example.test" },
+    { from: "attacker@example.test" },
+  ]) {
+    const context = await fixture(t);
+    assert.equal((await context.request({ ...data, ...patch })).status, 400);
+    assert.equal(context.requests.length, 0);
+  }
+});
+
+test("rejects unknown fields, honeypot, control characters and invalid fields", async (t) => {
+  for (const patch of [
+    { unexpected: "value" },
+    { website: "bot" },
+    { name: "x\r\nBcc: x@example.test" },
+    { email: "akk@vm" },
+    { phone: "123" },
+    { company: "" },
+    { name: "Я" },
+    { company: "X" },
+    { role: "Я" },
+  ]) {
+    const context = await fixture(t);
+    assert.equal((await context.request({ ...data, ...patch })).status, 400);
+    assert.equal(context.requests.length, 0);
+  }
+});
+
+test("requires a valid idempotency key", async (t) => {
+  for (const key of [null, "short", "invalid_header_value!"]) {
+    const context = await fixture(t);
+    const response = await context.request(data, {
+      headers: { "Idempotency-Key": key },
+    });
+    assert.equal(response.status, 400);
+    assert.equal(context.requests.length, 0);
+  }
+});
+
+test("enforces method, content type, origin and JSON parsing", async (t) => {
+  const cases = [
+    [{ method: "GET" }, 405],
+    [{ headers: { "Content-Type": "text/plain" } }, 400],
+    [{ headers: { Origin: "https://evil.test" } }, 400],
+    [{ body: "{" }, 400],
+  ];
+  for (const [extra, status] of cases) {
+    const context = await fixture(t);
+    const response = await context.request(data, extra);
+    assert.equal(response.status, status);
+    assert.equal(context.requests.length, 0);
+    if (status === 405) assert.equal(response.headers.get("allow"), "POST");
+  }
+});
+
+test("rejects oversized bodies by Content-Length and actual chunk count", async (t) => {
+  const byLength = await fixture(t);
+  assert.equal(
+    (await byLength.request(data, { body: "x".repeat(9000) })).status,
+    400,
+  );
+
+  const chunked = await fixture(t);
+  assert.equal(
+    (await chunked.requestChunked("x".repeat(9000))).statusCode,
+    400,
+  );
+  assert.equal(chunked.requests.length, 0);
+});
+
+test("rate limit cannot be bypassed with an untrusted forwarding header", async (t) => {
+  const context = await fixture(t);
+  for (let index = 0; index < 5; index += 1) {
+    assert.equal(
+      (
+        await context.request(data, {
+          headers: { "X-Real-IP": `203.0.113.${index}` },
+        })
+      ).status,
+      200,
+    );
+  }
+  const response = await context.request(data, {
+    headers: { "X-Real-IP": "198.51.100.1" },
+  });
+  assert.equal(response.status, 429);
+  assert.equal(response.headers.get("retry-after"), "600");
+});
+
+test("rate limiter uses the injected clock and expires buckets", () => {
+  let time = 0;
+  const limiter = createRateLimiter({
+    maxRequests: 1,
+    windowMs: 100,
+    maxEntries: 1,
+    now: () => time,
+  });
+  assert.equal(limiter.consume("client-a"), true);
+  assert.equal(limiter.consume("client-a"), false);
+  assert.equal(limiter.consume("client-b"), false);
+  time = 100;
+  assert.equal(limiter.consume("client-b"), true);
+});
+
+test("missing or unsafe server configuration returns a generic 500", async (t) => {
+  for (const env of [
+    { APP_ORIGIN: "https://example.test", EMAIL_FROM: "events@example.test" },
+    {
+      ...defaultEnv,
+      EMAIL_FROM: "events@example.test\r\nBcc: victim@example.test",
+    },
+    { ...defaultEnv, EMAIL_TEST_MODE: "true" },
+  ]) {
+    const context = await fixture(t, { env });
+    const response = await context.request();
+    assert.equal(response.status, 500);
+    assert.deepEqual(await response.json(), { ok: false });
+  }
+});
+
+test("provider HTTP and network failures remain generic", async (t) => {
+  for (const fetchEmail of [
+    async () => ({ ok: false }),
+    async () => {
+      throw new Error("secret provider error");
+    },
+  ]) {
+    const context = await fixture(t, { fetchEmail });
+    const response = await context.request();
+    assert.equal(response.status, 500);
+    assert.equal(await response.text(), '{"ok":false}');
+  }
+});
+
+test("Resend provider times out and converts the failure", async () => {
+  const provider = createResendEmailProvider({
+    apiKey: "test-only",
+    timeoutMs: 5,
+    fetchImpl: async (_url, { signal }) =>
+      new Promise((resolve, reject) => {
+        signal.addEventListener("abort", () => reject(signal.reason), {
+          once: true,
+        });
+      }),
+  });
+  await assert.rejects(
+    provider.sendEmail({
+      from: "events@example.test",
+      to: ["organizer@example.test"],
+      subject: "Subject",
+      text: "Body",
+      idempotencyKey: "request-key-123456",
+    }),
+    EmailDeliveryError,
+  );
+});
+
+test("Resend provider owns its endpoint, headers and payload", async () => {
+  let captured;
+  const provider = createResendEmailProvider({
+    apiKey: "secret-test-key",
+    timeoutMs: 100,
+    fetchImpl: async (url, request) => {
+      captured = { url, request };
+      return { ok: true };
+    },
+  });
+  const message = {
+    from: "events@example.test",
+    to: ["organizer@example.test"],
+    subject: "Subject",
+    text: "Body",
+    idempotencyKey: "request-key-123456",
+  };
+  await provider.sendEmail(message);
+
+  assert.equal(captured.url, "https://api.resend.com/emails");
+  assert.equal(captured.request.method, "POST");
+  assert.equal(
+    captured.request.headers.Authorization,
+    "Bearer secret-test-key",
+  );
+  assert.equal(
+    captured.request.headers["Idempotency-Key"],
+    "register-request-key-123456",
+  );
+  assert.deepEqual(JSON.parse(captured.request.body), {
+    from: message.from,
+    to: message.to,
+    subject: message.subject,
+    text: message.text,
+  });
+});
+
+test("registration service works with a provider-agnostic fake email service", async () => {
+  const messages = [];
+  const registrationService = createRegistrationService({
+    emailService: {
+      sendEmail: async (message) => messages.push(message),
+    },
+  });
+  await registrationService.registerConferenceParticipant({
+    fields: data,
+    idempotencyKey: "request-key-123456",
+  });
+
+  assert.equal(messages.length, 1);
+  assert.equal(messages[0].subject, "Новая регистрация на конференцию");
+  assert.equal(messages[0].idempotencyKey, "request-key-123456");
+  assert.match(messages[0].text, /Тест Тестов/);
+  assert.equal("to" in messages[0], false);
+  assert.equal("from" in messages[0], false);
+});

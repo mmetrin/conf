@@ -1,6 +1,6 @@
 export const topics = [
   {
-    image: "assets/programme/first-frame.png",
+    image: "assets/programme/first-frame.webp",
     author: "Екатерина Белозерова",
     title: "Первый кадр",
     description:
@@ -14,28 +14,28 @@ export const topics = [
       "Почему рекламный рынок виден фрагментарно и как данные, каналы, коммуникации и результаты складываются в единую систему",
   },
   {
-    image: "assets/programme/new-light.png",
+    image: "assets/programme/new-light.webp",
     author: "Маргарита Бондаренко",
     title: "Реклама в новом свете",
     description:
       "Итоги МТС Ads в 2026 году, развитие рекламной экосистемы и основные направления на 2027 год",
   },
   {
-    image: "assets/programme/public-talk.png",
+    image: "assets/programme/public-talk.webp",
     author: "Елена Лебедева",
     title: "Public Talk: «Что перестало работать по старому сценарию»",
     description:
       "Лидеры рынка обсудят, где реклама теряет точность, почему привычного набора каналов уже недостаточно и как меняются критерии эффективности",
   },
   {
-    image: "assets/programme/big-data.png",
+    image: "assets/programme/big-data.webp",
     author: "Виталий Пинчук",
     title: "Big Data: свет, который проявляет главное",
     description:
       "Обезличенные сегменты, AI, Smart Leads, безопасность данных и более точная работа с аудиторией",
   },
   {
-    image: "assets/programme/campaign.png",
+    image: "assets/programme/campaign.webp",
     author: "Василий Валейкин",
     title:
       "Монтаж кампании: как собрать полную картину из каналов и технологий",

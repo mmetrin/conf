@@ -2,135 +2,171 @@
 
 ## Что передаётся
 
-Готовый React 19 сайт с анимациями и формой регистрации. Сборка — esbuild, не Vite.
-`npm run build` создаёт `outputs/mts-ads-portrait-frames-current.html` и локальные ресурсы.
-Backend — Node.js: `server/start.mjs` обслуживает outputs и `POST /api/register`.
-Отправка: браузер → API на том же домене → Resend → почта организаторов.
-Базы данных нет, приложение не сохраняет заявки. Success-state появляется после принятия письма провайдером, а не гарантированного попадания во входящие.
+React 19 сайт с прямой browser-side интеграцией Sendsay Form API и Node.js endpoint `POST /api/register`. `npm run build` создаёт `outputs/mts-ads-portrait-frames-current.html`, fingerprinted JS/CSS и precompressed `.br`/`.gz` text assets; `server/start.mjs` раздаёт сборку и подключает registration handler.
 
-## Текущее состояние: локальный тест
+Sendsay — source of truth для контакта и дальнейшей email-коммуникации. Success означает, что Sendsay принял форму; последующая ошибка `/api/register` не отменяет регистрацию. Собственной subscriber database нет. Frontend не знает Resend/SMTP credentials, sender или organizer recipient.
 
-На компьютере автора включён `EMAIL_TEST_MODE=true` в локальном `.env`.
-Отправитель: `onboarding@resend.dev`. Тестовый получатель задаётся переменной
-`EMAIL_TEST_RECIPIENT` в локальном `.env`.
-Resend принял тестовое письмо. Доставка на будущую почту организаторов ещё не проверена.
-Тестовый режим не должен попасть на production. Локальный `.env` не передаётся через Git.
+## Архитектура регистрации
 
-## Что обязательно поменять перед запуском
-
-1. Получить от заказчика итоговый домен сайта и итоговый email получателя заявок.
-2. В `server/register.mjs` заменить значение серверной константы `recipient`:
-   сейчас это `mmetrindesign@gmail.com`, вместо него нужен согласованный адрес организаторов.
-   Это адрес ПОЛУЧАТЕЛЯ. Он не обязан совпадать с доменом сайта или отправителя.
-   Не переносить получателя в тело запроса и не разрешать браузеру его задавать.
-3. В production установить `EMAIL_TEST_MODE=false` (или не задавать переменную).
-   При true сервер игнорирует recipient и использует тестовую почту.
-   После завершения тестирования можно удалить тестовую ветку выбора получателя из сервера.
-4. Создать рабочий аккаунт/ключ Resend команды. Не использовать личный ключ автора макета.
-5. В Resend → Domains добавить домен отправителя или его поддомен, например
-   `mail.company.ru`, и подтвердить DNS-записи, которые выдаёт Resend.
-   Покупки домена самой по себе недостаточно: нужен доступ к DNS и статус Verified.
-6. Задать `EMAIL_FROM`, например `MTS Ads <events@mail.company.ru>`.
-   Домен этого адреса должен быть подтверждён в Resend. Для production не использовать
-   `onboarding@resend.dev`: он предназначен для ограниченного тестирования.
-7. Задать `APP_ORIGIN` — точный публичный origin сайта, например `https://conference.company.ru`,
-   без пути и завершающего слеша. Frontend вызывает относительный `/api/register`.
-8. Перезапустить backend после изменения окружения.
-
-Тема письма задана серверной константой `subject`: «Новая регистрация на конференцию».
-Письмо содержит все пять текущих полей, включая объединённое «Фамилия и имя».
-При добавлении полей обновить `src/utils/validation.js`, серверный allowlist/limits,
-состав письма и тесты. Не принимать произвольные объекты формы без проверки.
-
-## Переменные окружения
-
-| Переменная | Назначение |
-| --- | --- |
-| EMAIL_API_KEY | Секретный API-ключ Resend с правом отправки |
-| EMAIL_FROM | Адрес на подтверждённом домене отправителя |
-| APP_ORIGIN | Точный origin frontend, HTTPS в production |
-| PORT | Внутренний порт Node.js, по умолчанию 53860 |
-| EMAIL_TEST_MODE | false в production; true только для локального теста |
-| EMAIL_TEST_RECIPIENT | Тестовый получатель; обязателен при `EMAIL_TEST_MODE=true` |
-| TRUST_LOCAL_PROXY | true только при доверенном локальном proxy, описанном ниже |
-
-Все переменные задаются в серверном окружении: в настройках сервиса приложения на
-хостинге или в защищённом файле окружения вне репозитория. Не использовать VITE_*,
-public config или define в сборщике для секретов. `.env.example` содержит только шаблон.
-
-## Локальный запуск
-
-Node.js 22+.
-
-```sh
-npm ci
-cp .env.example .env
-# Заполнить .env локально, не добавлять его в Git.
-npm run check
-npm start
+```text
+src/services/sendsay/sendsayConfig.js       public build config/field mapping
+src/services/sendsay/sendsayFormClient.js   Form API payload, timeout, response contract
+src/services/registration/registrationSubmission.js normalization, validation, notification isolation
+src/components/Registration.jsx             form UI and submit lock
+server/register.mjs                         composition/configuration
+server/registration/registrationHandler.mjs HTTP orchestration
+server/registration/registrationService.mjs registration use-case
+server/registration/registrationValidation.mjs server validation/normalization
+server/email/emailService.mjs               provider-independent boundary/recipient rules
+server/email/registrationEmail.mjs          text-only message builder
+server/email/providers/resendEmailProvider.mjs Resend adapter
+server/security/*                           IP resolution/HMAC/rate limiter
+server/http/*                               bounded body parser/JSON response
+server/config/registrationConfig.mjs        server env and constants
+shared/registrationValidation.js            shared frontend/backend field rules
+server/http/staticFileHandler.mjs           streamed static delivery, cache and compression selection
+server/server.mjs                           HTTP routing and server timeout wiring
+server/config/serverConfig.mjs              port, bind host, static root and entry document
 ```
 
-Открыть `http://127.0.0.1:53860/mts-ads-portrait-frames-current.html`.
-Статический сервер без backend (например, прежний порт 53859) не отправляет заявки.
-Без настроенного Resend форма корректно показывает ошибку, а не имитирует успех.
-Для тестов `npm test` ключ и реальная отправка не нужны: провайдер подменяется mock.
+Текущий поток:
 
-## Production и выбор хостинга
+```text
+Registration UI
+→ submitConferenceRegistration
+→ POST https://sendsay.ru/form/<ACCOUNT>/<FORM_ID>/
+→ success UI
+→ best-effort POST /api/register
+→ EmailService → ResendEmailProvider → Resend → organizer
+```
 
-Хостинг пока не выбран. Текущий вариант рассчитан на ОДИН постоянно работающий
-Node.js-процесс за HTTPS reverse proxy на том же сервере. Сборка: `npm ci && npm run build`.
-Если переменные инжектирует хостинг, запускать `node server/start.mjs`.
-`npm start` ожидает локальный файл .env и предназначен для локального запуска.
+Form API никогда не вызывается с backend и не требует secret API key. Email передаётся только как `_member_email`. Остальные поля строятся по конфигурации; honeypot в Sendsay не попадает. Resend-specific endpoint, authorization, payload, idempotency header и timeout находятся только в server provider adapter.
 
-Сервер слушает 127.0.0.1. Настроить proxy на этот внутренний порт, сертификат HTTPS,
-редирект HTTP → HTTPS, лимит тела 8 KB и автоматический перезапуск процесса.
-Proxy должен ПЕРЕЗАПИСЫВАТЬ `X-Real-IP` адресом клиентского соединения.
-Только после этого установить `TRUST_LOCAL_PROXY=true`. Не пробрасывать заголовок
-пользователя без замены. При выключенной настройке лимит общий для IP прокси.
-Для цепочки CDN/proxy отдельно настроить доверенные адреса и получение IP клиента.
+## Sendsay: что нужно получить и где настроить
 
-Нельзя просто загрузить outputs на статический хостинг и ожидать отправки.
-Для Vercel/Netlify/Cloudflare потребуется адаптер соответствующей serverless-платформы
-и общий серверный rate limiter. Текущий лимитер хранится в памяти одного процесса,
-сбрасывается при рестарте и не рассчитан на несколько реплик. Для контейнерного
-хостинга также адаптировать bind и доверие к proxy под его сетевую модель.
+Следующему разработчику/владельцу аккаунта нужны реальные значения из Sendsay:
+
+| Что                                        | Где взять/проверить                                                       |
+| ------------------------------------------ | ------------------------------------------------------------------------- |
+| Account code                               | URL/настройки аккаунта Sendsay                                            |
+| Form ID                                    | **Сайт → Формы**, форма-дубль конференции                                 |
+| codes имени, телефона, компании, должности | `fields[].name` ответа `GET https://sendsay.ru/form/<ACCOUNT>/<FORM_ID>/` |
+| обязательность и типы                      | `fields[].required` и `fields[].type` того же ответа                      |
+| event datetime field code                  | code скрытого поля типа «Дата и время», если используется                 |
+| event datetime value                       | подтверждённое московское время `2026-11-19 17:00:00`                     |
+| event venue                                | Арбатская площадь, 14, строение 1, кинотеатр «Художественный»             |
+| event ID field/value                       | только если реально создано и нужно                                       |
+| audience list                              | шаг «Аудитория» формы                                                     |
+| confirmation template                      | шаг «Письмо подтверждения формы»                                          |
+| automation                                 | **Автоматизации → Сценарии**, сценарий конкретной формы                   |
+| email templates                            | **Контент** и блоки отправки сценария                                     |
+
+Build-time переменные перечислены в `.env.example`: `SENDSAY_ACCOUNT`, `SENDSAY_FORM_ID`, `SENDSAY_FIELD_NAME`, `SENDSAY_FIELD_PHONE`, `SENDSAY_FIELD_COMPANY`, `SENDSAY_FIELD_ROLE`; optional пары для event datetime/event ID; `SENDSAY_TEST_FORM_ID` и `SENDSAY_USE_TEST_FORM`. После изменения нужна новая `npm run build`.
+
+Нельзя угадывать codes или добавлять API key в frontend. Если обязательная конфигурация отсутствует, клиент прекращает submit до network request. General Sendsay API key, если когда-либо понадобится, должен быть только server-side и выдан саблогину с минимальными правами.
+
+## Sendsay UI checklist
+
+1. Создать форму-дубль с полями текущей формы: имя, email, телефон, компания, должность.
+2. Назначить отдельный список аудитории конференции.
+3. Создать и добавить скрытое поле «Дата мероприятия» типа «Дата и время» с точностью до минут; передавать подтверждённое значение `2026-11-19 17:00:00` по московскому времени.
+4. Настроить DOI-письмо со ссылкой `[% confirm_url %]`; не использовать `form.transfer` для обхода подтверждения.
+5. Активировать форму и проверить через GET её `state`, fields, required/types и реальные codes.
+6. Создать отдельную test form/list, собрать с `SENDSAY_USE_TEST_FORM=true`, выполнить smoke test, затем вернуть `false` и пересобрать production.
+7. Создать scenario со стартом **Подтверждение формы** для конкретной формы.
+8. Добавить EMAIL 1 сразу после подтверждения; затем согласованные reminders через разделения по дате и timers.
+9. Перед каждым фиксированным timer поставить условие **Совпадение даты и времени**, чтобы late registration пропускала прошедший момент и не застревала.
+10. Проверить sender, subject и шаблоны в разделе **Контент**, затем активировать scenario.
+
+Текущий success-текст UI оставлен как утверждённый. Для точного DOI flow рекомендуется отдельно согласовать текст «Регистрация отправлена. Проверьте почту и подтвердите адрес».
+
+## Resend после Sendsay
+
+Sendsay отвечает за контакт/participant emails и может отправлять собственное уведомление организатору о заполнении формы. `/api/register` + Resend также остаётся включённым и отправляет внутреннее письмо «Новая регистрация на конференцию». Notification Resend стартует после успеха Sendsay и не влияет на success UI.
+
+Исключение действует только при `EMAIL_TEST_MODE=true`: техническая ошибка Sendsay разрешает server-checked fallback в `/api/register`, и письмо уходит на `EMAIL_TEST_RECIPIENT`. Validation errors Sendsay не обходятся. Production mode отклоняет fallback независимо от client request.
+
+Два organizer notification на одну регистрацию — одно от Sendsay и одно от Resend — согласованы и допустимы.
+
+Вариант A возможен после настройки `notify.email`/шаблона уведомления в Sendsay и production-проверки. Чтобы отключить старый flow:
+
+1. Проверить на test и production form, что Sendsay notification содержит все нужные поля и стабильно доставляется нужным организаторам.
+2. Удалить только вызов `notifyOrganizer` из `src/components/Registration.jsx` и затем server registration/email wiring, если endpoint больше нигде не нужен.
+3. Удалить Resend server env (`EMAIL_API_KEY`, `EMAIL_FROM`, test recipient) и deployment secrets только после проверки и согласования rollback.
+4. Обновить server routing/tests/документацию. Sendsay Form API client и его public config не менять.
+
+Не удалять Resend только потому, что Sendsay Form API уже принимает контакты: это разные обязанности до завершения шага 1.
+
+## Текущая отправка через Resend
+
+Необходимые server-only values:
+
+| Переменная             | Назначение                                                      |
+| ---------------------- | --------------------------------------------------------------- |
+| `EMAIL_API_KEY`        | Секретный Resend API key                                        |
+| `EMAIL_FROM`           | Sender на подтверждённом домене                                 |
+| `APP_ORIGIN`           | Точный origin frontend, HTTPS в production                      |
+| `EMAIL_TEST_MODE`      | `false` в production, `true` только для теста                   |
+| `EMAIL_TEST_RECIPIENT` | Обязателен при test mode                                        |
+| `TRUST_LOCAL_PROXY`    | `true` только за настроенным доверенным локальным proxy         |
+| `PORT`                 | Внутренний Node.js port, по умолчанию 53860                     |
+| `SERVER_HOST`          | `127.0.0.1` по умолчанию; `0.0.0.0` только если требует хостинг |
+
+Production organizer recipient сейчас `mmetrindesign@gmail.com` и задан server-side в `server/config/registrationConfig.mjs`. Браузеру нельзя разрешать менять `to`, `from` или recipient. При `EMAIL_TEST_MODE=true` используется только `EMAIL_TEST_RECIPIENT`; при `false` — только production recipient.
+
+Локальный `.env` не передаётся через Git. Production secrets устанавливаются в окружении хостинга/процесса или secret store. Не использовать public env prefixes и не инжектировать credentials в frontend build.
+
+## Переход на собственный SMTP
+
+SMTP adapter пока отсутствует. Для миграции:
+
+1. Реализовать `server/email/providers/smtpEmailProvider.mjs` с contract `sendEmail({ from, to, subject, text, idempotencyKey })`.
+2. Добавить server-only `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD` и нужную sender-конфигурацию.
+3. Инициализировать SMTP adapter в `server/register.mjs` и передать его в `createEmailService` вместо Resend adapter.
+4. Оставить выбор test/production recipient в `EmailService` и проверить оба режима.
+5. После production smoke test удалить Resend adapter/config только если rollback больше не нужен.
+
+Не требуется менять `registrationHandler`, `registrationService`, validation, frontend или `/api/register`. SMTP password нельзя хранить в Git, README, frontend или JS bundle.
+
+## Static delivery and production deployment
+
+Entry document — `outputs/mts-ads-portrait-frames-current.html`, доступный по `/`; SPA routing/service worker нет. `server/http/staticFileHandler.mjs` stream-ит файлы и разрешает только GET/HEAD. Path traversal, malformed URI, directories, dotfiles и прямой доступ к `.br`/`.gz` sidecars не выдаются.
+
+Компрессия выполняется на build: для HTML/CSS/JS/SVG больше 1 KB создаются `.br`/`.gz`; static handler выбирает representation по `Accept-Encoding` и выставляет `Vary`. Runtime Brotli/gzip не используется. WebP/OTF не сжимаются повторно. HTML получает `no-cache`; fingerprinted esbuild JS/CSS — годовой immutable cache; copied non-hashed assets, в том числе `receiver-frames/01.webp`…`30.webp`, — один день без immutable. ETag/Last-Modified позволяют revalidate HTML и stable assets.
+
+Текущая реализация рассчитана на один постоянно работающий Node.js process за HTTPS reverse proxy. По умолчанию сервер слушает `127.0.0.1`; proxy должен завершать TLS, делать HTTP → HTTPS redirect и перезаписывать `X-Real-IP`. Только после этого допустим `TRUST_LOCAL_PROXY=true`. Для платформы, требующей внешний bind, задать `SERVER_HOST=0.0.0.0`; `PORT` должен быть 1–65535 и по умолчанию 53860.
+
+HTTP headers ограничены 10 секундами, complete request — 15 секундами, idle keep-alive — 5 секундами. Streaming static response не имеет отдельного aggressive socket timeout, поэтому медленная отдача assets не обрывается этим configuration. Для масштабного production предпочтительнее CDN/reverse proxy для статики и compression, а Node оставить для `/api/register`; текущая Node static delivery остаётся подходящей для локального и простого single-process deployment.
+
+Rate limiter хранит максимум 10000 HMAC-анонимизированных buckets в памяти process, разрешает пять запросов за 10 минут и сбрасывается при рестарте. Для нескольких replicas, serverless или horizontal scaling нужен shared rate-limit store. Текущий код не предоставляет distributed limiting и не подключает Redis.
+
+Перед production:
+
+- задать Account, production Form ID и реальные field codes до `npm run build`;
+- установить `SENDSAY_USE_TEST_FORM=false`, проверить active form и audience list;
+- пройти DOI и event scenario одним контролируемым production-контактом;
+- установить `EMAIL_TEST_MODE=false`;
+- проверить production recipient и `APP_ORIGIN`;
+- подтвердить sender/domain у provider;
+- проверить отсутствие `.env` и email/SMTP secrets в Git и клиентской сборке;
+- выполнить `npm run check`;
+- отправить одну production smoke registration по HTTPS;
+- проверить доставку, правильный sender/recipient/subject и все пять полей;
+- проверить 429 и IP resolution за реальным proxy;
+- проверить `/`, hashed JS/CSS, WebP hero, один frame asset и `POST /api/register` через production proxy;
+- проверить `Content-Encoding`, `Vary`, cache headers и `HEAD` после production build;
+- для нескольких instances сначала подключить shared rate-limit store.
 
 ## Безопасность и персональные данные
 
-Сейчас реализованы: серверный allowlist, обязательность/длины полей, нормализация,
-валидация email/телефона, запрет управляющих символов, JSON/POST/origin checks,
-лимит тела 8192 байта, honeypot, пять попыток за 10 минут по IP, ограниченный размер
-карты счётчиков, таймауты, блокировка повторного клика и идемпотентность Resend.
-В памяти лимитера только временный HMAC IP и счётчик, содержимое заявок не хранится.
-Письмо plain text: ввод не вставляется в HTML или заголовки письма.
+Сервер проверяет POST/JSON/origin, ограничивает body по declared и actual bytes, применяет honeypot и allowlist, нормализует Unicode, запрещает control characters, повторно валидирует поля и принимает только проверенный idempotency key. Письмо plain text; пользовательские значения не используются в headers. API key, sender, organizer и test recipient читаются только server-side. Ошибки provider не раскрываются клиенту.
 
-Не подключать логирование body, персональных данных или секретов в proxy, APM,
-аналитику и error monitoring. Не добавлять БД/файловое хранение без отдельного требования.
-Resend может хранить письма согласно своим настройкам и политике.
-При необходимости CAPTCHA: добавить токен Turnstile в allowlist и проверять его
-сервером до отправки письма. Сейчас тяжёлой CAPTCHA нет.
+Node static handler сейчас не выставляет CSP. Если CSP задаёт reverse proxy/CDN, добавить `'self' https://sendsay.ru` в `connect-src`, не использовать wildcard. Public Sendsay identifiers допустимы в bundle; ни Sendsay General API key, ни Resend key туда попадать не должны.
 
-Письмо отправляется ТОЛЬКО организатору. Письмо участнику не реализовано, поэтому
-подтверждение на сайте не обещает отправку даты на его почту. Если это понадобится,
-согласовать отдельную отправку участнику и её защиту от злоупотреблений.
+Не логировать body заявки, raw IP, credentials или provider response с секретами. Не добавлять хранение персональных данных без отдельного требования и согласованной retention policy.
 
-## Проверки перед передачей в эксплуатацию
+## Поддержка и проверки
 
-- `npm run check`: тесты и production build должны проходить.
-- После изменения recipient обновить ожидаемый адрес в `tests/register.test.mjs`.
-- Подтвердить отсутствие .env и ключей в Git и клиентской сборке.
-- Отправить одну явно тестовую заявку на согласованный адрес организаторов через HTTPS.
-- Убедиться в получении письма со всеми полями, правильной темой и отправителем.
-- Проверить success-state, пустые поля, неверные email/телефон, двойное нажатие.
-- В тестовом окружении проверить ошибку провайдера: значения остаются, успех не показывается.
-- Проверить 429 после пяти попыток и правильное определение IP за production proxy.
-- Проверить мобильную форму, анимации и Tab-навигацию.
+`tests/sendsay.test.mjs` покрывает payload/mapping, test Form ID, `_member_email`, honeypot, frontend-validation, API errors, network, timeout, unknown response, missing config и изоляцию organizer notification. `tests/app.test.mjs` проверяет error/success UI и отсутствие параллельных Sendsay requests. `tests/register.test.mjs` покрывает внутренний API, security checks, recipients, rate limiting, Resend adapter и timeout. Реальные Sendsay/Resend запросы в тестах не выполняются.
 
-## Что класть в Git
-
-Исходники `src`, `server`, `public`, `scripts`, `tests`, README.md, HANDOFF.md,
-package.json, package-lock.json, .gitignore, .env.example. outputs и reports —
-генерируемые результаты; команда может хранить их или собирать при deploy.
-Не передавать `.env`, `node_modules`, `work` и личные ключи. Секреты настроить отдельно.
-Если секрет уже был закоммичен, удаления файла недостаточно: отозвать ключ и очистить историю.
-На момент подготовки документа эта папка ещё не является Git-репозиторием.
+При изменении полей сначала обновить `shared/registrationValidation.js`, server limits/message builder и тесты. При изменении provider contract обновить оба adapter-level теста до включения нового транспорта в production.

@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { createScheduler } from "../src/animation/scheduler.js";
 import {
+  createReceiverPlayer,
   receiverFrameAt,
   FRAME_DURATION,
   FRAME_PAUSE,
@@ -52,14 +53,101 @@ test("all 30 frames play forward, hold, reverse and loop with the original timin
   assert.equal(receiverFrameAt(3.4), 29);
   assert.equal(receiverFrameAt(4.0), 29);
 });
+
+test("receiver loads only frame 1 before background loading is explicitly started", async () => {
+  const descriptors = Object.fromEntries(
+    ["window", "navigator", "devicePixelRatio", "Image", "createImageBitmap", "ResizeObserver"].map(
+      (key) => [key, Object.getOwnPropertyDescriptor(globalThis, key)],
+    ),
+  );
+  const urls = [];
+  const disposers = [];
+  const context = {
+    drawImage() {},
+    createRadialGradient: () => ({ addColorStop() {} }),
+    fillRect() {},
+  };
+  const canvas = {
+    clientWidth: 640,
+    width: 0,
+    height: 0,
+    getContext: () => context,
+  };
+  class MockImage {
+    set src(value) {
+      this.url = value;
+      if (value) urls.push(value);
+    }
+    decode() {
+      return Promise.resolve();
+    }
+  }
+  Object.defineProperties(globalThis, {
+    window: {
+      configurable: true,
+      value: { setTimeout, clearTimeout },
+    },
+    navigator: {
+      configurable: true,
+      value: { connection: { effectiveType: "4g", saveData: false } },
+    },
+    devicePixelRatio: { configurable: true, value: 1 },
+    Image: { configurable: true, value: MockImage },
+    createImageBitmap: {
+      configurable: true,
+      value: async () => ({ close() {} }),
+    },
+    ResizeObserver: {
+      configurable: true,
+      value: class {
+        observe() {}
+        disconnect() {}
+      },
+    },
+  });
+  const scope = {
+    disposed: false,
+    observe(observer, node) {
+      observer.observe(node);
+      disposers.push(() => observer.disconnect());
+    },
+    defer(fn) {
+      disposers.push(fn);
+    },
+    timeout: setTimeout,
+    clearTimeout,
+  };
+  try {
+    const receiver = createReceiverPlayer(canvas, scope);
+    await receiver.firstReady;
+    assert.equal(urls.length, 1);
+    assert.match(urls[0], /01\.webp/);
+    const completion = await receiver.startBackground();
+    assert.equal(completion.ready, true);
+    assert.equal(urls.length, 30);
+    assert.match(urls.at(-1), /30\.webp/);
+  } finally {
+    scope.disposed = true;
+    for (const dispose of disposers.reverse()) dispose();
+    for (const [key, descriptor] of Object.entries(descriptors)) {
+      if (descriptor) Object.defineProperty(globalThis, key, descriptor);
+      else delete globalThis[key];
+    }
+  }
+});
 test("registration validates whitespace, email and phone without sending data", () => {
   assert(validateField("name", "  "));
+  assert.equal(validateField("name", "А"), "Введите не менее 2 символов");
+  assert.equal(validateField("company", "Я"), "Введите не менее 2 символов");
+  assert.equal(validateField("role", "X"), "Введите не менее 2 символов");
   assert(validateField("email", "test"));
   assert(validateField("phone", "123"));
   assert(validateField("phone", "+7invalid123456789"));
   assert.equal(validateField("email", "test@example.ru"), "");
   assert.equal(validateField("phone", "+7 (999) 123-45-67"), "");
   assert.equal(validateField("name", "Анна Петрова"), "");
+  assert.equal(validateField("company", "МТС"), "");
+  assert.equal(validateField("role", "CEO"), "");
 });
 
  test("registration matches Figma email and phone errors", () => {

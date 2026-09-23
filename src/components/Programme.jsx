@@ -1,4 +1,11 @@
 import { topics, slots } from "../data/programme.js";
+const portraitSizes =
+  "(max-width: 599px) 64px, (max-width: 1399px) 6.572vw, 92px";
+
+function portraitSrcSet(source) {
+  return `${source.replace(/\.webp$/, "-96.webp")} 96w, ${source} 192w`;
+}
+
 function TimeSlot({ slot, business = false }) {
   return (
     <div
@@ -40,12 +47,14 @@ export function Programme() {
                   <div className="programme__focus-content">
                     {topic.icon ? (
                       <div className="programme__portrait programme__portrait--icon" aria-hidden="true">
-                        <img src={topic.image} width="44" height="44" alt="" />
+                        <img src={topic.image} width="44" height="44" alt="" loading="lazy" decoding="async" />
                       </div>
                     ) : (
                     <img
                       className="programme__portrait"
                       src={topic.image}
+                      srcSet={portraitSrcSet(topic.image)}
+                      sizes={portraitSizes}
                       alt=""
                       width="92"
                       height="92"

@@ -1,3 +1,5 @@
+import { getDesktopScale, getHeroScale } from "../utils/desktopScale.js";
+
 export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
   const raster = document.createElement("canvas");
   raster.width = Math.ceil(w * dpr);
@@ -9,16 +11,31 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     c.textAlign = "center";
     c.imageSmoothingEnabled = true;
   }
-  const width = Math.min(900, w - 48),
-    left = (w - width) / 2,
-    mobile = w < 760;
-  const headingSize = 44;
-  const subtitleSize = 23;
-  const factSize = 15,
-    iconSize = 18,
-    iconGap = 8;
-  let y = h * (192 / 940),
-    factsTop = 0;
+  const heroScale = getHeroScale(w, h),
+    desktopScale = getDesktopScale(w),
+    mobile = w < 600,
+    headingWidth = mobile
+      ? Math.min(
+          w - 16,
+          270 +
+            Math.max(0, Math.min(54, w - 360)) * (128 / 54),
+        )
+      : Math.min(900 * heroScale, w - 48 * heroScale),
+    subtitleWidth = mobile
+      ? Math.min(328, w - 32)
+      : Math.min(870 * heroScale, w - 48 * heroScale);
+  const headingSize = mobile ? 21.5 : 44 * heroScale;
+  const subtitleSize = mobile ? 17 : 23 * heroScale;
+  const factSize = mobile ? 14 : Math.max(10, 15 * desktopScale),
+    factLineHeight = mobile ? 20 : Math.max(14, 24 * desktopScale),
+    iconSize = mobile ? 18 : 18 * desktopScale,
+    iconGap = mobile ? 8 : 8 * desktopScale,
+    factGap = mobile ? 4 : 4 * desktopScale,
+    factPaddingX = mobile ? 13 : 16 * desktopScale,
+    factPaddingY = mobile ? 4 : 4 * desktopScale;
+  let y = mobile
+    ? Math.max(95, Math.min(109, h * 0.19))
+    : h * (192 / 940);
   const rows = [],
     c = contexts[0];
   function wrapped(text, font, maxWidth) {
@@ -35,12 +52,18 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     if (line) out.push(line);
     return out;
   }
-  function textRow(text, font, lineHeight, gradientText) {
+  function textRow(text, font, lineHeight, gradientText, rowWidth) {
     for (let i = 0; i < contexts.length; i++) {
       const ctx = contexts[i];
       ctx.font = font;
       if (gradientText) {
-        const gradient = ctx.createLinearGradient(left, 0, left + width, 0);
+        const left = (w - rowWidth) / 2;
+        const gradient = ctx.createLinearGradient(
+          left,
+          0,
+          left + rowWidth,
+          0,
+        );
         gradient.addColorStop(0, "rgba(255,255,255,.2)");
         gradient.addColorStop(0.10577, "rgba(255,255,255,.2)");
         gradient.addColorStop(0.4375, "#ffffff");
@@ -55,14 +78,28 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     y += lineHeight;
   }
   const headingFont = `700 ${headingSize}px 'MTS Ultra Extended', Arial`;
-  for (const line of wrapped(blocks[0].text, headingFont, width))
-    textRow(line, headingFont, headingSize * 1.1, true);
-  y += 36;
+  const headingText = mobile
+    ? blocks[0].text.replace(/Ads\b/i, "ADS")
+    : blocks[0].text;
+  for (const line of wrapped(headingText, headingFont, headingWidth))
+    textRow(
+      line,
+      headingFont,
+      mobile ? 29.7 : headingSize * 1.1,
+      true,
+      headingWidth,
+    );
+  y += mobile ? 12 : 30 * heroScale;
   const subtitleFont = `400 ${subtitleSize}px 'MTS Wide', Arial`;
-  for (const line of wrapped(blocks[1].text, subtitleFont, width))
-    textRow(line, subtitleFont, mobile ? subtitleSize * 1.32 : 29, true);
-  y += 60;
-  factsTop = y;
+  for (const line of wrapped(blocks[1].text, subtitleFont, subtitleWidth))
+    textRow(
+      line,
+      subtitleFont,
+      mobile ? 22 : 29 * heroScale,
+      true,
+      subtitleWidth,
+    );
+  y = mobile ? Math.max(y + 16, h - 178) : y + 60 * desktopScale;
   const factsRaster = document.createElement("canvas");
   factsRaster.width = raster.width;
   factsRaster.height = raster.height;
@@ -70,125 +107,91 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
   factsCtx.scale(dpr, dpr);
   factsCtx.textBaseline = "middle";
   factsCtx.imageSmoothingEnabled = true;
-  for (let rowIndex = 2; rowIndex < blocks.length; rowIndex++) {
-    const block = blocks[rowIndex],
-      parts = block.text.split(" · ");
-    let fontSize = factSize;
-    c.font = `400 ${fontSize}px 'MTS Wide', Arial`;
-    const separatorWidth = 32;
-    let textWidth =
-      parts.reduce((sum, part) => sum + c.measureText(part).width, 0) +
-      (parts.length - 1) * separatorWidth;
-    // At narrow widths wrap only between semantic facts, keeping each label intact.
-    let groups = [parts];
-    if (textWidth + iconSize + iconGap > width && mobile)
-      groups = parts.map((part) => [part]);
-    else if (textWidth + iconSize + iconGap > width) {
-      fontSize *= (width - iconSize - iconGap) / textWidth;
-    }
-    const lineHeight = 24;
-    const pairIndex = (rowIndex - 2) % 2;
-    const rowIndexInPairs = Math.floor((rowIndex - 2) / 2);
-    groups.forEach((group, groupIndex) => {
-      const font = `400 ${fontSize}px 'MTS Wide', Arial`;
-      c.font = font;
-      const lengths = group.map((part) => c.measureText(part).width);
-      const hasIcon = groupIndex === 0,
-        total =
-          lengths.reduce((sum, n) => sum + n, 0) +
-          (group.length - 1) * separatorWidth +
-          (hasIcon ? iconSize + iconGap : 0);
-      let rowTotal = total;
-      if (!mobile && pairIndex === 0 && blocks[rowIndex + 1]) {
-        const nextText = blocks[rowIndex + 1].text;
-        c.font = font;
-        const nextWidth = c.measureText(nextText).width + iconSize + iconGap;
-        rowTotal = total + nextWidth + 28;
-      } else if (!mobile && pairIndex === 1 && blocks[rowIndex - 1]) {
-        const previousText = blocks[rowIndex - 1].text;
-        c.font = font;
-        const previousWidth = c.measureText(previousText).width + iconSize + iconGap;
-        rowTotal = previousWidth + total + 28;
-      }
-      let start =
-        (w - rowTotal) / 2 +
-        (pairIndex === 1 ? rowTotal - total : 0);
-      // Each fact is presented as its own pill: 4px vertical and 12px
-      // horizontal padding, with a fully rounded border radius.
-      const frameX = start - 12;
-      const frameY = y - 4;
-      const frameWidth = total + 24;
-      const frameHeight = lineHeight + 8;
+  const factFont = `400 ${factSize}px 'MTS Wide', Arial`;
+  c.font = factFont;
+  const factItems = blocks.slice(2).map((block, index) => {
+    const textWidth = c.measureText(block.text).width;
+    return {
+      block,
+      side: index % 2 === 0 ? "left" : "right",
+      textWidth,
+      width: factPaddingX * 2 + iconSize + iconGap + textWidth,
+    };
+  });
+  const factRows = mobile
+    ? [
+        factItems.slice(0, 1),
+        factItems.slice(1, 2),
+        factItems.slice(2, 4),
+      ].map((items) => ({
+        items,
+        width:
+          items.reduce((sum, item) => sum + item.width, 0) +
+          factGap * Math.max(0, items.length - 1),
+      }))
+    : Array.from({ length: Math.ceil(factItems.length / 2) }, (_, index) => {
+        const items = factItems.slice(index * 2, index * 2 + 2);
+        return {
+          items,
+          width:
+            items.reduce((sum, item) => sum + item.width, 0) +
+            factGap * Math.max(0, items.length - 1),
+        };
+      });
+
+  factRows.forEach((row, rowIndex) => {
+    let frameX = (w - row.width) / 2;
+    for (const item of row.items) {
+      const { block } = item;
+      const frameY = y - factPaddingY;
+      const frameHeight = factLineHeight + factPaddingY * 2;
+      const pillFill = factsCtx.createLinearGradient(
+        frameX,
+        0,
+        frameX + item.width,
+        0,
+      );
+      const lightFill = "rgba(28, 26, 32, 0.84)";
+      const darkFill = "rgba(3, 2, 5, 0.90)";
+      pillFill.addColorStop(0, item.side === "left" ? lightFill : darkFill);
+      pillFill.addColorStop(1, item.side === "left" ? darkFill : lightFill);
       factsCtx.save();
-      factsCtx.fillStyle = "rgba(7, 6, 9, 0.84)";
+      factsCtx.fillStyle = pillFill;
       factsCtx.beginPath();
       factsCtx.roundRect(
         frameX,
         frameY,
-        frameWidth,
+        item.width,
         frameHeight,
         frameHeight / 2,
       );
       factsCtx.fill();
       factsCtx.restore();
-      for (let i = 0; i < contexts.length; i++) {
-        const ctx = factsCtx;
-        ctx.font = font;
-        ctx.textAlign = "left";
-        ctx.fillStyle = "rgba(255, 255, 255, 0.80)";
-        let x = start;
-        if (hasIcon) {
-          if (icons[block.icon] && icons[block.icon].complete) {
-            ctx.save();
-            ctx.globalAlpha = 0.6;
-            ctx.drawImage(
-              icons[block.icon],
-              x,
-              y + (lineHeight - iconSize) / 2,
-              iconSize,
-              iconSize,
-            );
-            ctx.restore();
-          }
-          x += iconSize + iconGap;
-        }
-        group.forEach((part, j) => {
-          ctx.fillText(part, x, y + lineHeight / 2);
-          x += lengths[j];
-          if (j < group.length - 1) {
-            const ctx = contexts[i];
-            ctx.save();
-            const dotX = x + separatorWidth / 2,
-              dotY = y + lineHeight / 2;
-            const glow = ctx.createRadialGradient(
-              dotX,
-              dotY,
-              0,
-              dotX,
-              dotY,
-              12,
-            );
-            glow.addColorStop(0, "#fffaff");
-            glow.addColorStop(0.15, "#e5cfff");
-            glow.addColorStop(0.4, "#b58aff88");
-            glow.addColorStop(1, "#b58aff00");
-            ctx.fillStyle = glow;
-            ctx.fillRect(dotX - 12, dotY - 12, 24, 24);
-            ctx.fillStyle = "#fffaff";
-            ctx.beginPath();
-            ctx.arc(dotX, dotY, 2.5, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.restore();
-            x += separatorWidth;
-          }
-        });
-        ctx.textAlign = "center";
+      factsCtx.font = factFont;
+      factsCtx.textAlign = "left";
+      factsCtx.fillStyle = "rgba(255, 255, 255, 0.80)";
+      let x = frameX + factPaddingX;
+      if (icons[block.icon] && icons[block.icon].complete) {
+        factsCtx.save();
+        factsCtx.globalAlpha = 0.6;
+        factsCtx.drawImage(
+          icons[block.icon],
+          x,
+          y + (factLineHeight - iconSize) / 2 - desktopScale,
+          iconSize,
+          iconSize,
+        );
+        factsCtx.restore();
       }
-      rows.push({ text: group.join(" · "), top: y, bottom: y + lineHeight });
-      if (pairIndex === 1 || mobile) y += lineHeight + (groupIndex < groups.length - 1 ? 8 : 0);
-    });
-    if ((pairIndex === 1 || mobile) && rowIndex < blocks.length - 1) y += 12;
-  }
+      x += iconSize + iconGap;
+      factsCtx.fillText(block.text, x, y + factLineHeight / 2);
+      factsCtx.textAlign = "center";
+      rows.push({ text: block.text, top: y, bottom: y + factLineHeight });
+      frameX += item.width + factGap;
+    }
+    y += factLineHeight + factPaddingY * 2;
+    if (rowIndex < factRows.length - 1) y += factGap;
+  });
   c.drawImage(factsRaster, 0, 0, w, h);
   return { raster, bottom: y };
 }

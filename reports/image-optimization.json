@@ -1,0 +1,1401 @@
+{
+  "generatedAt": "2026-09-23T00:21:11.815Z",
+  "settings": {
+    "webp": {
+      "quality": 82,
+      "alphaQuality": 100,
+      "smartSubsample": true,
+      "effort": 5
+    },
+    "avif": {
+      "quality": 60,
+      "effort": 5,
+      "chromaSubsampling": "4:4:4"
+    },
+    "avifMinimumSaving": 0.15,
+    "metadata": "stripped by Sharp (withMetadata is intentionally not used)",
+    "sequence": {
+      "action": "rebuilt from PNG originals",
+      "webp": {
+        "quality": 92,
+        "alphaQuality": 100,
+        "smartSubsample": true,
+        "effort": 5
+      }
+    }
+  },
+  "totals": {
+    "beforeBytes": 39602084,
+    "beforeFiles": 39,
+    "sourceBytes": 39420256,
+    "passthroughBytes": 181828,
+    "usedBeforeBytes": 38247456,
+    "afterBytes": 5057789,
+    "afterFiles": 48,
+    "savingPercent": 87.2,
+    "usedSavingPercent": 86.8
+  },
+  "inventory": [
+    {
+      "path": "assets-source/main-mts-particle.png",
+      "bytes": 36307,
+      "width": 2573,
+      "height": 996,
+      "hasAlpha": true,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/particle-human-reference.png",
+      "bytes": 1891170,
+      "width": 1906,
+      "height": 1842,
+      "hasAlpha": true,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/big-data.png",
+      "bytes": 1447782,
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/campaign.png",
+      "bytes": 1485230,
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/first-frame.png",
+      "bytes": 301000,
+      "width": 500,
+      "height": 500,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/light-on.png",
+      "bytes": 1318321,
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/new-light.png",
+      "bytes": 1248357,
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/programme/public-talk.png",
+      "bytes": 1325578,
+      "width": 1024,
+      "height": 1024,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/01.png",
+      "bytes": 1005485,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": true,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/02.png",
+      "bytes": 1007328,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/03.png",
+      "bytes": 1004804,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/04.png",
+      "bytes": 995457,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/05.png",
+      "bytes": 995770,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/06.png",
+      "bytes": 992382,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/07.png",
+      "bytes": 989647,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/08.png",
+      "bytes": 1008792,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/09.png",
+      "bytes": 992113,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/10.png",
+      "bytes": 1005280,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/11.png",
+      "bytes": 964821,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/12.png",
+      "bytes": 968608,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/13.png",
+      "bytes": 990727,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/14.png",
+      "bytes": 1001398,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/15.png",
+      "bytes": 984926,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/16.png",
+      "bytes": 998454,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/17.png",
+      "bytes": 989998,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/18.png",
+      "bytes": 1015432,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/19.png",
+      "bytes": 997568,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/20.png",
+      "bytes": 989032,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/21.png",
+      "bytes": 1005148,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/22.png",
+      "bytes": 977339,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/23.png",
+      "bytes": 1007770,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/24.png",
+      "bytes": 987551,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/25.png",
+      "bytes": 994647,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/26.png",
+      "bytes": 988679,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/27.png",
+      "bytes": 988420,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/28.png",
+      "bytes": 988364,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/29.png",
+      "bytes": 973476,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/receiver-frames/30.png",
+      "bytes": 992427,
+      "width": 2012,
+      "height": 1132,
+      "hasAlpha": false,
+      "format": "png"
+    },
+    {
+      "path": "assets-source/registration/light-ribbon.png",
+      "bytes": 564668,
+      "width": 1710,
+      "height": 794,
+      "hasAlpha": false,
+      "format": "png"
+    }
+  ],
+  "images": [
+    {
+      "source": {
+        "path": "assets-source/particle-human-reference.png",
+        "bytes": 1891170,
+        "width": 1906,
+        "height": 1842,
+        "hasAlpha": true,
+        "format": "png"
+      },
+      "usage": [
+        "src/animation/particles.js (canvas sampling source)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/particle-human-reference.webp",
+          "bytes": 68812,
+          "width": 800,
+          "height": 773,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": null,
+      "decision": "WebP retained: this image is decoded into a runtime canvas; the AVIF candidate was smaller but materially slower to decode."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/first-frame.png",
+        "bytes": 301000,
+        "width": 500,
+        "height": 500,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (responsive <img srcset>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/first-frame-96.webp",
+          "bytes": 1522,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/first-frame.webp",
+          "bytes": 3808,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": 0.09774859287054405,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/new-light.png",
+        "bytes": 1248357,
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (responsive <img srcset>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/new-light-96.webp",
+          "bytes": 1442,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/new-light.webp",
+          "bytes": 3718,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": 0.0753875968992248,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/public-talk.png",
+        "bytes": 1325578,
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (responsive <img srcset>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/public-talk-96.webp",
+          "bytes": 1952,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/public-talk.webp",
+          "bytes": 4838,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": 0.14108983799705455,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/big-data.png",
+        "bytes": 1447782,
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (responsive <img srcset>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/big-data-96.webp",
+          "bytes": 2304,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/big-data.webp",
+          "bytes": 5948,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": 0.12396994667959282,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/campaign.png",
+        "bytes": 1485230,
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/components/Programme.jsx (responsive <img srcset>)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/programme/campaign-96.webp",
+          "bytes": 1140,
+          "width": 96,
+          "height": 96,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/programme/campaign.webp",
+          "bytes": 2816,
+          "width": 192,
+          "height": 192,
+          "hasAlpha": false,
+          "format": "webp"
+        }
+      ],
+      "resized": true,
+      "avif": false,
+      "avifSaving": 0.11324570273003032,
+      "decision": "AVIF omitted: aggregate saving was below 15%."
+    },
+    {
+      "source": {
+        "path": "assets-source/registration/light-ribbon.png",
+        "bytes": 564668,
+        "width": 1710,
+        "height": 794,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "usage": [
+        "src/styles/site.css (.registration__ribbon)"
+      ],
+      "outputs": [
+        {
+          "path": "public/assets/registration/light-ribbon-700.webp",
+          "bytes": 3750,
+          "width": 700,
+          "height": 325,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/registration/light-ribbon-700.avif",
+          "bytes": 2305,
+          "width": 700,
+          "height": 325,
+          "hasAlpha": false,
+          "format": "heif"
+        },
+        {
+          "path": "public/assets/registration/light-ribbon.webp",
+          "bytes": 9130,
+          "width": 1400,
+          "height": 650,
+          "hasAlpha": false,
+          "format": "webp"
+        },
+        {
+          "path": "public/assets/registration/light-ribbon.avif",
+          "bytes": 4612,
+          "width": 1400,
+          "height": 650,
+          "hasAlpha": false,
+          "format": "heif"
+        }
+      ],
+      "resized": true,
+      "avif": true,
+      "avifSaving": 0.4629658385093167,
+      "decision": "AVIF retained: aggregate variants are 46.3% smaller than WebP."
+    }
+  ],
+  "sequence": {
+    "frames": 30,
+    "sourceBytes": 29801843,
+    "outputBytes": 4757864,
+    "width": 1440,
+    "height": 810,
+    "sourceWidth": 2012,
+    "sourceHeight": 1132,
+    "decodeMs": 508.9,
+    "averageDecodeMs": 17,
+    "psnr": 43.02,
+    "frameMaeRange": [
+      1.175,
+      1.222
+    ],
+    "outputs": [
+      {
+        "path": "public/assets/receiver-frames/01.webp",
+        "bytes": 157494,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": true,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/02.webp",
+        "bytes": 159070,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/03.webp",
+        "bytes": 159106,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/04.webp",
+        "bytes": 154620,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/05.webp",
+        "bytes": 155324,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/06.webp",
+        "bytes": 159448,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/07.webp",
+        "bytes": 160022,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/08.webp",
+        "bytes": 155522,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/09.webp",
+        "bytes": 159846,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/10.webp",
+        "bytes": 159862,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/11.webp",
+        "bytes": 155416,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/12.webp",
+        "bytes": 155898,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/13.webp",
+        "bytes": 154594,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/14.webp",
+        "bytes": 159152,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/15.webp",
+        "bytes": 158970,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/16.webp",
+        "bytes": 155554,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/17.webp",
+        "bytes": 160172,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/18.webp",
+        "bytes": 159656,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/19.webp",
+        "bytes": 159972,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/20.webp",
+        "bytes": 159838,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/21.webp",
+        "bytes": 160172,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/22.webp",
+        "bytes": 159330,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/23.webp",
+        "bytes": 159650,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/24.webp",
+        "bytes": 159820,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/25.webp",
+        "bytes": 159664,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/26.webp",
+        "bytes": 160018,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/27.webp",
+        "bytes": 160084,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/28.webp",
+        "bytes": 160574,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/29.webp",
+        "bytes": 159208,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      },
+      {
+        "path": "public/assets/receiver-frames/30.webp",
+        "bytes": 159808,
+        "width": 1440,
+        "height": 810,
+        "hasAlpha": false,
+        "format": "webp"
+      }
+    ],
+    "usage": [
+      "src/animation/receiver.js (30-frame canvas sequence)",
+      "scripts/build.mjs (frame 01 preload)"
+    ],
+    "decision": "WebP q92 sequence generated consistently from the PNG originals; normal pipeline runs validate it without another lossy encode.",
+    "rebuilt": true
+  },
+  "unused": [
+    {
+      "source": {
+        "path": "assets-source/main-mts-particle.png",
+        "bytes": 36307,
+        "width": 2573,
+        "height": 996,
+        "hasAlpha": true,
+        "format": "png"
+      },
+      "decision": "Unused: no production reference; original retained in assets-source."
+    },
+    {
+      "source": {
+        "path": "assets-source/programme/light-on.png",
+        "bytes": 1318321,
+        "width": 1024,
+        "height": 1024,
+        "hasAlpha": false,
+        "format": "png"
+      },
+      "decision": "Unused: the programme uses light-on-icon.svg; original PNG retained and SVG left untouched."
+    }
+  ],
+  "passthrough": [
+    {
+      "path": "inline-9537aceeaf6a.webp",
+      "usage": "src/components/StageOverlay.jsx (loader)",
+      "output": {
+        "path": "public/assets/inline-9537aceeaf6a.webp",
+        "bytes": 24598,
+        "width": 516,
+        "height": 488,
+        "hasAlpha": true,
+        "format": "webp"
+      }
+    },
+    {
+      "path": "projector-realistic.webp",
+      "usage": "src/components/Hero.jsx and src/styles/site.css",
+      "output": {
+        "path": "public/assets/projector-realistic.webp",
+        "bytes": 102878,
+        "width": 1777,
+        "height": 885,
+        "hasAlpha": true,
+        "format": "webp"
+      }
+    },
+    {
+      "path": "projector-downward.webp",
+      "usage": "src/components/StageOverlay.jsx",
+      "output": {
+        "path": "public/assets/projector-downward.webp",
+        "bytes": 54352,
+        "width": 1200,
+        "height": 599,
+        "hasAlpha": true,
+        "format": "webp"
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "path": "public/assets/inline-9537aceeaf6a.webp",
+      "bytes": 24598,
+      "width": 516,
+      "height": 488,
+      "hasAlpha": true,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/particle-human-reference.webp",
+      "bytes": 68812,
+      "width": 800,
+      "height": 773,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/big-data-96.webp",
+      "bytes": 2304,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/big-data.webp",
+      "bytes": 5948,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/campaign-96.webp",
+      "bytes": 1140,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/campaign.webp",
+      "bytes": 2816,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/first-frame-96.webp",
+      "bytes": 1522,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/first-frame.webp",
+      "bytes": 3808,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/new-light-96.webp",
+      "bytes": 1442,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/new-light.webp",
+      "bytes": 3718,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/public-talk-96.webp",
+      "bytes": 1952,
+      "width": 96,
+      "height": 96,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/programme/public-talk.webp",
+      "bytes": 4838,
+      "width": 192,
+      "height": 192,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/projector-downward.webp",
+      "bytes": 54352,
+      "width": 1200,
+      "height": 599,
+      "hasAlpha": true,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/projector-realistic.webp",
+      "bytes": 102878,
+      "width": 1777,
+      "height": 885,
+      "hasAlpha": true,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/01.webp",
+      "bytes": 157494,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": true,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/02.webp",
+      "bytes": 159070,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/03.webp",
+      "bytes": 159106,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/04.webp",
+      "bytes": 154620,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/05.webp",
+      "bytes": 155324,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/06.webp",
+      "bytes": 159448,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/07.webp",
+      "bytes": 160022,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/08.webp",
+      "bytes": 155522,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/09.webp",
+      "bytes": 159846,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/10.webp",
+      "bytes": 159862,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/11.webp",
+      "bytes": 155416,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/12.webp",
+      "bytes": 155898,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/13.webp",
+      "bytes": 154594,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/14.webp",
+      "bytes": 159152,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/15.webp",
+      "bytes": 158970,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/16.webp",
+      "bytes": 155554,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/17.webp",
+      "bytes": 160172,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/18.webp",
+      "bytes": 159656,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/19.webp",
+      "bytes": 159972,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/20.webp",
+      "bytes": 159838,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/21.webp",
+      "bytes": 160172,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/22.webp",
+      "bytes": 159330,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/23.webp",
+      "bytes": 159650,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/24.webp",
+      "bytes": 159820,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/25.webp",
+      "bytes": 159664,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/26.webp",
+      "bytes": 160018,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/27.webp",
+      "bytes": 160084,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/28.webp",
+      "bytes": 160574,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/29.webp",
+      "bytes": 159208,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/30.webp",
+      "bytes": 159808,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/registration/light-ribbon-700.avif",
+      "bytes": 2305,
+      "width": 700,
+      "height": 325,
+      "hasAlpha": false,
+      "format": "heif"
+    },
+    {
+      "path": "public/assets/registration/light-ribbon-700.webp",
+      "bytes": 3750,
+      "width": 700,
+      "height": 325,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/registration/light-ribbon.avif",
+      "bytes": 4612,
+      "width": 1400,
+      "height": 650,
+      "hasAlpha": false,
+      "format": "heif"
+    },
+    {
+      "path": "public/assets/registration/light-ribbon.webp",
+      "bytes": 9130,
+      "width": 1400,
+      "height": 650,
+      "hasAlpha": false,
+      "format": "webp"
+    }
+  ],
+  "heaviest": [
+    {
+      "path": "public/assets/receiver-frames/28.webp",
+      "bytes": 160574,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/17.webp",
+      "bytes": 160172,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/21.webp",
+      "bytes": 160172,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/27.webp",
+      "bytes": 160084,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/07.webp",
+      "bytes": 160022,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/26.webp",
+      "bytes": 160018,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/19.webp",
+      "bytes": 159972,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/10.webp",
+      "bytes": 159862,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/09.webp",
+      "bytes": 159846,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    },
+    {
+      "path": "public/assets/receiver-frames/20.webp",
+      "bytes": 159838,
+      "width": 1440,
+      "height": 810,
+      "hasAlpha": false,
+      "format": "webp"
+    }
+  ]
+}

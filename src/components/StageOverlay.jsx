@@ -3,16 +3,36 @@ import { createPortal } from "react-dom";
 export function StageOverlay() {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigateTo = (selector) => {
-    document.querySelector(selector)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const navigate = () => {
+      const target = document.querySelector(selector);
+      if (!target) return false;
+      const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({
+        behavior: reduced ? "instant" : "smooth",
+        block: "start",
+      });
+      if (selector === "#registration")
+        document
+          .querySelector("#registration-title")
+          ?.focus({ preventScroll: true });
+      return true;
+    };
+    if (!navigate()) {
+      window.addEventListener("lower-content-ready", navigate, { once: true });
+      window.dispatchEvent(new window.Event("lower-content-request"));
+    }
     setMenuOpen(false);
   };
   return createPortal(
     <>
+      <i id="cursor-dot" aria-hidden="true" />
       <nav className="scene-nav" aria-label="Навигация">
         <img
           src="assets/logos/main-mts.svg"
           className="scene-logo"
           alt="МТС ADS"
+          fetchPriority="high"
+          decoding="async"
         />
         <button
           className="menu-trigger"
@@ -26,6 +46,8 @@ export function StageOverlay() {
             width="28"
             height="28"
             alt=""
+            fetchPriority="high"
+            decoding="async"
           />
         </button>
       </nav>
@@ -42,7 +64,7 @@ export function StageOverlay() {
               <span><img src="assets/fact-address.svg" alt="" />Арбатская площадь, 14, строение 1</span>
               <span><img src="assets/fact-cinema.svg" alt="" />Кинотеатр «Художественный»</span>
               <span><img src="assets/fact-online.svg" alt="" />Только офлайн</span>
-              <span><img src="assets/fact-time.svg" alt="" />19 ноября, 17:00</span>
+              <span><img src="assets/fact-time.svg" alt="" />19 ноября 17:00</span>
             </div>
           </div>
         </div>
@@ -64,6 +86,7 @@ export function StageOverlay() {
         type="button"
         aria-hidden="true"
         inert={true}
+        onClick={() => navigateTo("#registration")}
       >
         {"Принять участие"}
       </button>
@@ -76,6 +99,7 @@ export function StageOverlay() {
             height="488"
             alt=""
             fetchPriority="high"
+            decoding="async"
           />
           <span className="lens-loader__lines"></span>
           <span className="lens-loader__lines lens-loader__lines--inner"></span>

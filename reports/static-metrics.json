@@ -1,20 +1,36 @@
 {
   "before": {
-    "htmlBytes": 4199467,
-    "scrollListeners": 4,
-    "independentRafDrivers": 5,
-    "blockingAnimationFrames": 20,
-    "programmeUnusedStyleUpdates": 120,
-    "frameCacheRgbaBytes": 182206720
+    "initialJsBytes": 299019,
+    "initialJsGzipBytes": 94023,
+    "cssBytes": 49967,
+    "cssGzipBytes": 10828,
+    "serverCriticalTextBytes": 349943,
+    "declaredCriticalBytes": 2281023,
+    "publicAssetBytes": 40504171,
+    "sequenceBytes": 29801843,
+    "maxSequenceRgbaBytes": 273310080,
+    "blockingAnimationFrames": 1,
+    "particleRafDrivers": 2
   },
   "after": {
-    "htmlBytes": 882,
-    "jsBytes": 279999,
-    "cssBytes": 42038,
-    "scrollListeners": 1,
-    "independentRafDrivers": 1,
+    "initialJsBytes": 258861,
+    "initialJsGzipBytes": 82132,
+    "asyncJsBytes": 46501,
+    "totalJsBytes": 305362,
+    "cssBytes": 49990,
+    "cssGzipBytes": 10720,
+    "serverCriticalTextBrotliBytes": 88511,
+    "declaredCriticalBytes": 843289,
+    "publicAssetBytes": 5396460,
+    "sequenceBytes": 4757864,
+    "maxSequenceRgbaBytes": 139968000,
+    "lowMemorySequenceRgbaBytes": 86241600,
     "blockingAnimationFrames": 1,
-    "programmeUnusedStyleUpdates": 0,
-    "frameCacheRgbaBytesAt1130CssPxAndDpr1": 57494400
+    "particleRafDrivers": 0
+  },
+  "notes": {
+    "criticalBytes": "HTML + CSS + initial JS + explicitly critical hero fonts/images; excludes protocol compression and cache.",
+    "rgbaCache": "Theoretical upper bound from width × height × 4 × 30; browser overhead is not included.",
+    "webVitals": "Not measured; no synthetic Lighthouse values are claimed."
   }
 }

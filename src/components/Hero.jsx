@@ -7,7 +7,6 @@ export function Hero() {
       aria-label="Интерактивная световая сцена. Прокручивайте страницу или используйте ползунок."
     >
       <div className="scene" id="scene">
-        <i id="cursor-dot" aria-hidden="true"></i>
         <canvas id="invitation-particles" aria-hidden="true"></canvas>
         <div className="projector" id="projector" aria-hidden="true">
           <img
@@ -60,19 +59,19 @@ export function Hero() {
           </p>
           <div className="photo-roles" id="photo-roles" aria-hidden="true">
             <span className="photo-roles__item">
-              <img className="photo-roles__icon" src="assets/roles-marketing.svg" alt="" />
+              <img className="photo-roles__icon" src="assets/roles-marketing.svg" alt="" loading="lazy" decoding="async" />
               <span>{"Директора по маркетингу"}</span>
             </span>
             <span className="photo-roles__item">
-              <img className="photo-roles__icon" src="assets/roles-agencies.svg" alt="" />
+              <img className="photo-roles__icon" src="assets/roles-agencies.svg" alt="" loading="lazy" decoding="async" />
               <span>{"Топы рекламных агенств"}</span>
             </span>
             <span className="photo-roles__item">
-              <img className="photo-roles__icon" src="assets/roles-c-level.svg" alt="" />
+              <img className="photo-roles__icon" src="assets/roles-c-level.svg" alt="" loading="lazy" decoding="async" />
               <span>{"C-level и senior-стратеги"}</span>
             </span>
             <span className="photo-roles__item">
-              <img className="photo-roles__icon" src="assets/roles-digital.svg" alt="" />
+              <img className="photo-roles__icon" src="assets/roles-digital.svg" alt="" loading="lazy" decoding="async" />
               <span>{"Digital Directors"}</span>
             </span>
           </div>

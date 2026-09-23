@@ -1,12 +1,12 @@
 {
   "description": "Native 2D canvas, programme beam at 1440×900, .8 resolution; 15 warmup + 80 frames with identical full pixel readback. Not browser FPS or CWV.",
   "before": {
-    "medianMs": 65.10599999999977,
-    "p95Ms": 77.64012500000013
+    "medianMs": 64.52900000000045,
+    "p95Ms": 66.02537499999994
   },
   "after": {
-    "medianMs": 63.163791999999376,
-    "p95Ms": 67.18720800000119
+    "medianMs": 63.09470800000054,
+    "p95Ms": 64.60179199999948
   },
   "pixelComparison": {
     "premultipliedRgbRmse": 0.1262920852600259,

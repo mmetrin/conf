@@ -76,10 +76,11 @@ export function startAbstractLights(scope) {
   const dataCanvas = document.querySelector("#abstract-data");
   const dataCtx = dataCanvas.getContext("2d");
   const dataTokens = ["0", "1", "·", "+", "▯"];
-  const dataPoints = Array.from({ length: 72 }, (_, i) => ({
+  const dataPoints = Array.from({ length: 120 }, (_, i) => ({
     phase: ((i * 29) % 157) / 156,
     lane: ((i * 37) % 101) / 100,
     side: i % 2 ? -1 : 1,
+    edge: i >= 72,
     speed: 0.008 + (i % 4) * 0.002,
     size: 10 + (i % 5) * 2,
     token: dataTokens[i % dataTokens.length],
@@ -97,7 +98,13 @@ export function startAbstractLights(scope) {
     dataCtx.textBaseline = "middle";
     for (const point of dataPoints) {
       const t = (point.phase + time * point.speed) % 1;
-      const x = width * (point.side < 0 ? -0.16 + 0.42 * t : 1.16 - 0.42 * t);
+      const x = width * (point.edge
+        ? point.side < 0
+          ? -0.3 + 0.36 * t
+          : 1.3 - 0.36 * t
+        : point.side < 0
+          ? -0.16 + 0.42 * t
+          : 1.16 - 0.42 * t);
       const curve = 0.5 + 0.36 * Math.sin(t * 4.1 + point.lane * 7) + (point.lane - 0.5) * 0.3;
       const y = height * curve;
       const fade = Math.pow(Math.sin(t * Math.PI), 2);
@@ -189,8 +196,8 @@ export function startAbstractLights(scope) {
     show(value) {
       if (value === lastOpacity) return;
       lastOpacity = value;
-      canvas.style.opacity = String(value);
-      dataCanvas.style.opacity = String(value);
+      canvas.style.opacity = String(value * 0.55);
+      dataCanvas.style.opacity = String(value * 0.48);
       visible = value > 0.001;
       if (!visible) {
         cancelAnimationFrame(raf);

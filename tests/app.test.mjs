@@ -13,6 +13,19 @@ const built = await build({
   platform: "node",
   jsx: "automatic",
   external: ["react", "react-dom", "react-dom/client"],
+  define: {
+    __SENDSAY_PUBLIC_CONFIG__: JSON.stringify({
+      account: "test-account",
+      formId: "test-form",
+      useTestForm: false,
+      fields: {
+        name: "field_name",
+        phone: "field_phone",
+        company: "field_company",
+        role: "field_role",
+      },
+    }),
+  },
 });
 await fs.mkdir("work/test-build", { recursive: true });
 await fs.writeFile("work/test-build/app.mjs", built.outputFiles[0].contents);
@@ -119,10 +132,11 @@ function environment(width, height, reduced = false) {
       h = height,
       x = 0,
       y = 0;
-    const programmeTop = height * 4.024 - scrollY;
+    const journeyHeight = height * 2.8,
+      programmeTop = journeyHeight - scrollY;
     if (node.id === "journey") {
       y = -scrollY;
-      h = height * 4.024;
+      h = journeyHeight;
     } else if (node.id === "programme") {
       y = programmeTop;
       h = 2800;
@@ -252,17 +266,52 @@ for (const [width, height, reduced] of [
   [375, 812, true],
 ])
   test(`React scene lifecycle ${width}×${height}, reduced=${reduced}`, async () => {
-    const originalFetch = globalThis.fetch, originalFormData = globalThis.FormData;
-    globalThis.location = { protocol: 'http:', hostname: '127.0.0.1' };
-    globalThis.FormData = class { constructor(form) { this.items = [...form.querySelectorAll('input')].map(el => [el.name, el.value || '']); } [Symbol.iterator]() { return this.items[Symbol.iterator](); } };
-    let calls = 0;
-    globalThis.fetch = async () => { calls++; return { ok: calls > 1, status: 500, json: async () => ({ok: true}) }; };
+    const originalFetch = globalThis.fetch,
+      originalFormData = globalThis.FormData;
+    globalThis.location = { protocol: "http:", hostname: "127.0.0.1" };
+    globalThis.FormData = class {
+      constructor(form) {
+        this.items = [...form.querySelectorAll("input")].map((el) => [
+          el.name,
+          el.value || "",
+        ]);
+      }
+      [Symbol.iterator]() {
+        return this.items[Symbol.iterator]();
+      }
+    };
+    let calls = 0,
+      sendsayCalls = 0;
+    globalThis.fetch = async (url) => {
+      calls++;
+      if (String(url).startsWith("https://sendsay.ru/form/")) {
+        sendsayCalls++;
+        return sendsayCalls === 1
+          ? {
+              ok: true,
+              status: 200,
+              json: async () => ({ errors: [{ id: "temporary_form_error" }] }),
+            }
+          : { ok: true, status: 200, json: async () => ({ obj: {} }) };
+      }
+      return { ok: true, status: 200, json: async () => ({ ok: true }) };
+    };
     const env = environment(width, height, reduced);
     const root = createRoot(document.getElementById("root"));
     try {
       await act(async () => {
         root.render(React.createElement(App));
         await Promise.resolve();
+      });
+      await env.step(3);
+      assert.equal(
+        document.querySelector("#programme"),
+        null,
+        "below-fold DOM is not part of the critical render",
+      );
+      await act(async () => {
+        window.dispatchEvent(new window.Event("lower-content-request"));
+        await new Promise((resolve) => setTimeout(resolve, 0));
       });
       await env.step(3);
       // Loader timing is wall-clock based; bypass only the wait, not the scene's state machine.
@@ -283,6 +332,21 @@ for (const [width, height, reduced] of [
       assert.equal(
         document.querySelectorAll(".programme__focus-content").length,
         11,
+      );
+      const stickyDistance = height * 1.8;
+      window.scrollTo({ top: stickyDistance });
+      await env.step(4);
+      assert.equal(
+        document.querySelector("#photo-dimmer").style.opacity,
+        "1.000",
+        "the hero timeline finishes exactly as the sticky section releases",
+      );
+      window.scrollTo({ top: 0 });
+      await env.step(4);
+      assert.equal(
+        document.querySelector("#photo-dimmer").style.opacity,
+        "0.000",
+        "the scroll timeline is reversible",
       );
       for (const top of [
         height,
@@ -312,6 +376,26 @@ for (const [width, height, reduced] of [
       Object.defineProperty(form, "elements", {
         value: { namedItem: (name) => form.querySelector(`[name="${name}"]`) },
       });
+      window.dispatchEvent(
+        new window.CustomEvent("scene-effects-active", {
+          detail: { active: false },
+        }),
+      );
+      const pointerMove = new window.Event("pointermove", { bubbles: true });
+      pointerMove.pointerType = "mouse";
+      pointerMove.clientX = 420;
+      pointerMove.clientY = 640;
+      form.elements.namedItem("name").dispatchEvent(pointerMove);
+      await env.step(1);
+      const cursorDot = document.querySelector("#cursor-dot");
+      assert.equal(cursorDot.parentElement, document.body);
+      assert.equal(
+        cursorDot.style.transform,
+        "translate3d(420px,640px,0) translate(-50%,-50%)",
+        "custom cursor keeps moving after scene effects are suspended",
+      );
+      assert(cursorDot.classList.contains("is-text"));
+      assert(document.body.classList.contains("cursor-active"));
       await act(async () => {
         form.dispatchEvent(
           new window.Event("submit", { bubbles: true, cancelable: true }),
@@ -333,21 +417,38 @@ for (const [width, height, reduced] of [
           new window.Event("submit", { bubbles: true, cancelable: true }),
         );
       });
-      assert.equal(calls, 1);
-      assert(document.querySelector('#registration-form'));
-      assert(document.querySelector('.registration__status').textContent);
-      assert.equal(form.elements.namedItem('email').value, values.email);
+      assert.equal(sendsayCalls, 1);
+      assert(document.querySelector("#registration-form"));
+      assert(document.querySelector(".registration__status").textContent);
+      assert.equal(form.elements.namedItem("email").value, values.email);
       await act(async () => {
-        form.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
-        form.dispatchEvent(new window.Event('submit', { bubbles: true, cancelable: true }));
+        form.dispatchEvent(
+          new window.Event("submit", { bubbles: true, cancelable: true }),
+        );
+        form.dispatchEvent(
+          new window.Event("submit", { bubbles: true, cancelable: true }),
+        );
       });
-      assert.equal(calls, 2, 'double submit sends only one request');
+      assert.equal(
+        sendsayCalls,
+        2,
+        "double submit sends only one Sendsay request",
+      );
+      assert.equal(
+        calls,
+        3,
+        "organizer notification is sent after Sendsay success",
+      );
       assert.equal(document.querySelector("#registration-form"), null);
       const success = document.querySelector(".registration__success");
       assert.equal(success.getAttribute("role"), "status");
       assert.match(success.textContent, /Вы зарегистрированы/);
       assert.match(success.textContent, /19 ноября/);
-      assert.equal(success.querySelectorAll("img").length, 3);
+      assert.equal(success.querySelectorAll("img").length, 5);
+      assert.equal(
+        success.querySelectorAll(".registration__success-fact").length,
+        4,
+      );
       Object.defineProperty(document, "hidden", {
         value: true,
         writable: true,
