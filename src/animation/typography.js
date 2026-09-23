@@ -15,18 +15,14 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     desktopScale = getDesktopScale(w),
     mobile = w < 600,
     headingWidth = mobile
-      ? Math.min(
-          w - 16,
-          270 +
-            Math.max(0, Math.min(54, w - 360)) * (128 / 54),
-        )
-      : Math.min(900 * heroScale, w - 48 * heroScale),
+      ? w - 32
+      : Math.min(920 * heroScale, w - 48 * heroScale),
     subtitleWidth = mobile
       ? Math.min(328, w - 32)
       : Math.min(870 * heroScale, w - 48 * heroScale);
   const headingSize = mobile ? 21.5 : 44 * heroScale;
-  const subtitleSize = mobile ? 17 : 23 * heroScale;
-  const factSize = mobile ? 14 : Math.max(10, 15 * desktopScale),
+  const subtitleSize = mobile ? 18 : 24 * heroScale;
+  const factSize = mobile ? 13 : Math.max(10, 15 * desktopScale),
     factLineHeight = mobile ? 20 : Math.max(14, 24 * desktopScale),
     iconSize = mobile ? 18 : 18 * desktopScale,
     iconGap = mobile ? 8 : 8 * desktopScale,
@@ -34,7 +30,7 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     factPaddingX = mobile ? 13 : 16 * desktopScale,
     factPaddingY = mobile ? 4 : 4 * desktopScale;
   let y = mobile
-    ? Math.max(95, Math.min(109, h * 0.19))
+    ? Math.max(107, Math.min(121, h * 0.19 + 12))
     : h * (192 / 940);
   const rows = [],
     c = contexts[0];
@@ -78,17 +74,21 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
     y += lineHeight;
   }
   const headingFont = `700 ${headingSize}px 'MTS Ultra Extended', Arial`;
-  const headingText = mobile
+  const headingText = (mobile
     ? blocks[0].text.replace(/Ads\b/i, "ADS")
-    : blocks[0].text;
-  for (const line of wrapped(headingText, headingFont, headingWidth))
-    textRow(
-      line,
-      headingFont,
-      mobile ? 29.7 : headingSize * 1.1,
-      true,
-      headingWidth,
-    );
+    : blocks[0].text
+  ).replace(/\s+(?=МТС\s+Ads\b)/i, "\n");
+  headingText.split("\n").forEach((part, partIndex) => {
+    if (partIndex > 0) y += mobile ? 2 : 4;
+    for (const line of wrapped(part, headingFont, headingWidth))
+      textRow(
+        line,
+        headingFont,
+        mobile ? 29.7 : headingSize * 1.1,
+        true,
+        headingWidth,
+      );
+  });
   y += mobile ? 12 : 30 * heroScale;
   const subtitleFont = `400 ${subtitleSize}px 'MTS Wide', Arial`;
   for (const line of wrapped(blocks[1].text, subtitleFont, subtitleWidth))
@@ -99,7 +99,7 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
       true,
       subtitleWidth,
     );
-  y = mobile ? Math.max(y + 16, h - 178) : y + 60 * desktopScale;
+  y = mobile ? Math.max(y + 16, h - 186) : y + 60 * desktopScale;
   const factsRaster = document.createElement("canvas");
   factsRaster.width = raster.width;
   factsRaster.height = raster.height;
@@ -151,8 +151,12 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
         frameX + item.width,
         0,
       );
-      const lightFill = "rgba(28, 26, 32, 0.84)";
-      const darkFill = "rgba(3, 2, 5, 0.90)";
+      const lightFill = mobile
+        ? "rgba(21, 18, 23, 0.76)"
+        : "rgba(28, 26, 32, 0.84)";
+      const darkFill = mobile
+        ? "rgba(21, 18, 23, 0.76)"
+        : "rgba(3, 2, 5, 0.90)";
       pillFill.addColorStop(0, item.side === "left" ? lightFill : darkFill);
       pillFill.addColorStop(1, item.side === "left" ? darkFill : lightFill);
       factsCtx.save();

@@ -39,33 +39,48 @@ export function Programme() {
           >
             <TimeSlot slot={slots[1]} business />
             <ol className="programme__topics">
-              {topics.map((topic) => (
+              {topics.map((topic, index) => (
                 <li
-                  className="programme__item programme__topic"
+                  className={
+                    "programme__item programme__topic" +
+                    (topic.icon ? " programme__topic--without-photo" : "")
+                  }
                   key={topic.image}
                 >
                   <div className="programme__focus-content">
                     {topic.icon ? (
-                      <div className="programme__portrait programme__portrait--icon" aria-hidden="true">
-                        <img src={topic.image} width="44" height="44" alt="" loading="lazy" decoding="async" />
+                      <div
+                        className="programme__portrait programme__portrait--icon"
+                        aria-hidden="true"
+                      >
+                        <img
+                          src={topic.image}
+                          width="44"
+                          height="44"
+                          alt=""
+                          loading={index === 0 ? "eager" : "lazy"}
+                          decoding="async"
+                        />
                       </div>
                     ) : (
-                    <img
-                      className="programme__portrait"
-                      src={topic.image}
-                      srcSet={portraitSrcSet(topic.image)}
-                      sizes={portraitSizes}
-                      alt=""
-                      width="92"
-                      height="92"
-                      loading="lazy"
-                      decoding="async"
-                    />
+                      <img
+                        className="programme__portrait"
+                        src={topic.image}
+                        srcSet={portraitSrcSet(topic.image)}
+                        sizes={portraitSizes}
+                        alt=""
+                        width="92"
+                        height="92"
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                      />
                     )}
                     <div className="programme__topic-copy">
                       <div className="programme__topic-heading">
                         {topic.author && (
-                          <span className="programme__author">{topic.author}</span>
+                          <span className="programme__author">
+                            {topic.author}
+                          </span>
                         )}
                         <h3>{topic.title}</h3>
                       </div>

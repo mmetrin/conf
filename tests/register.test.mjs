@@ -102,7 +102,7 @@ test("valid POST keeps the public response and sends every normalized field", as
   const message = context.requests[0].json;
   assert.deepEqual(message.to, ["mmetrindesign@gmail.com"]);
   assert.equal(message.from, "events@example.test");
-  assert.equal(message.subject, "Новая регистрация на конференцию");
+  assert.equal(message.subject, "Новая регистрация на конференцию");
   assert.match(message.text, /Тест Тестов/);
   for (const field of ["email", "phone", "company", "role"]) {
     assert(message.text.includes(data[field]));
@@ -396,7 +396,7 @@ test("registration service works with a provider-agnostic fake email service", a
   });
 
   assert.equal(messages.length, 1);
-  assert.equal(messages[0].subject, "Новая регистрация на конференцию");
+  assert.equal(messages[0].subject, "Новая регистрация на конференцию");
   assert.equal(messages[0].idempotencyKey, "request-key-123456");
   assert.match(messages[0].text, /Тест Тестов/);
   assert.equal("to" in messages[0], false);

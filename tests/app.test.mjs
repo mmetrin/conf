@@ -30,7 +30,7 @@ const built = await build({
 await fs.mkdir("work/test-build", { recursive: true });
 await fs.writeFile("work/test-build/app.mjs", built.outputFiles[0].contents);
 const { default: App } = await import("../work/test-build/app.mjs");
-function environment(width, height, reduced = false) {
+function environment(width, height, reduced = false, options = {}) {
   const { window, document } = parseHTML(
     '<!doctype html><html><head></head><body><div id="root"></div></body></html>',
   );
@@ -102,7 +102,7 @@ function environment(width, height, reduced = false) {
   };
   const Img = window.HTMLImageElement;
   Img.prototype.decode = function () {
-    return Promise.resolve();
+    return options.decodeImage?.(this) || Promise.resolve();
   };
   Object.defineProperties(Img.prototype, {
     complete: { get: () => true, configurable: true },
@@ -260,6 +260,107 @@ function environment(width, height, reduced = false) {
     },
   };
 }
+
+test("mobile loader waits for the second projector image to decode", async () => {
+  let releaseProjector;
+  const projectorReady = new Promise((resolve) => {
+    releaseProjector = resolve;
+  });
+  const env = environment(375, 812, false, {
+    decodeImage: (image) =>
+      image.classList?.contains("projector-final-render")
+        ? projectorReady
+        : Promise.resolve(),
+  });
+  const root = createRoot(document.getElementById("root"));
+
+  try {
+    await act(async () => {
+      root.render(React.createElement(App));
+      await Promise.resolve();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 550));
+    });
+    await env.step(3);
+    assert(!document.documentElement.classList.contains("content-ready"));
+    assert(!document.documentElement.classList.contains("loader-finished"));
+    assert(document.querySelector("#page-loader"));
+
+    await act(async () => {
+      releaseProjector();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await env.step(5);
+    assert(
+      document.documentElement.classList.contains("content-ready"),
+      JSON.stringify({
+        pendingFrames: env.pending.size,
+        classes: document.documentElement.className,
+        errors: env.errors.map(String),
+      }),
+    );
+  } finally {
+    await act(async () => root.unmount());
+    env.dispose();
+  }
+});
+
+test("later screens prepare while background sequence is still pending", async () => {
+  let releaseFrames;
+  const framesReady = new Promise((resolve) => { releaseFrames = resolve; });
+  const env = environment(1600, 940, false, {
+    decodeImage: (image) => /receiver-frames\/(?!01\.)/.test(image.src)
+      ? framesReady : Promise.resolve(),
+  });
+  const root = createRoot(document.getElementById("root"));
+  let prefetched = false;
+  let completed = false;
+  window.addEventListener("audience-prefetch", () => { prefetched = true; });
+  window.addEventListener("sequence-background-complete", () => { completed = true; });
+  try {
+    await act(async () => {
+      root.render(React.createElement(App));
+      await Promise.resolve();
+    });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 550));
+    });
+    await env.step(100);
+    assert(document.documentElement.classList.contains("loader-finished"));
+    assert.equal(completed, false);
+    assert.equal(prefetched, true);
+    assert(document.querySelector("#programme"));
+    assert.equal(document.querySelector(".programme__portrait").getAttribute("loading"), "eager");
+  } finally {
+    await act(async () => {
+      root.unmount();
+      releaseFrames();
+      await new Promise((resolve) => setTimeout(resolve, 10));
+    });
+    env.dispose();
+  }
+});
+
+test("critical resource failure keeps loader closed and offers recovery", async () => {
+  const env = environment(375, 812);
+  document.fonts.load = () => Promise.reject(new Error("font network failure"));
+  const root = createRoot(document.getElementById("root"));
+  try {
+    await act(async () => {
+      root.render(React.createElement(App));
+      await Promise.resolve();
+    });
+    await env.step(5);
+    assert(!document.documentElement.classList.contains("content-ready"));
+    assert(document.querySelector(".loader-retry"));
+    assert.equal(env.errors.length, 0);
+  } finally {
+    await act(async () => root.unmount());
+    env.dispose();
+  }
+});
+
 for (const [width, height, reduced] of [
   [1600, 940, false],
   [768, 1024, false],
@@ -304,6 +405,47 @@ for (const [width, height, reduced] of [
         await Promise.resolve();
       });
       await env.step(3);
+      if (width < 599) {
+        const trigger = document.querySelector(".menu-trigger");
+        const menu = document.querySelector(".scene-menu");
+        assert(
+          menu,
+          "closed mobile menu remains mounted for its exit animation",
+        );
+        assert.equal(trigger.getAttribute("aria-expanded"), "false");
+        assert.equal(menu.getAttribute("aria-hidden"), "true");
+        assert(
+          trigger.querySelector(
+            '.menu-trigger__close-icon[src="assets/cross.svg"]',
+          ),
+        );
+        assert(
+          menu.querySelector(
+            ".scene-menu__panel > .scene-menu__links + .scene-menu__details",
+          ),
+          "mobile menu centers links before its facts and CTA group",
+        );
+        assert(
+          menu.querySelector(
+            ".scene-menu__details > .scene-menu__facts + .scene-menu__register",
+          ),
+          "facts stay above the registration button",
+        );
+        await act(async () => {
+          trigger.dispatchEvent(new window.Event("click", { bubbles: true }));
+        });
+        assert(trigger.classList.contains("is-open"));
+        assert(menu.classList.contains("is-open"));
+        assert.equal(trigger.getAttribute("aria-expanded"), "true");
+        assert.equal(menu.getAttribute("aria-hidden"), "false");
+        await act(async () => {
+          trigger.dispatchEvent(new window.Event("click", { bubbles: true }));
+        });
+        assert.equal(document.querySelector(".scene-menu"), menu);
+        assert(!trigger.classList.contains("is-open"));
+        assert(!menu.classList.contains("is-open"));
+        assert.equal(menu.getAttribute("aria-hidden"), "true");
+      }
       assert.equal(
         document.querySelector("#programme"),
         null,
@@ -396,6 +538,16 @@ for (const [width, height, reduced] of [
       );
       assert(cursorDot.classList.contains("is-text"));
       assert(document.body.classList.contains("cursor-active"));
+      const pointerOverButton = new window.Event("pointermove", {
+        bubbles: true,
+      });
+      pointerOverButton.pointerType = "mouse";
+      pointerOverButton.clientX = 450;
+      pointerOverButton.clientY = 40;
+      document.querySelector(".menu-trigger").dispatchEvent(pointerOverButton);
+      assert(cursorDot.classList.contains("is-pointer"));
+      assert(!cursorDot.classList.contains("is-text"));
+      assert(document.body.classList.contains("cursor-pointer"));
       await act(async () => {
         form.dispatchEvent(
           new window.Event("submit", { bubbles: true, cancelable: true }),
@@ -443,10 +595,10 @@ for (const [width, height, reduced] of [
       const success = document.querySelector(".registration__success");
       assert.equal(success.getAttribute("role"), "status");
       assert.match(success.textContent, /Вы зарегистрированы/);
-      assert.match(success.textContent, /19 ноября/);
+      assert.match(success.textContent, /19 ноября/);
       assert.equal(success.querySelectorAll("img").length, 5);
       assert.equal(
-        success.querySelectorAll(".registration__success-fact").length,
+        success.querySelectorAll(".site-footer__fact").length,
         4,
       );
       Object.defineProperty(document, "hidden", {

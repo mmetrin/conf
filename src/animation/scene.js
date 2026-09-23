@@ -2,6 +2,7 @@ import { buildFigmaOpeningTypography } from "./typography.js";
 
 import { createReceiverPlayer } from "./receiver.js";
 import { getHeroScale } from "../utils/desktopScale.js";
+import { waitForDecodedImage } from "../utils/imageReady.js";
 
 export function startScene({
   scope,
@@ -65,15 +66,18 @@ export function startScene({
   finalProjector.style.setProperty("--lens-center-x", `${lensCenter.x * 100}%`);
   finalProjector.style.setProperty("--lens-center-y", `${lensCenter.y * 100}%`);
   const imageReady = finalImage
-    ? finalImage.decode().catch(() => {})
-    : Promise.resolve();
-  imageReady.then(() => {
-    if (scope.disposed) return;
-    finalImageReady = true;
-    geometryDirty = true;
-    dirty = true;
-    wake();
-  });
+    ? waitForDecodedImage(finalImage)
+    : Promise.reject(new Error("Final projector image is missing"));
+  imageReady.then(
+    () => {
+      if (scope.disposed) return;
+      finalImageReady = true;
+      geometryDirty = true;
+      dirty = true;
+      wake();
+    },
+    () => {},
+  );
   function lensArrival() {
     return finalImageReady ? ease(clamp((rawScrollChapter - 0.98) / 0.65)) : 0;
   }
@@ -102,7 +106,9 @@ export function startScene({
   const projectorMorphDuration = projectorBlendStart + projectorBlendDuration;
   const contentRevealDuration = 1.1;
   function projectorAssembly() {
-    return clamp((openingElapsed - openingHoldDuration) / projectorMorphDuration);
+    return clamp(
+      (openingElapsed - openingHoldDuration) / projectorMorphDuration,
+    );
   }
   function projectorImageReveal(assembly) {
     const t = clamp(
@@ -143,7 +149,14 @@ export function startScene({
         ? 0.98 * ease(clamp(elapsed / projectorBlendStart))
         : 0.98 +
           (automaticEnd - 0.98) *
-            (1 - Math.pow(1 - clamp((elapsed - projectorBlendStart) / contentRevealDuration), 2));
+            (1 -
+              Math.pow(
+                1 -
+                  clamp(
+                    (elapsed - projectorBlendStart) / contentRevealDuration,
+                  ),
+                2,
+              ));
     if (elapsed >= projectorBlendStart + contentRevealDuration) {
       rawScrollChapter = automaticEnd;
       openingComplete = true;
@@ -186,17 +199,22 @@ export function startScene({
     [850, 480, 605, 420],
     [930, 320, 650, 389],
     [80, 285, 355, 391],
-  ].flatMap((path, i) => [0, 0.5].map((offset) => ({
-    path,
-    phase: (i / 10 + offset) % 1,
-    speed: 0.075 + (i % 3) * 0.01,
-    size: 1.25 + (i % 3) * 0.18,
-    alpha: 0.58,
-  })));
+  ].flatMap((path, i) =>
+    [0, 0.5].map((offset) => ({
+      path,
+      phase: (i / 10 + offset) % 1,
+      speed: 0.075 + (i % 3) * 0.01,
+      size: 1.25 + (i % 3) * 0.18,
+      alpha: 0.58,
+    })),
+  );
   const photoTitle = document.querySelector("#photo-title");
   const photoSubtitle = document.querySelector("#photo-subtitle");
   const photoRoles = document.querySelector("#photo-roles");
-  const particleShapes = [...document.querySelectorAll(".three-particle-shape")];
+  const photoCopy = document.querySelector(".photo-copy");
+  const particleShapes = [
+    ...document.querySelectorAll(".three-particle-shape"),
+  ];
   const photoRoleItems = [...photoRoles.querySelectorAll(".photo-roles__item")];
   let audienceStarted = false,
     audienceElapsed = 0;
@@ -277,7 +295,11 @@ export function startScene({
     object.querySelector(".receiver-picture"),
     scope,
   );
-  pagePreparationTasks.push(receiver.firstReady);
+  pagePreparationTasks.push(
+    receiver.firstReady.then((ready) => {
+      if (!ready) throw new Error("The first receiver frame failed to decode");
+    }),
+  );
   function advanceReceiverFrames(dt) {
     if (
       !openingReady ||
@@ -305,7 +327,8 @@ export function startScene({
     floorCtx.clearRect(0, 0, 1006, 566);
     floorCtx.lineCap = "round";
     for (const signal of floorRunners) {
-      const cycle = (signal.phase + (reduced.matches ? 0 : time * signal.speed)) % 1;
+      const cycle =
+        (signal.phase + (reduced.matches ? 0 : time * signal.speed)) % 1;
       if (cycle >= 0.9) continue;
       const travel = cycle / 0.9,
         [sx, sy, ex, ey] = signal.path;
@@ -461,11 +484,18 @@ export function startScene({
   }
   // The photograph settles into its final size during the opening, independently of scroll.
   function openingPhotoScale() {
+    const responsiveScale = w < 600 ? (h > 750 ? 1.16 : 1.05) : 1;
     return reduced.matches
-      ? 1
-      : 0.96 +
-          0.04 *
-            ease(clamp((openingElapsed - openingHoldDuration - projectorBlendStart) / 1.1));
+      ? responsiveScale
+      : responsiveScale *
+          (0.96 +
+            0.04 *
+              ease(
+                clamp(
+                  (openingElapsed - openingHoldDuration - projectorBlendStart) /
+                    1.1,
+                ),
+              ));
   }
   function apply() {
     const reveal = ease(clamp(p / 0.85)) * beamArrival(),
@@ -510,6 +540,11 @@ export function startScene({
     setStyle(object, "filter", `brightness(${1 - 0.85 * photoFade})`);
     setStyle(photoDimmer, "opacity", photoFade.toFixed(3));
     setStyle(photoTitle, "opacity", photoTitleReveal);
+    setStyle(
+      photoCopy,
+      "--photo-copy-backdrop-opacity",
+      ease(clamp(photoTitleReveal)).toFixed(3),
+    );
     setStyle(
       photoTitle,
       "visibility",
@@ -1024,7 +1059,7 @@ export function startScene({
     fontRevision++;
     resize();
     wake();
-  });
+  }, () => {}); // Critical loading owns the error/retry UI.
   // Sample the real invitation glyphs once, then release their pixels as a controlled
   // field of crisp motes. The canvas exists only during the opening transition.
   const inviteCanvas = document.querySelector("#invitation-particles");
@@ -1037,13 +1072,13 @@ export function startScene({
       [], // The invitation prelude was removed; start with the conference title.
       [
         {
-          text: "Флагманская конференция МТС Ads",
+          text: "Флагманская конференция МТС Ads",
           size: 64,
           gap: 26,
           bold: true,
         },
         {
-          text: "о технологиях будущего рекламной индустрии",
+          text: "о технологиях будущего рекламной индустрии",
           size: 32,
           gap: 24,
           wide: true,
@@ -1070,7 +1105,7 @@ export function startScene({
           fact: true,
         },
         {
-          text: "19 ноября 17:00",
+          text: "19 ноября 17:00",
           size: 22,
           gap: 0,
           icon: "time",
@@ -1126,12 +1161,9 @@ export function startScene({
     pagePreparationTasks.push(
       Promise.all([
         siteFontsReady,
-        factIcons.address.decode().catch(() => {}),
-        factIcons.cinema.decode().catch(() => {}),
-        factIcons.online.decode().catch(() => {}),
-        factIcons.time.decode().catch(() => {}),
+        ...Object.values(factIcons).map(waitForDecodedImage),
         imageReady,
-        projector.querySelector("img").decode().catch(() => {}),
+        ...[...projector.querySelectorAll("img")].map(waitForDecodedImage),
       ]).then(() => {
         if (scope.disposed) return;
         preparationReady = true;
@@ -1302,11 +1334,7 @@ export function startScene({
         "opacity",
         registrationVisibility.toFixed(3),
       );
-      setStyle(
-        conferenceRegister,
-        "transform",
-        "translateX(-50%)",
-      );
+      setStyle(conferenceRegister, "transform", "translateX(-50%)");
       setStyle(
         conferenceRegister,
         "pointerEvents",
@@ -1438,6 +1466,19 @@ export function startScene({
   const cursorCanvas = document.querySelector("#cursor-data");
   const cursorCtx = cursorCanvas.getContext("2d"),
     cursorGlyphs = [];
+  const textCursorSelector =
+      "input:not([type]), input[type='text'], input[type='email'], input[type='tel'], input[type='url'], input[type='search'], input[type='password'], input[type='number'], textarea, [contenteditable='true']",
+    pointerCursorSelector =
+      "a[href], button:not(:disabled), input[type='button']:not(:disabled), input[type='submit']:not(:disabled), input[type='reset']:not(:disabled), input[type='checkbox']:not(:disabled), input[type='radio']:not(:disabled), input[type='range']:not(:disabled), select:not(:disabled), summary, label[for], [role='button'], [role='link'], [data-cursor='pointer']";
+  function cursorModeFor(target) {
+    if (typeof target?.closest !== "function")
+      return { isText: false, isPointer: false };
+    const isText = !!target.closest(textCursorSelector);
+    return {
+      isText,
+      isPointer: !isText && !!target.closest(pointerCursorSelector),
+    };
+  }
   let lastCursorSpawn = 0,
     cursorFrame = 0;
   function sizeCursor() {
@@ -1477,6 +1518,12 @@ export function startScene({
     )
       cursorFrame = requestAnimationFrame(paintCursor);
   }
+  function clearCursorTrail() {
+    cancelAnimationFrame(cursorFrame);
+    cursorFrame = 0;
+    cursorGlyphs.length = 0;
+    cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
+  }
   scope.listen(document, "pointermove", (event) => {
     if (
       event.pointerType === "touch" ||
@@ -1485,6 +1532,10 @@ export function startScene({
       document.hidden
     )
       return;
+    if (cursorModeFor(event.target).isPointer) {
+      clearCursorTrail();
+      return;
+    }
     const now = performance.now();
     if (now - lastCursorSpawn < 35) return;
     lastCursorSpawn = now;
@@ -1506,10 +1557,7 @@ export function startScene({
   });
   scope.listen(reduced, "change", () => {
     if (!reduced.matches) return;
-    cancelAnimationFrame(cursorFrame);
-    cursorFrame = 0;
-    cursorGlyphs.length = 0;
-    cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
+    clearCursorTrail();
   });
   sizeCursor();
   const cursorDot = document.querySelector("#cursor-dot");
@@ -1524,20 +1572,19 @@ export function startScene({
     if (event.pointerType === "touch" || !pageActive || document.hidden) return;
     glintX = event.clientX;
     glintY = event.clientY;
-    cursorDot.classList.toggle(
-      "is-text",
-      typeof event.target?.closest === "function" &&
-        !!event.target.closest("input, textarea, [contenteditable='true']"),
-    );
+    const { isText, isPointer } = cursorModeFor(event.target);
+    cursorDot.classList.toggle("is-text", isText);
+    cursorDot.classList.toggle("is-pointer", isPointer);
     document.body.classList.add("cursor-active");
+    document.body.classList.toggle("cursor-pointer", isPointer);
     if (!glintFrame) glintFrame = requestAnimationFrame(paintGlint);
   });
   function clearGlint() {
     glintX = glintY = -1000;
     cancelAnimationFrame(glintFrame);
     glintFrame = 0;
-    document.body.classList.remove("cursor-active");
-    cursorDot.classList.remove("is-text");
+    document.body.classList.remove("cursor-active", "cursor-pointer");
+    cursorDot.classList.remove("is-text", "is-pointer");
   }
   scope.listen(document.documentElement, "pointerleave", clearGlint);
   scope.listen(window, "blur", clearGlint);
@@ -1564,7 +1611,12 @@ export function startScene({
     updateDecorativeState();
     last = 0;
     ambientDelta = 0;
-    if (!sceneInView || !pageActive || !contentEffectsActive || document.hidden) {
+    if (
+      !sceneInView ||
+      !pageActive ||
+      !contentEffectsActive ||
+      document.hidden
+    ) {
       cancelAnimationFrame(raf);
       raf = 0;
       if (!pageActive || document.hidden) {
@@ -1629,7 +1681,7 @@ export function startScene({
     floorCanvas.width = floorCanvas.height = 1;
     canvas.width = canvas.height = 1;
     inviteCanvas.width = inviteCanvas.height = 1;
-    document.body.classList.remove("cursor-active");
+    document.body.classList.remove("cursor-active", "cursor-pointer");
   });
   return {
     startBackground() {

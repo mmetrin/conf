@@ -12,17 +12,20 @@ export function ThreeParticleShape({ side = "right", seedOffset = 0 }) {
       active = false,
       prefetched = false;
 
+    const enabled = () => desktop.matches || side === "left";
+
     function load() {
-      if (disposed || loading || controller || !desktop.matches) return;
+      if (disposed || loading || controller || !enabled()) return;
       loading = import("../animation/particles.js")
         .then(async ({ startParticleShape }) => {
+          if (disposed) return;
           const next = await startParticleShape(canvas, { side, seedOffset });
           if (disposed) {
             next.dispose();
             return;
           }
           controller = next;
-          controller.setActive(active);
+          controller.setActive(active && enabled());
         })
         .catch(() => {
           loading = null;
@@ -35,16 +38,19 @@ export function ThreeParticleShape({ side = "right", seedOffset = 0 }) {
     function prepare() {
       active = true;
       load();
-      controller?.setActive(true);
+      controller?.setActive(enabled());
     }
     function activity(event) {
       active = !!event.detail?.active;
       if (active) load();
-      controller?.setActive(active);
+      controller?.setActive(active && enabled());
     }
     function mediaChange() {
-      if (!desktop.matches) controller?.setActive(false);
-      else if (active || prefetched) load();
+      if (!enabled()) controller?.setActive(false);
+      else if (active || prefetched) {
+        load();
+        controller?.setActive(active);
+      }
     }
 
     window.addEventListener("audience-prefetch", prefetch);

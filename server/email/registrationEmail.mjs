@@ -1,6 +1,6 @@
 import { registrationFields } from "../../shared/registrationValidation.js";
 
-export const REGISTRATION_EMAIL_SUBJECT = "Новая регистрация на конференцию";
+export const REGISTRATION_EMAIL_SUBJECT = "Новая регистрация на конференцию";
 
 export function buildRegistrationEmail(fields) {
   const lines = registrationFields.map((field) => {

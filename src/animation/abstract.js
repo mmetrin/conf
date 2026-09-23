@@ -76,13 +76,15 @@ export function startAbstractLights(scope) {
   const dataCanvas = document.querySelector("#abstract-data");
   const dataCtx = dataCanvas.getContext("2d");
   const dataTokens = ["0", "1", "·", "+", "▯"];
-  const dataPoints = Array.from({ length: 120 }, (_, i) => ({
+  // A denser, airier field gives the programme screen a stronger sense of
+  // movement without competing with the schedule copy.
+  const dataPoints = Array.from({ length: 210 }, (_, i) => ({
     phase: ((i * 29) % 157) / 156,
     lane: ((i * 37) % 101) / 100,
     side: i % 2 ? -1 : 1,
     edge: i >= 72,
     speed: 0.008 + (i % 4) * 0.002,
-    size: 10 + (i % 5) * 2,
+    size: 14 + (i % 7) * 2,
     token: dataTokens[i % dataTokens.length],
   }));
   let dataWidth = 0,
@@ -92,6 +94,7 @@ export function startAbstractLights(scope) {
     const width = dataWidth,
       height = dataHeight,
       ratio = dataRatio;
+    if (width < 1 || height < 1) return;
     dataCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
     dataCtx.clearRect(0, 0, width, height);
     dataCtx.textAlign = "center";
@@ -109,7 +112,8 @@ export function startAbstractLights(scope) {
       const y = height * curve;
       const fade = Math.pow(Math.sin(t * Math.PI), 2);
       const accent = point.token === "+" || point.token === "▯";
-      dataCtx.globalAlpha = fade * (accent ? 0.86 : 0.46 + 0.32 * point.lane);
+      dataCtx.globalAlpha =
+        fade * (accent ? 0.44 : 0.2 + 0.18 * point.lane);
       dataCtx.fillStyle = point.token === "+" ? "#f0b7cf" : point.token === "▯" ? "#dbc5ff" : "#f1e9ff";
       dataCtx.font = `${point.size}px monospace`;
       dataCtx.fillText(point.token, x, y);
@@ -197,7 +201,7 @@ export function startAbstractLights(scope) {
       if (value === lastOpacity) return;
       lastOpacity = value;
       canvas.style.opacity = String(value * 0.55);
-      dataCanvas.style.opacity = String(value * 0.48);
+      dataCanvas.style.opacity = String(value);
       visible = value > 0.001;
       if (!visible) {
         cancelAnimationFrame(raf);

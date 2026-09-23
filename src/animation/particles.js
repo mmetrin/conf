@@ -1,4 +1,5 @@
 import { cancelSharedFrame, requestSharedFrame } from "./frameHost.js";
+import { waitForDecodedImage } from "../utils/imageReady.js";
 
 const clamp = (value) => Math.max(0, Math.min(1, value));
 const ease = (value) => value * value * (3 - 2 * value);
@@ -37,7 +38,7 @@ function loadReferencePixels() {
     image.decoding = "async";
     image.fetchPriority = "low";
     image.src = "assets/particle-human-reference.webp";
-    await image.decode();
+    await waitForDecodedImage(image);
     const width = 800,
       height = 773,
       map = document.createElement("canvas");
@@ -48,7 +49,11 @@ function loadReferencePixels() {
     const pixels = context.getImageData(0, 0, width, height).data;
     map.width = map.height = 1;
     return { pixels, width, height };
-  })();
+  })().catch((error) => {
+    // A transient network error must not poison the shared cache forever.
+    referencePixelsPromise = null;
+    throw error;
+  });
   return referencePixelsPromise;
 }
 
@@ -78,7 +83,7 @@ export async function startParticleShape(
     "#ff0032",
     "#ffb0c0",
   ];
-  const glyphs = "01{}[]<>/+=:·";
+  const glyphs = "01{}[]<>/+=:λΣ#";
   const isLeft = side === "left";
   const scanNames = isLeft
     ? ["signal.vector", "data.field"]
@@ -123,8 +128,17 @@ export async function startParticleShape(
   });
 
   const sample = (x, y) => {
-    const offset = (Math.floor(y) * portraitW + Math.floor(x)) * 4;
-    return [pixels[offset], pixels[offset + 1], pixels[offset + 2]];
+    // Average a small patch once at setup so isolated source pixels do not
+    // break up the brow, nose and jaw. No image sampling happens per frame.
+    const color = [0, 0, 0];
+    for (let dy = -1; dy <= 1; dy += 1) {
+      for (let dx = -1; dx <= 1; dx += 1) {
+        const offset = ((Math.floor(y) + dy) * portraitW + Math.floor(x) + dx) * 4;
+        for (let channel = 0; channel < 3; channel += 1)
+          color[channel] += pixels[offset + channel] / 9;
+      }
+    }
+    return color;
   };
   const addPoint = (x, y, color, tile, size, alpha, glyph) =>
     points.push({
@@ -139,10 +153,9 @@ export async function startParticleShape(
       start: random() * 0.48 + (y / portraitH) * 0.19,
       speed: 0.24 + random() * 0.55,
       direction: random() < 0.5 ? -1 : 1,
-      amplitudeX: glyph ? 0.22 : 0.5 + random() * 0.7,
-      amplitudeY: glyph ? 0.12 : 0.25 + random() * 0.45,
+      amplitudeX: 2 + random() * 3,
+      amplitudeY: 1 + random() * 2,
       phase: random() * Math.PI * 2,
-      phaseY: random() * Math.PI * 2,
     });
   const colour = (r, g, b) =>
     Math.max(r, g, b) - Math.min(r, g, b) < 24
@@ -156,32 +169,23 @@ export async function startParticleShape(
           : r > g * 1.15
             ? 5
             : 4;
-  for (let y = 6; y < portraitH - 6; y += 5.2) {
-    for (let x = 6; x < portraitW - 6; x += 5.2) {
+  for (let y = 6; y < portraitH - 6; y += 7.4) {
+    for (let x = 6; x < portraitW - 6; x += 7.4) {
       const [r, g, b] = sample(x + random() * 0.7, y + random() * 0.7);
       const light = Math.max(r, g, b) / 255;
-      if (light < 0.12 || random() > 0.22 + light * 0.54) continue;
-      const glyph = random() > 0.72;
+      if (light < 0.1 || random() > 0.3 + light * 0.6) continue;
+      const glyph = random() > 0.3;
       addPoint(
         x,
         y,
         colour(r, g, b),
         glyph ? Math.floor(random() * glyphs.length) : random() > 0.5 ? 16 : 15,
-        0.78 + random() * 0.46,
-        Math.min(1, 0.32 + Math.pow(light, 0.6) * 0.8),
+        glyph ? 0.78 + random() * 0.2 : 0.78 + random() * 0.3,
+        Math.min(1, 0.12 + Math.pow(light, 0.75) * 1.05),
         glyph,
       );
     }
   }
-  // Thin only the plain dots after generation so the existing glyph set and
-  // its seeded layout stay exactly the same.
-  let nextPointIndex = 0;
-  for (let index = 0; index < points.length; index += 1) {
-    if (!points[index].glyph && index % 5 === 0) continue;
-    points[nextPointIndex] = points[index];
-    nextPointIndex += 1;
-  }
-  points.length = nextPointIndex;
   for (let index = 0; index < 64; index += 1)
     rows.push({
       phase: random() * Math.PI * 2,
@@ -285,28 +289,38 @@ export async function startParticleShape(
     for (const row of rows) {
       row.x =
         Math.sin(time * row.speed * row.direction + row.phase) * row.amplitude;
-      row.y = Math.cos(time * row.speed * 0.7 + row.phase) * 0.3;
+      row.y = Math.cos(time * row.speed * 0.7 + row.phase) * 0.8;
     }
-    const drawPortrait = (source, colourOnly = false) => {
+    const monochromeOpacity = window.innerWidth < 600 ? 0.4 : 0.24;
+    const framedContentOpacity = 0.9;
+    const frameOpacity = 0.68;
+    const rotation = reduced.matches
+      ? 0
+      : Math.sin(time * 0.22 + (isLeft ? Math.PI : 0)) * 0.035;
+    const rotationCos = Math.cos(rotation);
+    const rotationSin = Math.sin(rotation);
+    const drawPortrait = (source, opacity) => {
       for (const point of points) {
         const row = rows[point.row];
+        const dx = point.x - portraitW / 2;
+        const dy = point.y - portraitH / 2;
         const x =
-          point.x +
+          portraitW / 2 + dx * rotationCos - dy * rotationSin +
           (row?.x || 0) +
           Math.sin(time * point.speed * point.direction + point.phase) *
             point.amplitudeX;
         const y =
-          point.y +
+          portraitH / 2 + dx * rotationSin + dy * rotationCos +
           (row?.y || 0) +
-          Math.cos(time * point.speed * point.direction + point.phaseY) *
+          Math.cos(time * point.speed * point.direction + point.phase) *
             point.amplitudeY;
         const reveal = ease(clamp((shapeReveal - point.start) / 0.34));
         if (reveal <= 0) continue;
         ctx.globalAlpha =
           point.alpha *
           reveal *
-          (0.76 + 0.24 * Math.sin(time * 1.5 + point.phase)) *
-          (colourOnly ? 1 : 0.3);
+          (0.88 + 0.12 * Math.sin(time * 1.5 + point.phase)) *
+          opacity;
         ctx.drawImage(
           source,
           point.tile * 24,
@@ -320,7 +334,7 @@ export async function startParticleShape(
         );
       }
     };
-    drawPortrait(monoAtlas);
+    drawPortrait(monoAtlas, monochromeOpacity);
 
     const scanHold = 1.9,
       scanMove = 1.55,
@@ -347,7 +361,7 @@ export async function startParticleShape(
     ctx.beginPath();
     scanFrames.forEach((frame) => ctx.rect(frame.x, frame.y, frame.w, frame.h));
     ctx.clip();
-    drawPortrait(atlas, true);
+    drawPortrait(atlas, framedContentOpacity);
     ctx.restore();
 
     ctx.globalCompositeOperation = "source-over";
@@ -375,7 +389,7 @@ export async function startParticleShape(
         by = to.y + to.h / 2 - dy / toScale,
         mx = (ax + bx) / 2 + (index % 2 ? 16 : -16),
         my = (ay + by) / 2;
-      ctx.globalAlpha = 0.52;
+      ctx.globalAlpha = 0.42;
       ctx.beginPath();
       ctx.moveTo(ax, ay);
       ctx.lineTo(mx, my);
@@ -402,7 +416,7 @@ export async function startParticleShape(
         edge -= frame.w;
         handleY += frame.h - edge;
       }
-      ctx.globalAlpha = 0.9;
+      ctx.globalAlpha = frameOpacity;
       ctx.strokeStyle = "#f8f4ff";
       ctx.strokeRect(frame.x, frame.y, frame.w, frame.h);
       ctx.strokeRect(handleX - 6, handleY - 6, 12, 12);

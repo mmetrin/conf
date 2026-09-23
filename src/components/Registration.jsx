@@ -49,6 +49,16 @@ export function RegistrationField({
     input.value = formatted;
     input.setSelectionRange(next, next);
   }
+  function inputChange(event) {
+    if (field.name === "phone") return phoneChange(event);
+    if (field.name === "email") {
+      const input = event.target;
+      const sanitized = input.value.replace(/[^A-Za-z0-9@._%+-]/g, "");
+      if (sanitized !== input.value) input.value = sanitized;
+      return onChange({ target: { value: sanitized } });
+    }
+    onChange(event);
+  }
   return (
     <div
       className={
@@ -67,7 +77,13 @@ export function RegistrationField({
         <label htmlFor={id}>{field.label}</label>
         <input
           ref={inputRef}
-          inputMode={field.name === "phone" ? "tel" : undefined}
+          inputMode={
+            field.name === "phone"
+              ? "numeric"
+              : field.name === "email"
+                ? "email"
+                : undefined
+          }
           id={id}
           name={field.name}
           type={field.type}
@@ -78,7 +94,7 @@ export function RegistrationField({
           value={value}
           disabled={disabled}
           readOnly={readOnly}
-          onChange={phoneChange}
+          onChange={inputChange}
           onKeyDown={(event) => {
             if (
               field.name !== "phone" ||
@@ -265,10 +281,10 @@ export function Registration() {
         error instanceof SendsayFormError &&
         error.kind === "form_error"
       ) {
-        setStatus("Проверьте введённые данные и попробуйте ещё раз.");
+        setStatus("Проверьте введённые данные и попробуйте ещё раз.");
       } else {
         setStatus(
-          "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
+          "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
         );
       }
     } finally {
@@ -307,46 +323,63 @@ export function Registration() {
               <h3>
                 Вы зарегистрированы
                 <br />
-                на конференцию МТС ADS
+                на конференцию МТС ADS
               </h3>
             </div>
             <div className="registration__success-details">
-              <p>Отправим вам адрес и дату на почту</p>
+              <p>Отправим вам адрес и дату на почту</p>
               <div
                 className="registration__success-facts"
                 aria-label="Детали мероприятия"
               >
-                <div className="registration__success-facts-row">
-                  <span className="registration__success-fact">
-                    <img
-                      src="assets/fact-address.svg"
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    <span>Арбатская площадь, 14, строение 1</span>
-                  </span>
-                  <span className="registration__success-fact">
-                    <img
-                      src="assets/fact-cinema.svg"
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    <span>Кинотеатр «Художественный»</span>
-                  </span>
-                </div>
-                <div className="registration__success-facts-row">
-                  <span className="registration__success-fact">
-                    <img
-                      src="assets/fact-online.svg"
-                      alt=""
-                      aria-hidden="true"
-                    />
-                    <span>Только офлайн</span>
-                  </span>
-                  <span className="registration__success-fact">
-                    <img src="assets/fact-time.svg" alt="" aria-hidden="true" />
-                    <span>19 ноября 17:00</span>
-                  </span>
+                <div
+                  className="site-footer__facts"
+                  aria-label="Информация о мероприятии"
+                >
+                  <div className="site-footer__facts-row">
+                    <span className="site-footer__fact site-footer__fact--online">
+                      <img
+                        src="assets/fact-online.svg"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span>Только офлайн</span>
+                    </span>
+                    <span className="site-footer__fact site-footer__fact--time">
+                      <img
+                        src="assets/fact-time.svg"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span>19 ноября 17:00</span>
+                    </span>
+                  </div>
+                  <div className="site-footer__facts-row">
+                    <span className="site-footer__fact site-footer__fact--address">
+                      <img
+                        src="assets/fact-address.svg"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span>Арбатская площадь, 14, строение 1</span>
+                    </span>
+                    <span className="site-footer__fact site-footer__fact--cinema">
+                      <img
+                        src="assets/fact-cinema.svg"
+                        alt=""
+                        aria-hidden="true"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span>Кинотеатр «Художественный»</span>
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -388,13 +421,13 @@ export function Registration() {
               {sending ? "Отправляем…" : "Принять участие"}
             </button>
             <p className="registration__policy">
-              Продолжая, вы соглашаетесь с&nbsp;
+              Продолжая, вы соглашаетесь{" "}
               <a
-                href="https://marketolog.mts.ru/cabinet/assets/docs/soglasie_na_obrabotku.pdf"
+                href="https://stream.ru/docs/personal_info.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Политикой обработки персональных данных
+                с Политикой обработки персональных данных
               </a>
             </p>
             <p

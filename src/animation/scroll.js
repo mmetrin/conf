@@ -13,6 +13,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
     registrationContent = registration.querySelector(".registration__inner"),
     items = [...programme.querySelectorAll(".programme__item")];
   const reduced = matchMedia("(prefers-reduced-motion: reduce)"),
+    mobile = matchMedia("(max-width: 599px)"),
     written = new WeakMap();
   let metrics = null,
     previousEntryY = 0,
@@ -87,8 +88,9 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
         });
       const trackTop = rect.top - previousEntryY + entryY,
         contentTop = contentRect.top - previousEntryY + entryY,
-        focus = height * 0.48;
+        focus = height * (mobile.matches ? 0.5 : 0.48);
       focusState = {
+        lineY: (focus - trackTop).toFixed(1) + "px",
         edges: [
           darkEdge,
           darkEdge + (litEdge - darkEdge) * 0.45,
@@ -104,7 +106,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
               0.3 +
               0.7 * ease(clamp(1 - distance / (height * 0.3)))
             ).toFixed(3),
-            scale: reduced.matches
+            scale: reduced.matches || mobile.matches
               ? "1"
               : (
                   0.84 +
@@ -189,6 +191,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       }
       if (abstractLights) abstractLights.show(abstractLocked ? 1 : active ? abstractReveal : 0);
       if (focusState) {
+        commit(track, "--programme-line-y", focusState.lineY);
         ["dark", "dim", "soft", "lit"].forEach((name, i) =>
           commit(content, "--programme-" + name + "-edge", focusState.edges[i]),
         );
@@ -209,6 +212,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   scope.listen(window, "scroll", measure, { passive: true });
   scope.listen(window, "resize", invalidate, { passive: true });
   scope.listen(reduced, "change", schedule);
+  scope.listen(mobile, "change", invalidate);
   const observer = new ResizeObserver(invalidate);
   [journey, programme, registration].forEach((node) => observer.observe(node));
   scope.defer(() => observer.disconnect());
@@ -225,7 +229,7 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
   } else registration.classList.add("assets-ready");
   fontsReady.then(() => {
     if (!scope.disposed) invalidate();
-  });
+  }, () => {}); // Critical loading owns the error/retry UI.
   schedule();
   scope.defer(() => {
     delete window.programmeBeam;

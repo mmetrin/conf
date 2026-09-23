@@ -1,7 +1,7 @@
 export const registrationFields = [
   {
     name: "name",
-    label: "Фамилия и имя*",
+    label: "Фамилия и имя*",
     placeholder: "Петров Петр",
     type: "text",
     autoComplete: "name",
@@ -38,21 +38,26 @@ export const registrationFields = [
   },
 ];
 
+// Latin letters, digits and the standard symbols used in an email address.
+// Keeping this shared with the server ensures that browser autofill and direct
+// requests are checked by the same rule as typed input.
+export const EMAIL_PATTERN = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
 export function validateField(name, value, validity) {
   value = value.trim();
   if (!value || (name === "phone" && value === "+7")) {
     if (name === "phone") return "Укажите телефон";
     if (name === "email") return "Укажите почту";
-    if (name === "name") return "Укажите фамилию и имя";
+    if (name === "name") return "Укажите фамилию и имя";
     if (name === "company") return "Укажите компанию, где работаете";
-    if (name === "role") return "Укажите должность в компании";
+    if (name === "role") return "Укажите должность в компании";
     return "Заполните это поле";
   }
   if (["name", "company", "role"].includes(name) && value.length < 2)
-    return "Введите не менее 2 символов";
+    return "Введите не менее 2 символов";
   if (
     name === "email" &&
-    (validity?.typeMismatch || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))
+    (validity?.typeMismatch || !EMAIL_PATTERN.test(value))
   )
     return "Проверьте адрес почты";
   if (name === "phone") {
@@ -63,7 +68,7 @@ export function validateField(name, value, validity) {
     )
       digits = digits.slice(1);
     if (!/^[+\d\s().-]+$/.test(value) || digits.length !== 10)
-      return "Номер телефона должен быть из 10 цифр";
+      return "Номер телефона должен быть из 10 цифр";
     if (!/^[345689]/.test(digits))
       return "Номер телефона может начинаться на 3, 4, 5, 6, 8, 9";
   }

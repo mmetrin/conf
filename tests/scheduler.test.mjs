@@ -137,13 +137,16 @@ test("receiver loads only frame 1 before background loading is explicitly starte
 });
 test("registration validates whitespace, email and phone without sending data", () => {
   assert(validateField("name", "  "));
-  assert.equal(validateField("name", "А"), "Введите не менее 2 символов");
-  assert.equal(validateField("company", "Я"), "Введите не менее 2 символов");
-  assert.equal(validateField("role", "X"), "Введите не менее 2 символов");
+  assert.equal(validateField("name", "А"), "Введите не менее 2 символов");
+  assert.equal(validateField("company", "Я"), "Введите не менее 2 символов");
+  assert.equal(validateField("role", "X"), "Введите не менее 2 символов");
   assert(validateField("email", "test"));
+  assert(validateField("email", "test@example"));
+  assert(validateField("email", "тест@example.ru"));
   assert(validateField("phone", "123"));
   assert(validateField("phone", "+7invalid123456789"));
   assert.equal(validateField("email", "test@example.ru"), "");
+  assert.equal(validateField("email", "test-123@example.co.uk"), "");
   assert.equal(validateField("phone", "+7 (999) 123-45-67"), "");
   assert.equal(validateField("name", "Анна Петрова"), "");
   assert.equal(validateField("company", "МТС"), "");
@@ -154,7 +157,7 @@ test("registration validates whitespace, email and phone without sending data", 
   assert.equal(validateField("email", ""), "Укажите почту");
   assert.equal(validateField("email", "akk@vm", { typeMismatch: false }), "Проверьте адрес почты");
   assert.equal(validateField("phone", "+7 "), "Укажите телефон");
-  assert.equal(validateField("phone", "+7 121 718-72-8"), "Номер телефона должен быть из 10 цифр");
+  assert.equal(validateField("phone", "+7 121 718-72-8"), "Номер телефона должен быть из 10 цифр");
   assert.equal(validateField("phone", "+7 121 718-72-88"), "Номер телефона может начинаться на 3, 4, 5, 6, 8, 9");
   assert.equal(validateField("phone", "+7 913-123-45-67"), "");
 });
