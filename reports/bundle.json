@@ -3,7 +3,7 @@
   "initialJsBytes": 272898,
   "asyncJsBytes": 57065,
   "totalJsBytes": 329963,
-  "cssBytes": 73911,
+  "cssBytes": 74081,
   "precompressedAssets": [
     {
       "path": "app/chunks/BelowFold-R2NLSQK2.js.br",
@@ -174,12 +174,12 @@
       "bytes": 6762
     },
     {
-      "path": "site-b979735e9d.css.br",
-      "bytes": 14133
+      "path": "site-160af169c3.css.br",
+      "bytes": 14158
     },
     {
-      "path": "site-b979735e9d.css.gz",
-      "bytes": 15091
+      "path": "site-160af169c3.css.gz",
+      "bytes": 15113
     }
   ],
   "metafile": {

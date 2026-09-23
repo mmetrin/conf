@@ -53,6 +53,17 @@ html.opening-locked body {
   overscroll-behavior: none;
   touch-action: none;
 }
+@media (max-width: 599px) {
+  /* The mobile audience is already in normal document flow once the first
+     screen is ready. Keep the opening class for its lifecycle events, but do
+     not leave a completed loader with a page-wide touch/scroll lock. */
+  html.content-ready.opening-locked,
+  html.content-ready.opening-locked body {
+    overflow-y: auto !important;
+    overscroll-behavior-y: auto;
+    touch-action: pan-y;
+  }
+}
 html {
   scrollbar-gutter: stable;
 }
