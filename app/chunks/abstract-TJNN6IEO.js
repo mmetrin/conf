@@ -1,4 +1,4 @@
-import{c as q}from"./chunk-ZM3EZUG6.js";q();function J(i){let z=t=>i.request(t),f=t=>i.cancel(t),o=document.querySelector("#abstract-lights"),e=o.getContext("webgl",{alpha:!0,antialias:!1,depth:!1,preserveDrawingBuffer:!1});if(!e)return;let H="attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}",O=`precision mediump float;
+import{c as q}from"./chunk-OIBSJGDP.js";q();function J(i){let z=t=>i.request(t),f=t=>i.cancel(t),o=document.querySelector("#abstract-lights"),e=o.getContext("webgl",{alpha:!0,antialias:!1,depth:!1,preserveDrawingBuffer:!1});if(!e)return;let H="attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}",O=`precision mediump float;
  uniform vec2 resolution;uniform float time;
  void main(){
  vec2 uv=(2.*gl_FragCoord.xy-resolution)/resolution.y;
