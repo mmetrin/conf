@@ -1,0 +1,121 @@
+#programme {
+  margin-top: -75svh;
+  padding-top: 64px;
+}
+@media (max-width: 599px) {
+  #programme {
+    padding-top: 48px;
+  }
+
+  #programme-title {
+    scroll-margin-top: 112px;
+  }
+}
+
+#programme .programme__item {
+  padding-top: 44px;
+  padding-bottom: 52px;
+}
+#programme .programme__item:first-child {
+  padding-top: 12px;
+}
+#programme .programme__business-heading {
+  padding-bottom: 36px;
+}
+#programme .programme__guest {
+  padding-top: 44px !important;
+  padding-bottom: 52px !important;
+}
+
+body > .scene-nav {
+  top: 20px;
+  left: max(24px, calc((100% - 1600px) / 2 + 97px));
+  right: max(24px, calc((100% - 1600px) / 2 + 63px));
+  height: 56px;
+}
+.scene-nav .scene-logo {
+  width: 124px;
+  height: 48px;
+  object-fit: contain;
+}
+.scene-nav .menu-trigger {
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  padding: 0;
+  gap: 0;
+  border: 0;
+  border-left: 1.4px solid #ffffff1f;
+  border-right: 1.4px solid #ffffff1f;
+  border-radius: 42px;
+  background: rgba(154, 154, 154, 0.1);
+  backdrop-filter: blur(2.8px);
+  box-shadow: none;
+}
+.scene-nav .menu-trigger img {
+  display: block;
+  width: 28px;
+  height: 28px;
+}
+body > #conference-register {
+  min-width: 0;
+  padding: 16px 32px 18px;
+  border: 0;
+  border-radius: 40px;
+  background: #ff0032;
+  color: #fff;
+  font:
+    500 16px/1 "MTS Wide",
+    Arial,
+    sans-serif;
+  letter-spacing: 0;
+  box-shadow: none;
+}
+body > #conference-register:hover {
+  background: #cc0028;
+  box-shadow: none;
+}
+body > #conference-register:active {
+  background: #ff244f;
+  color: #fff;
+}
+body > #conference-register,
+.scene-menu__register,
+.registration__submit {
+  color: #fff;
+}
+body > #conference-register:hover,
+.scene-menu__register:hover,
+.registration__submit:hover {
+  background: #cc0028;
+  color: #fff;
+}
+body > #conference-register:active,
+.scene-menu__register:active,
+.registration__submit:active {
+  background: #ff244f;
+  color: #fff;
+}
+@media (max-width: 599px) {
+  body > .scene-nav {
+    left: 24px;
+    right: 24px;
+  }
+  .scene-nav .scene-logo {
+    width: 103px;
+    height: 40px;
+  }
+  .scene-nav .menu-trigger {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+  body > #conference-register {
+    font-size: 15px;
+    padding: 16px 28px 18px;
+  }
+}
+.menu-trigger {
+  border: 0;
+  box-shadow: 0 8px 22px #0005;
+}

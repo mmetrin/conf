@@ -3,14 +3,14 @@
   "initialJsBytes": 269967,
   "asyncJsBytes": 103353,
   "totalJsBytes": 373320,
-  "cssBytes": 85047,
+  "cssBytes": 85046,
   "precompressedAssets": [
     {
-      "path": "app/chunks/BelowFold-PUJHYMIQ.js.br",
+      "path": "app/chunks/BelowFold-LRDAAMEI.js.br",
       "bytes": 13238
     },
     {
-      "path": "app/chunks/BelowFold-PUJHYMIQ.js.gz",
+      "path": "app/chunks/BelowFold-LRDAAMEI.js.gz",
       "bytes": 13482
     },
     {
@@ -46,12 +46,12 @@
       "bytes": 1942
     },
     {
-      "path": "app/site-UU7WL4OY.js.br",
+      "path": "app/site-EJTH5III.js.br",
       "bytes": 84154
     },
     {
-      "path": "app/site-UU7WL4OY.js.gz",
-      "bytes": 89559
+      "path": "app/site-EJTH5III.js.gz",
+      "bytes": 89558
     },
     {
       "path": "assets/fact-address.svg.br",
@@ -174,12 +174,12 @@
       "bytes": 6760
     },
     {
-      "path": "site-120c22fec6.css.br",
-      "bytes": 15812
+      "path": "site-c71943cde0.css.br",
+      "bytes": 15808
     },
     {
-      "path": "site-120c22fec6.css.gz",
-      "bytes": 16912
+      "path": "site-c71943cde0.css.gz",
+      "bytes": 16906
     }
   ],
   "metafile": {
@@ -386,8 +386,8 @@
         ],
         "format": "cjs"
       },
-      "src/components/ThreeParticleShape.jsx": {
-        "bytes": 3343,
+      "src/components/Hero/ThreeParticleShape.jsx": {
+        "bytes": 3346,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -402,7 +402,7 @@
           {
             "path": "src/animation/particles.js",
             "kind": "dynamic-import",
-            "original": "../animation/particles.js"
+            "original": "../../animation/particles.js"
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -412,7 +412,7 @@
         ],
         "format": "esm"
       },
-      "src/components/Hero.jsx": {
+      "src/components/Hero/Hero.jsx": {
         "bytes": 5666,
         "imports": [
           {
@@ -421,7 +421,7 @@
             "original": "react-dom"
           },
           {
-            "path": "src/components/ThreeParticleShape.jsx",
+            "path": "src/components/Hero/ThreeParticleShape.jsx",
             "kind": "import-statement",
             "original": "./ThreeParticleShape.jsx"
           },
@@ -449,8 +449,8 @@
         ],
         "format": "esm"
       },
-      "src/components/StageOverlay.jsx": {
-        "bytes": 8885,
+      "src/components/StageOverlay/StageOverlay.jsx": {
+        "bytes": 8888,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -465,7 +465,7 @@
           {
             "path": "src/loader-lens.js",
             "kind": "import-statement",
-            "original": "../loader-lens.js"
+            "original": "../../loader-lens.js"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -660,13 +660,13 @@
         ],
         "format": "esm"
       },
-      "src/components/Programme.jsx": {
-        "bytes": 4902,
+      "src/components/Programme/Programme.jsx": {
+        "bytes": 4905,
         "imports": [
           {
             "path": "src/data/programme.js",
             "kind": "import-statement",
-            "original": "../data/programme.js"
+            "original": "../../data/programme.js"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -730,8 +730,8 @@
         ],
         "format": "esm"
       },
-      "src/components/ConsentModal.jsx": {
-        "bytes": 5450,
+      "src/components/ConsentModal/ConsentModal.jsx": {
+        "bytes": 5453,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -746,7 +746,7 @@
           {
             "path": "src/utils/bottomSheet.js",
             "kind": "import-statement",
-            "original": "../utils/bottomSheet.js"
+            "original": "../../utils/bottomSheet.js"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -761,11 +761,11 @@
         ],
         "format": "esm"
       },
-      "src/components/PersonalDataConsentModal.jsx": {
+      "src/components/ConsentModal/PersonalDataConsentModal.jsx": {
         "bytes": 7669,
         "imports": [
           {
-            "path": "src/components/ConsentModal.jsx",
+            "path": "src/components/ConsentModal/ConsentModal.jsx",
             "kind": "import-statement",
             "original": "./ConsentModal.jsx"
           },
@@ -830,8 +830,8 @@
         ],
         "format": "esm"
       },
-      "src/components/Registration.jsx": {
-        "bytes": 25922,
+      "src/components/Registration/Registration.jsx": {
+        "bytes": 25962,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -841,32 +841,32 @@
           {
             "path": "src/utils/phone.js",
             "kind": "import-statement",
-            "original": "../utils/phone.js"
+            "original": "../../utils/phone.js"
           },
           {
             "path": "src/utils/validation.js",
             "kind": "import-statement",
-            "original": "../utils/validation.js"
+            "original": "../../utils/validation.js"
           },
           {
-            "path": "src/components/ConsentModal.jsx",
+            "path": "src/components/ConsentModal/ConsentModal.jsx",
             "kind": "import-statement",
-            "original": "./ConsentModal.jsx"
+            "original": "../ConsentModal/ConsentModal.jsx"
           },
           {
-            "path": "src/components/PersonalDataConsentModal.jsx",
+            "path": "src/components/ConsentModal/PersonalDataConsentModal.jsx",
             "kind": "import-statement",
-            "original": "./PersonalDataConsentModal.jsx"
+            "original": "../ConsentModal/PersonalDataConsentModal.jsx"
           },
           {
             "path": "src/services/registration/registrationSubmission.js",
             "kind": "import-statement",
-            "original": "../services/registration/registrationSubmission.js"
+            "original": "../../services/registration/registrationSubmission.js"
           },
           {
             "path": "src/services/sendsay/sendsayFormClient.js",
             "kind": "import-statement",
-            "original": "../services/sendsay/sendsayFormClient.js"
+            "original": "../../services/sendsay/sendsayFormClient.js"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -881,8 +881,8 @@
         ],
         "format": "esm"
       },
-      "src/components/Footer.jsx": {
-        "bytes": 3965,
+      "src/components/Footer/Footer.jsx": {
+        "bytes": 3993,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -890,14 +890,14 @@
             "original": "react"
           },
           {
-            "path": "src/components/PersonalDataConsentModal.jsx",
+            "path": "src/components/ConsentModal/PersonalDataConsentModal.jsx",
             "kind": "import-statement",
-            "original": "./PersonalDataConsentModal.jsx"
+            "original": "../ConsentModal/PersonalDataConsentModal.jsx"
           },
           {
-            "path": "src/components/Registration.jsx",
+            "path": "src/components/Registration/Registration.jsx",
             "kind": "import-statement",
-            "original": "./Registration.jsx"
+            "original": "../Registration/Registration.jsx"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -912,8 +912,8 @@
         ],
         "format": "esm"
       },
-      "src/components/BelowFold.jsx": {
-        "bytes": 399,
+      "src/components/BelowFold/BelowFold.jsx": {
+        "bytes": 432,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -921,19 +921,19 @@
             "original": "react"
           },
           {
-            "path": "src/components/Programme.jsx",
+            "path": "src/components/Programme/Programme.jsx",
             "kind": "import-statement",
-            "original": "./Programme.jsx"
+            "original": "../Programme/Programme.jsx"
           },
           {
-            "path": "src/components/Registration.jsx",
+            "path": "src/components/Registration/Registration.jsx",
             "kind": "import-statement",
-            "original": "./Registration.jsx"
+            "original": "../Registration/Registration.jsx"
           },
           {
-            "path": "src/components/Footer.jsx",
+            "path": "src/components/Footer/Footer.jsx",
             "kind": "import-statement",
-            "original": "./Footer.jsx"
+            "original": "../Footer/Footer.jsx"
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -949,7 +949,7 @@
         "format": "esm"
       },
       "src/App.jsx": {
-        "bytes": 1477,
+        "bytes": 1505,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -957,14 +957,14 @@
             "original": "react"
           },
           {
-            "path": "src/components/Hero.jsx",
+            "path": "src/components/Hero/Hero.jsx",
             "kind": "import-statement",
-            "original": "./components/Hero.jsx"
+            "original": "./components/Hero/Hero.jsx"
           },
           {
-            "path": "src/components/StageOverlay.jsx",
+            "path": "src/components/StageOverlay/StageOverlay.jsx",
             "kind": "import-statement",
-            "original": "./components/StageOverlay.jsx"
+            "original": "./components/StageOverlay/StageOverlay.jsx"
           },
           {
             "path": "src/hooks/useSceneRuntime.js",
@@ -977,9 +977,9 @@
             "external": true
           },
           {
-            "path": "src/components/BelowFold.jsx",
+            "path": "src/components/BelowFold/BelowFold.jsx",
             "kind": "dynamic-import",
-            "original": "./components/BelowFold.jsx"
+            "original": "./components/BelowFold/BelowFold.jsx"
           },
           {
             "path": "node_modules/react/jsx-runtime.js",
@@ -1017,7 +1017,7 @@
       }
     },
     "outputs": {
-      "outputs/app/site-UU7WL4OY.js": {
+      "outputs/app/site-EJTH5III.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-LSR74TKP.js",
@@ -1048,7 +1048,7 @@
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/BelowFold-PUJHYMIQ.js",
+            "path": "outputs/app/chunks/BelowFold-LRDAAMEI.js",
             "kind": "dynamic-import"
           }
         ],
@@ -1073,13 +1073,13 @@
           "src/App.jsx": {
             "bytesInOutput": 829
           },
-          "src/components/Hero.jsx": {
+          "src/components/Hero/Hero.jsx": {
             "bytesInOutput": 5773
           },
-          "src/components/ThreeParticleShape.jsx": {
+          "src/components/Hero/ThreeParticleShape.jsx": {
             "bytesInOutput": 1986
           },
-          "src/components/StageOverlay.jsx": {
+          "src/components/StageOverlay/StageOverlay.jsx": {
             "bytesInOutput": 7066
           },
           "src/loader-lens.js": {
@@ -1209,7 +1209,7 @@
         },
         "bytes": 189
       },
-      "outputs/app/chunks/BelowFold-PUJHYMIQ.js": {
+      "outputs/app/chunks/BelowFold-LRDAAMEI.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-3GSFVTFP.js",
@@ -1223,18 +1223,18 @@
         "exports": [
           "default"
         ],
-        "entryPoint": "src/components/BelowFold.jsx",
+        "entryPoint": "src/components/BelowFold/BelowFold.jsx",
         "inputs": {
-          "src/components/BelowFold.jsx": {
+          "src/components/BelowFold/BelowFold.jsx": {
             "bytesInOutput": 231
           },
-          "src/components/Programme.jsx": {
+          "src/components/Programme/Programme.jsx": {
             "bytesInOutput": 2704
           },
           "src/data/programme.js": {
             "bytesInOutput": 6294
           },
-          "src/components/Registration.jsx": {
+          "src/components/Registration/Registration.jsx": {
             "bytesInOutput": 29789
           },
           "src/utils/phone.js": {
@@ -1246,13 +1246,13 @@
           "shared/registrationValidation.js": {
             "bytesInOutput": 2639
           },
-          "src/components/ConsentModal.jsx": {
+          "src/components/ConsentModal/ConsentModal.jsx": {
             "bytesInOutput": 3108
           },
           "src/utils/bottomSheet.js": {
             "bytesInOutput": 44
           },
-          "src/components/PersonalDataConsentModal.jsx": {
+          "src/components/ConsentModal/PersonalDataConsentModal.jsx": {
             "bytesInOutput": 17822
           },
           "src/services/registration/registrationSubmission.js": {
@@ -1264,7 +1264,7 @@
           "src/services/sendsay/sendsayConfig.js": {
             "bytesInOutput": 1408
           },
-          "src/components/Footer.jsx": {
+          "src/components/Footer/Footer.jsx": {
             "bytesInOutput": 3243
           }
         },

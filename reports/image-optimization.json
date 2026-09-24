@@ -395,7 +395,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (responsive <img srcset>)"
+        "src/components/Programme/Programme.jsx (responsive <img srcset>)"
       ],
       "outputs": [
         {
@@ -430,7 +430,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (responsive <img srcset>)"
+        "src/components/Programme/Programme.jsx (responsive <img srcset>)"
       ],
       "outputs": [
         {
@@ -465,7 +465,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (responsive <img srcset>)"
+        "src/components/Programme/Programme.jsx (responsive <img srcset>)"
       ],
       "outputs": [
         {
@@ -500,7 +500,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (responsive <img srcset>)"
+        "src/components/Programme/Programme.jsx (responsive <img srcset>)"
       ],
       "outputs": [
         {
@@ -535,7 +535,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (responsive <img srcset>)"
+        "src/components/Programme/Programme.jsx (responsive <img srcset>)"
       ],
       "outputs": [
         {
@@ -570,7 +570,7 @@
         "format": "png"
       },
       "usage": [
-        "src/components/Programme.jsx (mobile-only responsive <picture>)"
+        "src/components/Programme/Programme.jsx (mobile-only responsive <picture>)"
       ],
       "outputs": [
         {
@@ -605,7 +605,7 @@
         "format": "png"
       },
       "usage": [
-        "src/styles/site.css (.registration__ribbon)"
+        "src/components/Registration/Registration.states.css (.registration__ribbon)"
       ],
       "outputs": [
         {
@@ -938,7 +938,7 @@
   "passthrough": [
     {
       "path": "inline-9537aceeaf6a.webp",
-      "usage": "src/components/StageOverlay.jsx (loader)",
+      "usage": "src/components/StageOverlay/StageOverlay.jsx (loader)",
       "output": {
         "path": "public/assets/inline-9537aceeaf6a.webp",
         "bytes": 24598,
@@ -950,7 +950,7 @@
     },
     {
       "path": "projector-realistic.webp",
-      "usage": "src/components/Hero.jsx and src/styles/site.css",
+      "usage": "src/components/Hero/Hero.jsx and src/components/Hero/Hero.css",
       "output": {
         "path": "public/assets/projector-realistic.webp",
         "bytes": 102878,
@@ -962,7 +962,7 @@
     },
     {
       "path": "projector-downward.webp",
-      "usage": "src/components/StageOverlay.jsx",
+      "usage": "src/components/StageOverlay/StageOverlay.jsx",
       "output": {
         "path": "public/assets/projector-downward.webp",
         "bytes": 54352,

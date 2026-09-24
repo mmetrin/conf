@@ -3,6 +3,18 @@ import assert from "node:assert/strict";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { loadImage } from "@napi-rs/canvas";
+
+async function readSourceTree(directory) {
+  let source = "";
+  for (const entry of await fs.readdir(directory, { withFileTypes: true })) {
+    const entryPath = path.join(directory, entry.name);
+    source += entry.isDirectory()
+      ? await readSourceTree(entryPath)
+      : await fs.readFile(entryPath, "utf8");
+  }
+  return source;
+}
+
 test("all 30 optimized frames decode and every static asset reference resolves", async () => {
   const names = (await fs.readdir("public/assets/receiver-frames"))
     .filter((n) => /\.webp$/.test(n))
@@ -24,11 +36,13 @@ test("all 30 optimized frames decode and every static asset reference resolves",
     assert.equal(mobile.height, 405);
     assert((await fs.stat(mobilePath)).size < (await fs.stat("public/assets/receiver-frames/" + name)).size);
   }
-  const dirs = ["src/components", "src/animation"];
-  let sources = await fs.readFile("src/styles/site.css", "utf8");
-  for (const dir of dirs)
-    for (const name of await fs.readdir(dir))
-      sources += await fs.readFile(path.join(dir, name), "utf8");
+  const dirs = ["src/components", "src/animation", "src/styles"];
+  const sources = (await Promise.all(dirs.map(readSourceTree))).join("");
+  assert.doesNotMatch(
+    sources,
+    /url\(["']?\/assets\//,
+    "static CSS assets must stay relative for subpath deployments",
+  );
   for (const match of sources.matchAll(
     /assets\/[A-Za-z0-9_./-]+\.(?:avif|svg|png|webp|otf|woff2)/g,
   ))

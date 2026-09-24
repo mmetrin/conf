@@ -1,0 +1,198 @@
+.consent-modal {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+  animation: consent-modal-enter 0.28s ease-out both;
+}
+.consent-modal.is-closing {
+  animation: consent-modal-exit 0.24s ease-in both;
+}
+.consent-modal__dialog {
+  display: flex;
+  flex-direction: column;
+  width: min(920px, 100%);
+  max-height: min(860px, calc(100svh - 64px));
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 32px;
+  background: #111722;
+  color: rgba(255, 255, 255, 0.9);
+  cursor: default;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  font:
+    400 15px/1.5 "MTS Text",
+    Arial,
+    sans-serif;
+  transform-origin: center;
+  animation: consent-dialog-enter 0.32s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.consent-modal.is-closing .consent-modal__dialog {
+  animation: consent-dialog-exit 0.24s ease-in both;
+}
+.consent-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 28px 32px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.consent-modal__header h2 {
+  margin: 0;
+  color: #fff;
+  font:
+    500 24px/1.25 "MTS Wide",
+    Arial,
+    sans-serif;
+}
+.consent-modal__close {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+.consent-modal__close img {
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+.consent-modal__close:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.consent-modal__body {
+  overflow-y: auto;
+  padding: 24px 32px 32px;
+  scrollbar-gutter: stable;
+}
+.consent-modal__body p {
+  margin: 0 0 18px;
+}
+.consent-modal__body ol {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding-left: 24px;
+}
+.consent-modal__body ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+.consent-modal__body .consent-modal__plain-list {
+  gap: 2px;
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
+}
+.consent-modal__body a {
+  color: #9bc7ff;
+  overflow-wrap: anywhere;
+}
+.consent-modal__body .consent-modal__footnote {
+  margin: 24px 0 0;
+  color: #aab3c0;
+  font-size: 13px;
+}
+@media (min-width: 600px) {
+  .consent-modal {
+    place-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .consent-modal__dialog {
+    height: 700px;
+    max-height: calc(100svh - 64px);
+    border: 0;
+    border-radius: 48px;
+  }
+  .consent-modal__header {
+    position: relative;
+    display: block;
+    padding: 56px 104px 12px;
+    border-bottom: 0;
+  }
+  .consent-modal__header h2 {
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.2) 10.577%,
+      #fff 43.75%,
+      #fff 61.058%,
+      rgba(255, 255, 255, 0.2) 89.904%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    font-family: "MTS Ultra Extended", Arial, sans-serif !important;
+    font-size: clamp(22px, 2vw, 28px) !important;
+    font-weight: 500;
+    line-height: 110% !important;
+    text-align: center;
+  }
+  .consent-modal__close {
+    position: absolute;
+    top: 32px;
+    right: 40px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+    border-color: #ffffff4d;
+    background: #ffffff1f;
+    box-shadow:
+      inset 0 1px #ffffff38,
+      0 8px 22px #0005;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
+  }
+  .consent-modal__close img {
+    width: 28px;
+    height: 28px;
+  }
+  .consent-modal__close:hover {
+    background: #ffffff30;
+    border-color: #ffffff72;
+    transform: scale(1.05);
+  }
+  .consent-modal__body {
+    padding: 16px 48px 48px;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 28px,
+      #000 calc(100% - 28px),
+      transparent 100%
+    );
+  }
+}

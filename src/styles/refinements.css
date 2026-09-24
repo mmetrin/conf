@@ -1,0 +1,95 @@
+@media (min-width: 600px) {
+  .registration__success-facts .site-footer__facts {
+    align-items: center;
+    margin-left: 0;
+    padding-top: 0;
+    text-align: center;
+  }
+  .registration__success-facts .site-footer__facts-row {
+    justify-content: center;
+  }
+}
+/* Единый шрифт и размер заголовков по макету. */
+h1,
+h2 {
+  font-family: "MTS Ultra Extended", Arial, sans-serif !important;
+  font-size: 44px !important;
+  line-height: 110% !important;
+}
+#scene .photo-title,
+#programme h2,
+.registration h2 {
+  font-size: 44px !important;
+  line-height: 110% !important;
+}
+#scene .photo-title {
+  width: min(900px, 100%) !important;
+}
+#scene .photo-subtitle {
+  font-family: "MTS Wide", Arial, sans-serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  font-size: 21px !important;
+  line-height: 29px !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .registration__success-heading h3,
+  .registration__success-details {
+    animation: none;
+  }
+}
+
+.registration__honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.registration__submit:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+#programme .programme__portrait--icon {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    44.1697deg,
+    #211b2d 5.9546%,
+    rgba(113, 91, 150, 0.4) 99.724%
+  );
+}
+#programme .programme__portrait--icon img {
+  display: block;
+  width: 47.826%;
+  height: 47.826%;
+  object-fit: contain;
+}
+
+#programme .programme__guest .programme__time,
+#programme .programme__evening > .programme__guest h3 {
+  color: #000;
+  text-shadow: none;
+}
+#programme .programme__guest > .programme__focus-content::before {
+  top: 50%;
+  bottom: auto;
+  transform: translate(-50%, -50%);
+  width: max(110%, 340px);
+  height: calc(100% + 110px);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 252, 255, 0.88) 0%,
+    rgba(244, 235, 255, 0.8) 24%,
+    rgba(222, 205, 244, 0.56) 43%,
+    rgba(204, 179, 233, 0.27) 61%,
+    rgba(190, 162, 224, 0.08) 77%,
+    rgba(190, 162, 224, 0) 100%
+  );
+  filter: blur(24px);
+}
+#programme .programme__guest > .programme__focus-content::after {
+  content: none;
+  display: none;
+}

@@ -129,9 +129,10 @@ const totalJsBytes = result.outputFiles.reduce(
 const css = (
   await build({
     entryPoints: ["src/styles/site.css"],
-    bundle: false,
+    bundle: true,
     write: false,
     minify: true,
+    external: ["assets/*", "/assets/*"],
     loader: { ".css": "css" },
   })
 ).outputFiles[0].contents;

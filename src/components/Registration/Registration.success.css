@@ -1,0 +1,128 @@
+@media (max-width: 599px) {
+  .site-footer {
+    padding: 180px 16px 64px;
+    font-size: 15px;
+    line-height: 20px;
+  }
+  .site-footer__facts {
+    gap: 4px;
+  }
+}
+.registration-field input {
+  cursor: text;
+}
+.registration__success {
+  min-height: 452px;
+  justify-content: center;
+  align-items: center;
+  gap: 44px;
+  text-align: center;
+}
+.registration__success-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+}
+.registration__success-check {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.registration__success img {
+  display: block;
+  flex-shrink: 0;
+}
+.registration__success-heading h3 {
+  width: min(380px, 100%);
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.2) 10.577%,
+    #fff 43.75%,
+    #fff 61.058%,
+    rgba(255, 255, 255, 0.2) 89.904%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  animation: registration-success-copy-in 0.42s
+    cubic-bezier(0.22, 0.61, 0.36, 1) 0.12s both;
+}
+.registration__success-details {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px;
+  width: 100%;
+  color: rgba(255, 255, 255, 0.8);
+  font:
+    400 17px/24px "MTS Wide",
+    Arial,
+    sans-serif;
+  animation: registration-success-copy-in 0.42s
+    cubic-bezier(0.22, 0.61, 0.36, 1) 0.28s both;
+}
+@keyframes registration-success-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.registration__success-details p {
+  margin: 0;
+}
+.registration__success-facts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 100%;
+}
+.registration__success-facts-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  max-width: 100%;
+}
+.registration__success-fact {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 4px 16px;
+  border-radius: 50px;
+  background: rgba(28, 26, 32, 0.84);
+  color: rgba(255, 255, 255, 0.8);
+  font:
+    400 15px/24px "MTS Wide",
+    Arial,
+    sans-serif;
+  white-space: nowrap;
+}
+.registration__success-fact img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  opacity: 0.6;
+}
+@media (max-width: 599px) {
+  .registration__success {
+    padding: 32px 20px;
+  }
+  .registration__success-details {
+    font-size: 15px;
+  }
+  .registration__success-fact {
+    white-space: normal;
+    text-align: left;
+  }
+}

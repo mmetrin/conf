@@ -1,0 +1,352 @@
+/*
+ * Desktop scaling architecture
+ *
+ * 1400px is the authored desktop canvas. Between 600px and 1399px every
+ * composition token follows viewport width, while the sticky scene and its
+ * fullscreen canvas/background layers keep their real viewport geometry.
+ * The <=599px rules above remain the separate, intentionally untouched mobile
+ * architecture.
+ */
+@media (min-width: 600px) and (max-width: 1399px) {
+  :root {
+    --hero-projector-width: 54.285714vw;
+    --hero-final-projector-width: 36.785714vw;
+    --hero-object-width: 57.142857vw;
+    --hero-copy-width: 64.285714vw;
+    --hero-title-size: 3.142857vw;
+    --hero-subtitle-size: 1.5vw;
+    --hero-subtitle-line: 2.071429vw;
+    --hero-particle-right-width: 58.571429vw;
+    --hero-particle-right-height: 50vw;
+    --hero-particle-left-width: 62.857143vw;
+    --hero-particle-left-height: 53.428571vw;
+  }
+
+  /* Content-bound Hero composition. */
+  #scene .projector {
+    width: var(--hero-projector-width);
+  }
+  body > #projector-final {
+    width: var(--hero-final-projector-width);
+  }
+  #scene .object {
+    width: var(--hero-object-width);
+  }
+  #scene .photo-copy {
+    padding: 1px 1.714286vw 1.428571vw;
+  }
+  #scene .photo-title {
+    width: min(var(--hero-copy-width), 100%) !important;
+    font-size: var(--hero-title-size) !important;
+  }
+  #scene .photo-subtitle {
+    width: min(62.142857vw, 100%);
+    margin-top: 2.142857vw;
+    font-size: var(--hero-subtitle-size) !important;
+    line-height: var(--hero-subtitle-line) !important;
+  }
+  #scene .photo-roles {
+    width: min(38.571429vw, 100%);
+    gap: 4px;
+    margin-top: 4.285714vw;
+    font-size: 1.071429vw;
+    line-height: 1.714286vw;
+  }
+  #scene .photo-roles__item {
+    gap: 4px;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+  }
+  #scene .photo-roles__icon {
+    flex-basis: 1.285714vw;
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+  .three-particle-shape {
+    width: var(--hero-particle-right-width);
+    height: var(--hero-particle-right-height);
+  }
+  .three-particle-shape--left {
+    width: var(--hero-particle-left-width);
+    height: var(--hero-particle-left-height);
+  }
+
+  /* Overlay visuals scale, but interactive hit areas stay at least 44px. */
+  body > .scene-nav {
+    top: 1.428571vw;
+    left: 1.714286vw;
+    right: 1.714286vw;
+    height: max(44px, 4vw);
+  }
+  .scene-nav .scene-logo {
+    width: 8.857143vw;
+    height: 3.428571vw;
+  }
+  .scene-nav .menu-trigger {
+    width: max(44px, 4vw);
+    height: max(44px, 4vw);
+    min-width: max(44px, 4vw);
+  }
+  .scene-nav .menu-trigger img {
+    width: max(18px, 2vw);
+    height: max(18px, 2vw);
+  }
+  body > #conference-register {
+    bottom: 5.714286vw;
+    min-height: 44px;
+    padding: max(12px, 1.142857vw) 2.285714vw max(12px, 1.285714vw);
+    border-radius: 2.857143vw;
+    font-size: max(12px, 1.142857vw);
+  }
+
+  /* Programme uses real, fluid layout dimensions for scroll measurements. */
+  #programme {
+    padding: 7.142857vw 1.714286vw 10vw;
+    font-size: max(10px, 1.214286vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  #programme .programme__inner {
+    max-width: 62.142857vw;
+  }
+  #programme h2 {
+    margin-bottom: 4.857143vw;
+    font-size: 3.142857vw !important;
+  }
+  #programme .programme__intro-note {
+    width: min(62.142857vw, 100%);
+    margin: 2.142857vw auto 4.285714vw;
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__track {
+    gap: 5.714286vw;
+    width: min(40vw, 100%);
+  }
+  #programme .programme__time {
+    font-size: max(10px, 1.571429vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__track > .programme__item h3,
+  #programme .programme__business-heading h3,
+  #programme .programme__evening > .programme__item h3 {
+    margin-top: 0.285714vw;
+    font-size: max(10px, 1.214286vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  #programme .programme__business,
+  #programme .programme__topics {
+    gap: 4.285714vw;
+  }
+  #programme .programme__topic > .programme__focus-content {
+    gap: 2.285714vw;
+  }
+  #programme .programme__portrait {
+    flex-basis: 6.571429vw;
+    width: 6.571429vw;
+    height: 6.571429vw;
+    border-radius: 1.142857vw 0 1.142857vw 1.142857vw;
+  }
+  #programme .programme__portrait-pair {
+    flex-basis: 6.571429vw;
+    width: 6.571429vw;
+    height: 7.142857vw;
+  }
+  #programme .programme__portrait-pair .programme__portrait {
+    width: 4.285714vw;
+    height: 4.285714vw;
+    border-radius: 0.785714vw 0 0.785714vw 0.785714vw;
+  }
+  #programme .programme__portrait-pair .programme__portrait:last-child {
+    top: 2.857143vw;
+  }
+  #programme .programme__topic-copy {
+    gap: 0.714286vw;
+  }
+  #programme .programme__topic-heading {
+    gap: 0.142857vw;
+  }
+  #programme .programme__author {
+    font-size: max(10px, 1vw);
+    line-height: max(14px, 1.428571vw);
+  }
+  #programme .programme__topics .programme__topic h3 {
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  #programme .programme__topics .programme__topic p {
+    font-size: max(9px, 1vw);
+    line-height: max(12px, 1.428571vw);
+  }
+  #programme .programme__guest > .programme__focus-content::before {
+    width: max(110%, 24.285714vw);
+    height: calc(100% + 7.857143vw);
+    filter: blur(1.714286vw);
+  }
+
+  /* Registration also scales through layout, with safe form controls. */
+  .registration {
+    min-height: 67.142857vw;
+    padding: calc(12.928571vw - 40px) 1.714286vw 10.785714vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration__inner {
+    max-width: 62.142857vw;
+  }
+  .registration h2 {
+    margin-bottom: 3.571429vw;
+    font-size: 3.142857vw !important;
+  }
+  .registration__form {
+    gap: 2.285714vw;
+    width: min(46.428571vw, 100%);
+    padding: 2.285714vw;
+    border-radius: 4.285714vw;
+  }
+  .registration__form h3 {
+    font-size: max(10px, 1.428571vw);
+    line-height: max(14px, 2.071429vw);
+  }
+  .registration__fields {
+    gap: 0.714286vw 1.142857vw;
+  }
+  .registration-field {
+    padding-top: 0.5vw;
+  }
+  .registration-field__control {
+    height: max(44px, 3.714286vw);
+    border-radius: 2.857143vw;
+  }
+  .registration-field input {
+    padding: max(10px, 1vw) 1.714286vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration-field label {
+    top: -0.5vw;
+    left: 1.428571vw;
+    max-width: calc(100% - 2.857143vw);
+    padding-inline: 0.285714vw;
+    font-size: max(9px, 0.857143vw);
+    line-height: max(11px, 1.142857vw);
+  }
+  .registration-field__phone-hint {
+    left: 3.428571vw;
+    top: max(10px, 1vw);
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration-field__error {
+    margin-top: 0.571429vw;
+    font-size: max(9px, 0.857143vw);
+    line-height: max(11px, 1.142857vw);
+  }
+  .registration__submit {
+    min-height: max(44px, 3.571429vw);
+    padding: max(12px, 1.142857vw) 1.714286vw;
+    border-radius: 2.857143vw;
+    font-size: max(12px, 1.142857vw);
+    line-height: max(14px, 1.285714vw);
+  }
+  .registration__consents {
+    font-size: max(10px, 0.857143vw);
+    line-height: max(12px, 1.142857vw);
+  }
+  .registration__status {
+    font-size: max(10px, 1vw);
+    line-height: max(14px, 1.428571vw);
+  }
+  .registration__ribbon {
+    top: 38.357143vw;
+    width: min(74.428571vw, 100%);
+  }
+  .registration__success {
+    min-height: 32.285714vw;
+    gap: 3.142857vw;
+  }
+  .registration__success-heading {
+    gap: 1.714286vw;
+  }
+  .registration__success-check {
+    padding: 1.428571vw;
+    border-radius: 2.857143vw;
+  }
+  .registration__success-details {
+    gap: 1.428571vw;
+    padding-bottom: 1.428571vw;
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .registration__success-facts {
+    gap: 0.285714vw;
+  }
+  .registration__success-fact {
+    gap: 0.571429vw;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+    font-size: max(10px, 1.071429vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .registration__success-fact img {
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+
+  /* Footer keeps the desktop row rather than switching at the old 900px cut. */
+  .site-footer {
+    padding: calc(10vw + 100px) 1.714286vw 5.142857vw;
+    font-size: max(10px, 1.285714vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .site-footer__inner {
+    gap: 3.428571vw;
+  }
+  .site-footer__copyright {
+    font-size: max(12px, 1.214286vw);
+    line-height: max(16px, 1.714286vw);
+  }
+  .site-footer__facts {
+    gap: 4px;
+    padding-top: 0.571429vw;
+  }
+  .site-footer__fact {
+    gap: 0.571429vw;
+    padding: 0.285714vw 1.142857vw;
+    border-radius: 3.571429vw;
+    font-size: max(10px, 1.071429vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .site-footer__legal-links,
+  .site-footer .site-footer__copyright {
+    font-size: max(10px, 1.071429vw);
+    line-height: max(14px, 1.714286vw);
+  }
+  .site-footer__fact img {
+    width: 1.285714vw;
+    height: 1.285714vw;
+  }
+}
+
+/* Width remains primary; only Hero composition receives short-viewport safety. */
+@media (min-width: 600px) and (max-width: 1399px) and (max-height: 700px) {
+  :root {
+    --hero-projector-width: min(54.285714vw, 108.571429svh);
+    --hero-final-projector-width: min(36.785714vw, 73.571429svh);
+    --hero-object-width: min(57.142857vw, 114.285714svh);
+    --hero-copy-width: min(64.285714vw, 128.571429svh);
+    --hero-title-size: min(3.142857vw, 6.285714svh);
+    --hero-subtitle-size: min(1.5vw, 3svh);
+    --hero-subtitle-line: min(2.071429vw, 4.142857svh);
+    --hero-particle-right-width: min(58.571429vw, 117.142857svh);
+    --hero-particle-right-height: min(50vw, 100svh);
+    --hero-particle-left-width: min(62.857143vw, 125.714286svh);
+    --hero-particle-left-height: min(53.428571vw, 106.857143svh);
+  }
+}
+
+@media (min-width: 601px) {
+  .scene-nav .menu-trigger,
+  .scene-menu {
+    display: none;
+  }
+}

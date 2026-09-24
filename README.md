@@ -68,7 +68,7 @@ Production-handoff для React 19 сайта конференции. Проек
 | production list                | не является параметром проекта             | владелец Sendsay выбирает нужный список внутри production-формы; передавать разработчику его ID не требуется | Sendsay UI                                    |
 | production form active         | подтверждено владельцем                    | Form ID `24` уже проверен через GET Form API: `state: 1`                                                     | Sendsay UI / Form API                         |
 | email logic/templates/schedule | ведутся владельцем Sendsay                 | не требуются для кода формы; проверяются владельцем Sendsay непосредственно в automation                     | Sendsay UI                                    |
-| personal-data consent          | текст и ссылки получены                    | дополнительное подтверждение для текущей версии не требуется                                                 | `src/components/PersonalDataConsentModal.jsx` |
+| personal-data consent          | текст и ссылки получены                    | дополнительное подтверждение для текущей версии не требуется                                                 | `src/components/ConsentModal/PersonalDataConsentModal.jsx` |
 
 Значения `example.test`, `example.com` и тестовые email внутри `tests/` — только fixtures; в production bundle и конфигурацию они не попадают. Внутренние строки `http://localhost` в URL parser также не являются deployment placeholders и менять их не нужно.
 
@@ -310,7 +310,7 @@ Node server готов: он раздаёт `outputs`, маршрутизиру�
 
 | Область                       | Файл                                                                      |
 | ----------------------------- | ------------------------------------------------------------------------- |
-| UI формы                      | `src/components/Registration.jsx`                                         |
+| UI формы                      | `src/components/Registration/Registration.jsx`                            |
 | shared validation             | `shared/registrationValidation.js`                                        |
 | Sendsay public config/mapping | `src/services/sendsay/sendsayConfig.js`                                   |
 | Sendsay Form API client       | `src/services/sendsay/sendsayFormClient.js`                               |

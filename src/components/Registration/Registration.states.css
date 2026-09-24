@@ -1,0 +1,248 @@
+.registration__status {
+  margin: 0;
+  text-align: center;
+  color: #c9c1d2;
+  font:
+    400 14px/20px "MTS Text",
+    Arial,
+    sans-serif;
+}
+.registration [hidden] {
+  display: none !important;
+}
+.registration__ribbon {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  left: 50%;
+  top: 537px;
+  transform: translateX(-50%);
+  width: min(1042px, 100%);
+  aspect-ratio: 1042/471;
+  background-position: center bottom;
+  background-size: 100% 102.72%;
+  background-repeat: no-repeat;
+}
+.registration.assets-ready .registration__ribbon {
+  background-image: url("assets/registration/light-ribbon.webp");
+  background-image: image-set(
+    url("assets/registration/light-ribbon.avif") type("image/avif"),
+    url("assets/registration/light-ribbon.webp") type("image/webp")
+  );
+  mask: url("assets/registration/light-ribbon-mask.svg") center/100% 100%
+    no-repeat;
+  -webkit-mask: url("assets/registration/light-ribbon-mask.svg") center/100%
+    100% no-repeat;
+}
+body.registration-visible > #conference-register {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+@media (max-width: 599px) {
+  .registration {
+    min-height: 100svh;
+    padding: 160px 20px 0;
+  }
+  .registration h2 {
+    font-size: clamp(26px, 5.3vw, 40px);
+    margin-bottom: 40px;
+  }
+  .registration__form {
+    border-radius: 40px;
+    padding: 28px 24px;
+  }
+  .registration__form h3 {
+    font-size: 15px;
+    line-height: 20px;
+  }
+  .registration__ribbon {
+    top: auto;
+    bottom: 0;
+  }
+  .registration.assets-ready .registration__ribbon {
+    background-image: url("assets/registration/light-ribbon-700.webp");
+    background-image: image-set(
+      url("assets/registration/light-ribbon-700.avif") type("image/avif") 1x,
+      url("assets/registration/light-ribbon.avif") type("image/avif") 2x,
+      url("assets/registration/light-ribbon-700.webp") type("image/webp") 1x,
+      url("assets/registration/light-ribbon.webp") type("image/webp") 2x
+    );
+  }
+  .consent-modal {
+    place-items: end center;
+    padding: 0;
+  }
+  .consent-modal__dialog {
+    width: 100%;
+    max-height: min(88svh, 760px);
+    border-bottom: 0;
+    border-radius: 28px 28px 0 0;
+    color: rgba(255, 255, 255, 0.8);
+    font:
+      400 14px/20px "MTS Text",
+      Arial,
+      sans-serif;
+    transform: translateY(var(--sheet-drag-y, 0));
+    transition: transform 0.22s ease-out;
+    animation: consent-sheet-enter 0.28s ease-out both;
+  }
+  .consent-modal__dialog.is-dragging {
+    transition: none;
+  }
+  .consent-modal.is-closing .consent-modal__dialog {
+    animation: consent-sheet-exit 0.24s ease-in both;
+  }
+  .consent-modal__header {
+    position: relative;
+    display: block;
+    padding: 34px 16px 16px;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+  }
+  .consent-modal__header h2 {
+    box-sizing: border-box;
+    width: 100%;
+    margin: 0;
+    padding-inline: 40px;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.6) 10.577%,
+      #fff 43.75%,
+      #fff 61.058%,
+      rgba(255, 255, 255, 0.6) 89.904%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    font-family: "MTS Wide", Arial, sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 400;
+    line-height: 22px !important;
+    text-align: center;
+  }
+  .consent-modal__close {
+    position: absolute;
+    top: 28px;
+    right: 16px;
+  }
+  .consent-modal__header::before {
+    content: "";
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    width: 44px;
+    height: 4px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    background: var(--Controls-Blur, rgba(255, 255, 255, 0.24));
+    transform: translateX(-50%);
+  }
+  .consent-modal__dialog.is-dragging .consent-modal__header {
+    cursor: grabbing;
+  }
+  .consent-modal__body {
+    padding: 20px 16px calc(24px + env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+  }
+  .consent-modal__body .consent-modal__footnote {
+    color: inherit;
+    font-size: inherit;
+  }
+}
+@keyframes consent-sheet-enter {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(var(--sheet-drag-y, 0));
+  }
+}
+@keyframes consent-sheet-exit {
+  from {
+    transform: translateY(var(--sheet-drag-y, 0));
+  }
+  to {
+    transform: translateY(100%);
+  }
+}
+@keyframes consent-modal-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes consent-modal-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes consent-dialog-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes consent-dialog-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.985);
+  }
+}
+@media (max-width: 480px) {
+  .registration__fields {
+    grid-template-columns: 1fr;
+  }
+  .registration__form {
+    padding: 28px 20px;
+    gap: 24px;
+    border-radius: 32px;
+  }
+  .registration-field input {
+    padding-inline: 20px;
+  }
+  .registration-field label {
+    left: 16px;
+  }
+  .registration__submit {
+    font-size: 15px;
+  }
+  .consent-modal__dialog {
+    font-size: 14px;
+  }
+  .consent-modal__header h2 {
+    font-size: 19px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .registration__inner {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+  .registration-field *,
+  .registration__submit {
+    transition: none !important;
+  }
+  .consent-modal__dialog {
+    animation: none !important;
+    transition: none !important;
+  }
+  .consent-modal {
+    animation: none !important;
+  }
+}

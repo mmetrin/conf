@@ -20,18 +20,18 @@ Generated: 2026-09-23T16:28:23.914Z
 ## Usage and format decisions
 
 - `assets-source/particle-human-reference.png` — src/animation/particles.js (canvas sampling source); WebP retained: this image is decoded into a runtime canvas; the AVIF candidate was smaller but materially slower to decode.
-- `assets-source/programme/first-frame.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/programme/new-light.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/programme/public-talk.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/programme/big-data.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/programme/campaign.png` — src/components/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/programme/light-on-mobile.png` — src/components/Programme.jsx (mobile-only responsive <picture>); AVIF omitted: aggregate saving was below 15%.
-- `assets-source/registration/light-ribbon.png` — src/styles/site.css (.registration__ribbon); AVIF retained: aggregate variants are 46.3% smaller than WebP.
+- `assets-source/programme/first-frame.png` — src/components/Programme/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/new-light.png` — src/components/Programme/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/public-talk.png` — src/components/Programme/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/big-data.png` — src/components/Programme/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/campaign.png` — src/components/Programme/Programme.jsx (responsive <img srcset>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/programme/light-on-mobile.png` — src/components/Programme/Programme.jsx (mobile-only responsive <picture>); AVIF omitted: aggregate saving was below 15%.
+- `assets-source/registration/light-ribbon.png` — src/components/Registration/Registration.states.css (.registration__ribbon); AVIF retained: aggregate variants are 46.3% smaller than WebP.
 - `assets-source/main-mts-particle.png` — Unused: no production reference; original retained in assets-source.
 - `assets-source/programme/light-on.png` — Unused: the programme uses light-on-icon.svg; original PNG retained and SVG left untouched.
-- `public/assets/inline-9537aceeaf6a.webp` — src/components/StageOverlay.jsx (loader); already optimized WebP retained byte-for-byte.
-- `public/assets/projector-realistic.webp` — src/components/Hero.jsx and src/styles/site.css; already optimized WebP retained byte-for-byte.
-- `public/assets/projector-downward.webp` — src/components/StageOverlay.jsx; already optimized WebP retained byte-for-byte.
+- `public/assets/inline-9537aceeaf6a.webp` — src/components/StageOverlay/StageOverlay.jsx (loader); already optimized WebP retained byte-for-byte.
+- `public/assets/projector-realistic.webp` — src/components/Hero/Hero.jsx and src/components/Hero/Hero.css; already optimized WebP retained byte-for-byte.
+- `public/assets/projector-downward.webp` — src/components/StageOverlay/StageOverlay.jsx; already optimized WebP retained byte-for-byte.
 - `work/**` PNG/WebP files are design/QA captures with no production references; they remain untouched and are excluded from delivery totals.
 
 ## Resized

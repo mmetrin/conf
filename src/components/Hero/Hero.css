@@ -1,0 +1,296 @@
+.object {
+  width: min(96vw, 1120px);
+  min-width: 0;
+  aspect-ratio: 1448 / 560;
+  top: 71%;
+  overflow: hidden;
+  filter: brightness(var(--object-light, 0.3));
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 24%,
+    #000 72%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    #000 24%,
+    #000 72%,
+    transparent 100%
+  );
+}
+@media (max-width: 599px) {
+  .object {
+    width: 110vw;
+  }
+}
+@media (max-width: 560px) {
+  .object {
+    width: 145vw;
+    left: 58%;
+    top: 72%;
+  }
+}
+
+.projector {
+  width: clamp(390px, 59vw, 820px);
+  filter: drop-shadow(0 14px 19px #0009);
+}
+@media (max-width: 560px) {
+  .projector {
+    width: 390px;
+    left: 58%;
+  }
+}
+.object {
+  z-index: 2;
+  overflow: visible;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+#light {
+  z-index: 5;
+}
+.object {
+  filter: none;
+  will-change: transform, opacity;
+  transform: translate3d(-50%, -40%, 0) scale(var(--object-scale, 0.86));
+}
+.projector {
+  will-change: transform;
+  filter: none;
+}
+.projector,
+.projector-final {
+  top: clamp(14px, 3vh, 34px);
+  width: clamp(400px, 54vw, 760px);
+  aspect-ratio: 1774 / 887;
+  isolation: isolate;
+  transform-origin: 50% 0%;
+  transform-style: preserve-3d;
+}
+.projector-render {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+  user-select: none;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.projector-front {
+  opacity: 1;
+  transform: translateZ(0);
+  filter: brightness(0.66) contrast(1.17) saturate(0.72)
+    drop-shadow(0 22px 26px #000c);
+}
+.projector::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.84;
+  background:
+    radial-gradient(ellipse at 52% 44%, #bca5ff28 0 8%, transparent 28%),
+    linear-gradient(112deg, transparent 13%, #eef0ff18 31%, transparent 42%),
+    linear-gradient(286deg, transparent 48%, #9c7bea20 66%, transparent 79%);
+  mix-blend-mode: screen;
+  mask: url("assets/projector-realistic.webp") center / 100% 100% no-repeat;
+  -webkit-mask: url("assets/projector-realistic.webp") center / 100% 100%
+    no-repeat;
+}
+.projector {
+  animation: projector-intro 6s linear 0.25s both;
+}
+@keyframes projector-intro {
+  0% {
+    transform: translate3d(-50%, 6vh, 0) scale(0.7);
+    opacity: 0;
+  }
+  5% {
+    transform: translate3d(-50%, 6vh, 0) scale(0.7);
+    opacity: 1;
+  }
+  21.666667% {
+    transform: translate3d(-50%, 6vh, 0) scale(0.7);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.22, 0.08, 0.3, 1);
+  }
+  100% {
+    transform: translate3d(-50%, -58vh, 0) scale(1.22);
+    opacity: 1;
+  }
+}
+.projector-final {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  width: clamp(276px, 36.8vw, 515px);
+  opacity: var(--final-opacity, 0);
+  transform: translate3d(-50%, var(--final-y, -450px), 0)
+    scale(var(--final-scale, 1));
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.projector-final-render {
+  mix-blend-mode: screen;
+}
+.projector::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  left: 50%;
+  top: var(--lens-y, 58%);
+  width: 15%;
+  height: 13%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: var(--lens-power, 0);
+  background: radial-gradient(
+    ellipse,
+    #fff 0%,
+    #f6e9ff 24%,
+    #c39aff 53%,
+    #9b6aff22 70%,
+    transparent 100%
+  );
+  box-shadow: 0 0 28px 8px #bc92ff70;
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.projector-final::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  left: var(--lens-center-x);
+  top: var(--lens-center-y);
+  width: 16%;
+  height: 10%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: var(--final-lens-power, 0);
+  background: radial-gradient(
+    ellipse,
+    #fff 0%,
+    #f6e9ff 22%,
+    #c39aff 48%,
+    #9b6aff22 72%,
+    transparent 100%
+  );
+  mix-blend-mode: screen;
+}
+@media (max-width: 560px) {
+  .projector,
+  .projector-final {
+    width: 440px;
+    left: 58%;
+  }
+}
+@media (max-width: 560px) {
+  .projector-final {
+    width: 304px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .projector {
+    animation: none;
+    opacity: 0;
+  }
+}
+.object {
+  width: min(82.5vw, 962.5px);
+  min-width: 0;
+  aspect-ratio: 1448 / 1086;
+  top: calc(64% - 130px);
+  overflow: visible;
+  isolation: isolate;
+  --receiver-edge-mask:
+    linear-gradient(
+      90deg,
+      transparent 0%,
+      #0000000a 3%,
+      #0000002e 7%,
+      #00000080 12%,
+      #000000d9 18%,
+      #000 24%,
+      #000 76%,
+      #000000d9 82%,
+      #00000080 88%,
+      #0000002e 93%,
+      #0000000a 97%,
+      transparent 100%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      #000000b3 8%,
+      #000 16%,
+      #000 78%,
+      #00000059 92%,
+      transparent 100%
+    );
+  -webkit-mask-image: var(--receiver-edge-mask);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--receiver-edge-mask);
+  mask-composite: intersect;
+}
+.object::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  inset: -22% -20%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at 50% 36%,
+    #dec9ff26 0%,
+    #ae88ff12 23%,
+    #7040e006 43%,
+    transparent 68%
+  );
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(
+    ellipse at 50% 48%,
+    #000 7%,
+    #0007 36%,
+    transparent 70%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse at 50% 48%,
+    #000 7%,
+    #0007 36%,
+    transparent 70%
+  );
+}
+.object::after {
+  display: none;
+}
+.object::before {
+  display: none;
+}
+@media (max-width: 599px) {
+  .object {
+    width: 94.6vw;
+    top: calc(64% - 130px);
+  }
+}
+@media (max-width: 560px) {
+  .object {
+    width: 123.2vw;
+    left: 58%;
+    top: calc(66% - 130px);
+  }
+}
+#invitation-particles {
+  position: absolute;
+  z-index: 8;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}

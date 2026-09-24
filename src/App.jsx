@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Hero } from "./components/Hero.jsx";
-import { StageOverlay } from "./components/StageOverlay.jsx";
+import { Hero } from "./components/Hero/Hero.jsx";
+import { StageOverlay } from "./components/StageOverlay/StageOverlay.jsx";
 import { useSceneRuntime } from "./hooks/useSceneRuntime.js";
 
 export default function App() {
@@ -11,7 +11,7 @@ export default function App() {
     let disposed = false;
     const request = () => {
       if (BelowFold || lowerContentPromise.current) return;
-      lowerContentPromise.current = import("./components/BelowFold.jsx")
+      lowerContentPromise.current = import("./components/BelowFold/BelowFold.jsx")
         .then((module) => {
           if (!disposed) setBelowFold(() => module.default);
         })

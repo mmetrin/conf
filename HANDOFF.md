@@ -12,7 +12,7 @@ Sendsay — source of truth для контакта и дальнейшей emai
 src/services/sendsay/sendsayConfig.js       public build config/field mapping
 src/services/sendsay/sendsayFormClient.js   Form API payload, timeout, response contract
 src/services/registration/registrationSubmission.js normalization, validation, notification isolation
-src/components/Registration.jsx             form UI and submit lock
+src/components/Registration/Registration.jsx form UI and submit lock
 server/register.mjs                         composition/configuration
 server/registration/registrationHandler.mjs HTTP orchestration
 server/registration/registrationService.mjs registration use-case
@@ -100,7 +100,7 @@ Sendsay отвечает за контакт/participant emails и может о
 Вариант A возможен после настройки `notify.email`/шаблона уведомления в Sendsay и production-проверки. Чтобы отключить старый flow:
 
 1. Проверить на test и production form, что Sendsay notification содержит все нужные поля и стабильно доставляется нужным организаторам.
-2. Удалить только вызов `notifyOrganizer` из `src/components/Registration.jsx` и затем server registration/email wiring, если endpoint больше нигде не нужен.
+2. Удалить только вызов `notifyOrganizer` из `src/components/Registration/Registration.jsx` и затем server registration/email wiring, если endpoint больше нигде не нужен.
 3. Удалить Resend server env (`EMAIL_API_KEY`, `EMAIL_FROM`, test recipient) и deployment secrets только после проверки и согласования rollback.
 4. Обновить server routing/tests/документацию. Sendsay Form API client и его public config не менять.
 

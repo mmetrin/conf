@@ -44,7 +44,7 @@ const regularImages = [
       source: `programme/${name}.png`,
       output: `programme/${name}`,
       widths: [96, 192],
-      usage: ["src/components/Programme.jsx (responsive <img srcset>)"],
+      usage: ["src/components/Programme/Programme.jsx (responsive <img srcset>)"],
       avif: true,
     }),
   ),
@@ -53,7 +53,7 @@ const regularImages = [
     output: "programme/light-on-mobile",
     widths: [96, 192],
     usage: [
-      "src/components/Programme.jsx (responsive programme portrait)",
+      "src/components/Programme/Programme.jsx (responsive programme portrait)",
     ],
     avif: false,
   },
@@ -61,7 +61,7 @@ const regularImages = [
     source: "registration/light-ribbon.png",
     output: "registration/light-ribbon",
     widths: [700, 1400],
-    usage: ["src/styles/site.css (.registration__ribbon)"],
+    usage: ["src/components/Registration/Registration.states.css (.registration__ribbon)"],
     avif: true,
   },
 ];
@@ -82,15 +82,15 @@ const unusedImages = [
 const passthroughImages = [
   {
     path: "inline-9537aceeaf6a.webp",
-    usage: "src/components/StageOverlay.jsx (loader)",
+    usage: "src/components/StageOverlay/StageOverlay.jsx (loader)",
   },
   {
     path: "projector-realistic.webp",
-    usage: "src/components/Hero.jsx and src/styles/site.css",
+    usage: "src/components/Hero/Hero.jsx and src/components/Hero/Hero.css",
   },
   {
     path: "projector-downward.webp",
-    usage: "src/components/StageOverlay.jsx",
+    usage: "src/components/StageOverlay/StageOverlay.jsx",
   },
 ];
 
