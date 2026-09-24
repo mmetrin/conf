@@ -57,7 +57,12 @@ export async function submitConferenceRegistration(
 export async function notifyOrganizer(
   fields,
   idempotencyKey,
-  { fetchImpl = fetch, timeoutMs = 15_000, sendsayFallback = false } = {},
+  {
+    fetchImpl = fetch,
+    timeoutMs = 15_000,
+    sendsayFallback = false,
+    reminderConsent = false,
+  } = {},
 ) {
   try {
     const headers = {
@@ -69,7 +74,7 @@ export async function notifyOrganizer(
       method: "POST",
       headers,
       credentials: "same-origin",
-      body: JSON.stringify({ ...fields, website: "" }),
+      body: JSON.stringify({ ...fields, website: "", reminderConsent }),
       signal: AbortSignal.timeout(timeoutMs),
     });
     if (!response.ok) return false;

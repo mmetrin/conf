@@ -33,11 +33,22 @@ export function Programme() {
         <h2 id="programme-title">Программа</h2>
         <div className="programme__track">
           <TimeSlot slot={slots[0]} />
+          <TimeSlot slot={slots[1]} business />
+          <div className="programme__evening">
+            {slots.slice(2).map((slot) => (
+              <TimeSlot key={slot.time} slot={slot} />
+            ))}
+          </div>
           <section
             className="programme__business"
-            aria-labelledby="business-title"
+            aria-labelledby="business-topics-title"
           >
-            <TimeSlot slot={slots[1]} business />
+            <h3
+              className="programme__time programme__topics-title"
+              id="business-topics-title"
+            >
+              Деловая программа:
+            </h3>
             <ol className="programme__topics">
               {topics.map((topic, index) => (
                 <li
@@ -69,6 +80,26 @@ export function Programme() {
                           decoding="async"
                         />
                       </picture>
+                    ) : topic.secondaryImage ? (
+                      <div
+                        className="programme__portrait-pair"
+                        aria-hidden="true"
+                      >
+                        {[topic.image, topic.secondaryImage].map((image) => (
+                          <img
+                            className="programme__portrait"
+                            src={image}
+                            srcSet={portraitSrcSet(image)}
+                            sizes={portraitSizes}
+                            alt=""
+                            width="64"
+                            height="64"
+                            loading={index === 0 ? "eager" : "lazy"}
+                            decoding="async"
+                            key={image}
+                          />
+                        ))}
+                      </div>
                     ) : (
                       <img
                         className="programme__portrait"
@@ -98,11 +129,6 @@ export function Programme() {
               ))}
             </ol>
           </section>
-          <div className="programme__evening">
-            {slots.slice(2).map((slot) => (
-              <TimeSlot key={slot.time} slot={slot} />
-            ))}
-          </div>
         </div>
       </div>
     </section>

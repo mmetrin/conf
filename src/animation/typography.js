@@ -14,6 +14,9 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
   const heroScale = getHeroScale(w, h),
     desktopScale = getDesktopScale(w),
     mobile = w < 600,
+    // Keep the edge fade on compact screens, but let the first and last
+    // characters remain substantially more readable.
+    edgeTextOpacity = mobile ? 0.6 : 0.2,
     headingWidth = mobile
       ? w - 32
       : Math.min(920 * heroScale, w - 48 * heroScale),
@@ -60,12 +63,18 @@ export function buildFigmaOpeningTypography(w, h, dpr, blocks, icons) {
           left + rowWidth,
           0,
         );
-        gradient.addColorStop(0, "rgba(255,255,255,.2)");
-        gradient.addColorStop(0.10577, "rgba(255,255,255,.2)");
+        gradient.addColorStop(0, `rgba(255,255,255,${edgeTextOpacity})`);
+        gradient.addColorStop(
+          0.10577,
+          `rgba(255,255,255,${edgeTextOpacity})`,
+        );
         gradient.addColorStop(0.4375, "#ffffff");
         gradient.addColorStop(0.61058, "#ffffff");
-        gradient.addColorStop(0.89904, "rgba(255,255,255,.2)");
-        gradient.addColorStop(1, "rgba(255,255,255,.2)");
+        gradient.addColorStop(
+          0.89904,
+          `rgba(255,255,255,${edgeTextOpacity})`,
+        );
+        gradient.addColorStop(1, `rgba(255,255,255,${edgeTextOpacity})`);
         ctx.fillStyle = gradient;
       } else ctx.fillStyle = "rgba(255,255,255,.8)";
       ctx.fillText(text, w / 2, y + lineHeight / 2);

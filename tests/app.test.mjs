@@ -52,9 +52,15 @@ function environment(width, height, reduced = false, options = {}) {
     addEventListener() {},
     removeEventListener() {},
   };
-  globalThis.matchMedia = (query) => query === "(max-width: 599px)"
-    ? { ...media, get matches() { return width <= 599; } }
-    : media;
+  globalThis.matchMedia = (query) =>
+    query === "(max-width: 599px)"
+      ? {
+          ...media,
+          get matches() {
+            return width <= 599;
+          },
+        }
+      : media;
   window.matchMedia = globalThis.matchMedia;
   Object.defineProperty(window, "scrollY", {
     get: () => scrollY,
@@ -148,6 +154,18 @@ function environment(width, height, reduced = false, options = {}) {
     } else if (node.id === "registration") {
       y = programmeTop + 2800;
       h = 940;
+    } else if (node.id === "registration-title") {
+      const entryOffset = Number.parseFloat(
+        document
+          .querySelector("#registration")
+          ?.style.getPropertyValue("--registration-entry-y") || "0",
+      );
+      y =
+        programmeTop +
+        2800 +
+        181 +
+        (Number.isFinite(entryOffset) ? entryOffset : 0);
+      h = 53;
     } else if (node.classList.contains("lens-loader")) {
       w = h = 108;
       x = (width - w) / 2;
@@ -253,6 +271,9 @@ function environment(width, height, reduced = false, options = {}) {
     pending,
     step,
     errors,
+    get scrollY() {
+      return scrollY;
+    },
     resize(nextWidth, nextHeight) {
       width = nextWidth;
       height = nextHeight;
@@ -266,6 +287,18 @@ function environment(width, height, reduced = false, options = {}) {
   };
 }
 
+async function finishConsentModalClose() {
+  const modal = document.querySelector(".consent-modal");
+  if (!modal) return;
+  assert(
+    modal.classList.contains("is-closing"),
+    "the modal remains mounted for its closing animation",
+  );
+  await act(async () => {
+    modal.dispatchEvent(new window.Event("animationend", { bubbles: true }));
+  });
+}
+
 test("mobile loader waits for the second projector image to decode", async () => {
   let releaseProjector;
   const projectorReady = new Promise((resolve) => {
@@ -277,8 +310,14 @@ test("mobile loader waits for the second projector image to decode", async () =>
         ? projectorReady
         : Promise.resolve(),
   });
-  document.body.insertAdjacentHTML("afterbegin", await fs.readFile("src/loading-shell.html", "utf8"));
-  assert(document.querySelector("#bootstrap-loader"), "HTML includes a loader before React starts");
+  document.body.insertAdjacentHTML(
+    "afterbegin",
+    await fs.readFile("src/loading-shell.html", "utf8"),
+  );
+  assert(
+    document.querySelector("#bootstrap-loader"),
+    "HTML includes a loader before React starts",
+  );
   const root = createRoot(document.getElementById("root"));
 
   try {
@@ -293,8 +332,11 @@ test("mobile loader waits for the second projector image to decode", async () =>
     assert(!document.documentElement.classList.contains("content-ready"));
     assert(!document.documentElement.classList.contains("loader-finished"));
     assert(document.querySelector("#page-loader"));
-    assert.equal(document.querySelector("#bootstrap-loader"), null,
-      "React takes over the loading screen without leaving two overlays");
+    assert.equal(
+      document.querySelector("#bootstrap-loader"),
+      null,
+      "React takes over the loading screen without leaving two overlays",
+    );
 
     await act(async () => {
       releaseProjector();
@@ -317,16 +359,24 @@ test("mobile loader waits for the second projector image to decode", async () =>
 
 test("later screens prepare while background sequence is still pending", async () => {
   let releaseFrames;
-  const framesReady = new Promise((resolve) => { releaseFrames = resolve; });
+  const framesReady = new Promise((resolve) => {
+    releaseFrames = resolve;
+  });
   const env = environment(1600, 940, false, {
-    decodeImage: (image) => /receiver-frames\/(?!01\.)/.test(image.src)
-      ? framesReady : Promise.resolve(),
+    decodeImage: (image) =>
+      /receiver-frames\/(?!01\.)/.test(image.src)
+        ? framesReady
+        : Promise.resolve(),
   });
   const root = createRoot(document.getElementById("root"));
   let prefetched = false;
   let completed = false;
-  window.addEventListener("audience-prefetch", () => { prefetched = true; });
-  window.addEventListener("sequence-background-complete", () => { completed = true; });
+  window.addEventListener("audience-prefetch", () => {
+    prefetched = true;
+  });
+  window.addEventListener("sequence-background-complete", () => {
+    completed = true;
+  });
   try {
     await act(async () => {
       root.render(React.createElement(App));
@@ -336,13 +386,20 @@ test("later screens prepare while background sequence is still pending", async (
       await new Promise((resolve) => setTimeout(resolve, 550));
     });
     await env.step(100);
-    assert.equal(prefetched, false, "optional animation work waits until opening finishes");
+    assert.equal(
+      prefetched,
+      false,
+      "optional animation work waits until opening finishes",
+    );
     await env.step(130);
     assert(document.documentElement.classList.contains("loader-finished"));
     assert.equal(completed, false);
     assert.equal(prefetched, true);
     assert(document.querySelector("#programme"));
-    assert.equal(document.querySelector(".programme__portrait").getAttribute("loading"), "eager");
+    assert.equal(
+      document.querySelector(".programme__portrait").getAttribute("loading"),
+      "eager",
+    );
   } finally {
     await act(async () => {
       root.unmount();
@@ -358,7 +415,8 @@ for (const frameMs of [1000 / 60, 100])
     const requestedFrames = [];
     const env = environment(375, 812, false, {
       decodeImage: (image) => {
-        if (image.src?.includes("receiver-frames/")) requestedFrames.push(image.src);
+        if (image.src?.includes("receiver-frames/"))
+          requestedFrames.push(image.src);
         return Promise.resolve();
       },
     });
@@ -369,23 +427,38 @@ for (const frameMs of [1000 / 60, 100])
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
       await env.step(4);
-      assert(document.documentElement.classList.contains("content-ready"),
-        "cached assets do not incur a minimum 500ms loading delay");
-      assert.equal(requestedFrames.length, 1,
-        "only the initial frame is loaded during opening");
+      assert(
+        document.documentElement.classList.contains("content-ready"),
+        "cached assets do not incur a minimum 500ms loading delay",
+      );
+      assert.equal(
+        requestedFrames.length,
+        1,
+        "only the initial frame is loaded during opening",
+      );
       assert.match(requestedFrames[0], /receiver-frames\/mobile\/01\.webp/);
       await env.step(Math.ceil(1650 / frameMs), frameMs);
-      assert(document.documentElement.classList.contains("opening-locked"),
-        "the opening animation keeps its original pace instead of finishing in 1.5 seconds");
-      assert.equal(requestedFrames.length, 1,
-        "background frames still wait for the full opening animation");
+      assert(
+        document.documentElement.classList.contains("opening-locked"),
+        "the opening animation keeps its original pace instead of finishing in 1.5 seconds",
+      );
+      assert.equal(
+        requestedFrames.length,
+        1,
+        "background frames still wait for the full opening animation",
+      );
       await env.step(Math.ceil(1500 / frameMs), frameMs);
-      assert(!document.documentElement.classList.contains("opening-locked"),
-        "opening finishes without stretching its timing on dropped frames");
+      assert(
+        !document.documentElement.classList.contains("opening-locked"),
+        "opening finishes without stretching its timing on dropped frames",
+      );
       await act(async () => {
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
-      assert(document.querySelector("#programme"), "lower content is available after opening");
+      assert(
+        document.querySelector("#programme"),
+        "lower content is available after opening",
+      );
       assert.equal(env.errors.length, 0);
     } finally {
       await act(async () => root.unmount());
@@ -436,7 +509,8 @@ for (const [width, height, reduced] of [
     };
     let calls = 0,
       sendsayCalls = 0;
-    globalThis.fetch = async (url) => {
+    const apiBodies = [];
+    globalThis.fetch = async (url, request) => {
       calls++;
       if (String(url).startsWith("https://sendsay.ru/form/")) {
         sendsayCalls++;
@@ -446,8 +520,15 @@ for (const [width, height, reduced] of [
               status: 200,
               json: async () => ({ errors: [{ id: "temporary_form_error" }] }),
             }
-          : { ok: true, status: 200, json: async () => ({ obj: {} }) };
+          : {
+              ok: true,
+              status: 200,
+              json: async () => ({
+                errors: [{ id: "error/draft/emptyfromemail" }],
+              }),
+            };
       }
+      apiBodies.push(JSON.parse(request.body));
       return { ok: true, status: 200, json: async () => ({ ok: true }) };
     };
     const env = environment(width, height, reduced);
@@ -509,6 +590,34 @@ for (const [width, height, reduced] of [
         await new Promise((resolve) => setTimeout(resolve, 0));
       });
       await env.step(3);
+      for (const registerButton of document.querySelectorAll(
+        ".scene-menu__register, #conference-register",
+      )) {
+        window.scrollTo({ top: 0 });
+        await env.step(2);
+        const registration = document.querySelector("#registration");
+        const title = document.querySelector("#registration-title");
+        const entryOffset = Number.parseFloat(
+          registration.style.getPropertyValue("--registration-entry-y") || "0",
+        );
+        const expectedTop =
+          window.scrollY +
+          title.getBoundingClientRect().top -
+          (Number.isFinite(entryOffset) ? entryOffset : 0) -
+          120;
+        await act(async () => {
+          registerButton.dispatchEvent(
+            new window.Event("click", { bubbles: true }),
+          );
+        });
+        assert.equal(
+          env.scrollY,
+          expectedTop,
+          "every registration CTA leaves a 120px gap above the untransformed H2",
+        );
+      }
+      window.scrollTo({ top: 0 });
+      await env.step(2);
       // Exercise the scene state machine independently of async asset readiness.
       document.documentElement.classList.add("content-ready");
       window.dispatchEvent(new window.Event("opening-ready"));
@@ -528,6 +637,22 @@ for (const [width, height, reduced] of [
         document.querySelectorAll(".programme__focus-content").length,
         11,
       );
+      const businessHeading = document.querySelector(
+        ".programme__business-heading",
+      );
+      const evening = document.querySelector(".programme__evening");
+      const business = document.querySelector(".programme__business");
+      assert.equal(
+        businessHeading.parentElement,
+        document.querySelector(".programme__track"),
+      );
+      assert.equal(businessHeading.nextElementSibling, evening);
+      assert.equal(evening.nextElementSibling, business);
+      assert.equal(
+        business.querySelector(".programme__business-heading"),
+        null,
+        "the business heading stays outside the reordered topic group",
+      );
       const stickyDistance = height * 1.8;
       window.scrollTo({ top: stickyDistance });
       await env.step(4);
@@ -535,14 +660,31 @@ for (const [width, height, reduced] of [
         document.querySelector("#photo-dimmer").style.opacity,
         width <= 599 ? "0.000" : "1.000",
         "only desktop scroll advances the hero timeline",
-
       );
       if (width <= 599) {
-        assert(!document.querySelector("#scene").classList.contains("programme-pinned"));
-        assert(!document.querySelector("#scene").classList.contains("programme-exiting"));
-        for (const selector of ["#photo-title", "#photo-subtitle", "#photo-roles"]) {
-          assert.equal(document.querySelector(selector).getAttribute("aria-hidden"), "false");
-          assert.equal(document.querySelector(selector).style.visibility, "visible");
+        assert(
+          !document
+            .querySelector("#scene")
+            .classList.contains("programme-pinned"),
+        );
+        assert(
+          !document
+            .querySelector("#scene")
+            .classList.contains("programme-exiting"),
+        );
+        for (const selector of [
+          "#photo-title",
+          "#photo-subtitle",
+          "#photo-roles",
+        ]) {
+          assert.equal(
+            document.querySelector(selector).getAttribute("aria-hidden"),
+            "false",
+          );
+          assert.equal(
+            document.querySelector(selector).style.visibility,
+            "visible",
+          );
         }
       }
       window.scrollTo({ top: 0 });
@@ -568,33 +710,69 @@ for (const [width, height, reduced] of [
           const track = document.querySelector(".programme__track");
           assert.equal(
             track.style.getPropertyValue("--programme-line-y"),
-            (height * 0.5 - track.getBoundingClientRect().top).toFixed(1) + "px",
+            (height * 0.5 - track.getBoundingClientRect().top).toFixed(1) +
+              "px",
             "mobile line highlight follows scrolling at the viewport focus",
           );
           const smoke = document.querySelector("#abstract-lights");
-          assert.equal(smoke.parentElement, document.body,
-            "the smoke background is outside the clipped mobile scene");
-          const titleTop = document.querySelector("#programme-title").getBoundingClientRect().top;
+          assert.equal(
+            smoke.parentElement,
+            document.body,
+            "the smoke background is outside the clipped mobile scene",
+          );
+          const titleTop = document
+            .querySelector("#programme-title")
+            .getBoundingClientRect().top;
           if (titleTop >= 80) {
-            assert.equal(Number(smoke.style.opacity || 0), 0,
-              "smoke stays hidden until the programme heading reaches the top zone");
+            assert.equal(
+              Number(smoke.style.opacity || 0),
+              0,
+              "smoke stays hidden until the programme heading reaches the top zone",
+            );
           } else if (titleTop > 0) {
-            assert(Number(smoke.style.opacity) > 0 && Number(smoke.style.opacity) < 0.55,
-              "smoke appears gradually as the heading crosses the top zone");
+            assert(
+              Number(smoke.style.opacity) > 0 &&
+                Number(smoke.style.opacity) < 0.55,
+              "smoke appears gradually as the heading crosses the top zone",
+            );
           }
           if (top >= 3 * height) {
-            assert.equal(smoke.style.opacity, "0.55",
-              "smoke remains visible from programme through footer");
+            assert.equal(
+              smoke.style.opacity,
+              "0.55",
+              "smoke remains visible from programme through footer",
+            );
           } else if (top === 0) {
-            assert.equal(smoke.style.opacity, "0",
-              "smoke hides when returning above programme");
+            assert.equal(
+              smoke.style.opacity,
+              "0",
+              "smoke hides when returning above programme",
+            );
           }
         }
         if (width > 599) {
           assert(
-            !document.querySelector("#scene").classList.contains("is-suspended"),
+            !document
+              .querySelector("#scene")
+              .classList.contains("is-suspended"),
             "registration and footer must not suspend the fixed beam",
           );
+          if (top === 3 * height) {
+            const focusLevels = [
+              ...document.querySelectorAll(".programme__item"),
+            ].map((item) => item.style.getPropertyValue("--focus"));
+            assert.equal(
+              focusLevels.filter((value) => value === "1.000").length,
+              1,
+              "exactly one desktop programme item is fully opaque",
+            );
+            assert(
+              focusLevels
+                .filter((value) => value !== "1.000")
+                .every((value) => value === "0.500"),
+              "every non-central desktop programme item is 50% opaque",
+            );
+          }
         }
       }
       if (width > 599) {
@@ -604,10 +782,22 @@ for (const [width, height, reduced] of [
         window.dispatchEvent(new window.Event("scroll"));
         await env.step(4);
         const content = document.querySelector(".programme__inner");
-        const litEdge = parseFloat(content.style.getPropertyValue("--programme-lit-edge"));
-        const darkEdge = parseFloat(content.style.getPropertyValue("--programme-dark-edge"));
-        assert(Math.abs(litEdge + content.getBoundingClientRect().top - height * 0.18) < 1, "fading begins near the top edge");
-        assert(Math.abs(litEdge - darkEdge - height * 0.36) < 1, "fading has a broad gradual range");
+        const litEdge = parseFloat(
+          content.style.getPropertyValue("--programme-lit-edge"),
+        );
+        const darkEdge = parseFloat(
+          content.style.getPropertyValue("--programme-dark-edge"),
+        );
+        assert(
+          Math.abs(
+            litEdge + content.getBoundingClientRect().top - height * 0.18,
+          ) < 1,
+          "fading begins near the top edge",
+        );
+        assert(
+          Math.abs(litEdge - darkEdge - height * 0.36) < 1,
+          "fading has a broad gradual range",
+        );
         window.scrollTo({ top: height * 2.8 + 2800 + 940 });
         await env.step(4);
       }
@@ -617,8 +807,10 @@ for (const [width, height, reduced] of [
       });
       await env.step(4);
       if (width > 599) {
-        assert(!document.querySelector("#scene").classList.contains("is-suspended"),
-          "resizing at the footer keeps the beam renderer active");
+        assert(
+          !document.querySelector("#scene").classList.contains("is-suspended"),
+          "resizing at the footer keeps the beam renderer active",
+        );
       }
       for (const node of document.querySelectorAll("[style]"))
         assert(!/NaN|undefinedpx/.test(node.getAttribute("style")), node.id);
@@ -631,6 +823,125 @@ for (const [width, height, reduced] of [
       const form = document.querySelector("#registration-form");
       Object.defineProperty(form, "elements", {
         value: { namedItem: (name) => form.querySelector(`[name="${name}"]`) },
+      });
+      const reminderCheckbox = form.querySelector(
+        "#registration-reminder-consent",
+      );
+      const privacyPolicyButton = form.querySelector(".registration__policy a");
+      assert.equal(
+        form.querySelector(".registration__policy").textContent,
+        "Продолжая, я соглашаюсь с Политикой обработки персональных данных",
+      );
+      assert.equal(privacyPolicyButton.textContent.includes("\u00a0"), false);
+      assert.equal(reminderCheckbox.checked, true);
+      await act(async () => {
+        form
+          .querySelector("#registration-reminder-link")
+          .dispatchEvent(new window.Event("click", { bubbles: true }));
+      });
+      const consentDialog = document.querySelector(".consent-modal__dialog");
+      assert(consentDialog);
+      assert.equal(
+        consentDialog.parentElement.dataset.cursor,
+        "pointer",
+        "the dismissible desktop backdrop exposes its pointer cursor state",
+      );
+      assert.match(
+        consentDialog.textContent,
+        /Согласие на\s+рекламное взаимодействие/,
+      );
+      assert.match(consentDialog.textContent, /ООО\s+«МТС АДС ВИДЕО»/);
+      assert(
+        consentDialog.querySelector(
+          '.consent-modal__close img[src="assets/cross.svg"]',
+        ),
+        "the modal reuses the menu close icon",
+      );
+      await act(async () => {
+        const escape = new window.Event("keydown", { bubbles: true });
+        escape.key = "Escape";
+        document.dispatchEvent(escape);
+      });
+      await finishConsentModalClose();
+      assert.equal(document.querySelector(".consent-modal"), null);
+
+      for (const triggerSelector of [
+        ".registration__policy a",
+        ".site-footer__policy",
+      ]) {
+        await act(async () => {
+          document
+            .querySelector(triggerSelector)
+            .dispatchEvent(new window.Event("click", { bubbles: true }));
+        });
+        const personalDataDialog = document.querySelector(
+          ".consent-modal__dialog",
+        );
+        assert(personalDataDialog);
+        assert.match(
+          personalDataDialog.textContent,
+          /Согласие на\s+обработку персональных\s+данных/,
+        );
+        assert.match(personalDataDialog.textContent, /с\s+настоящего сайта/);
+        assert.doesNotMatch(
+          personalDataDialog.textContent,
+          /Тильда|flagman_event/,
+        );
+        assert.match(personalDataDialog.textContent, /срок 3\s+года/);
+        assert.match(personalDataDialog.textContent, /info@stream.ru/);
+        assert.match(personalDataDialog.textContent, /а\)\s+фамилия, имя,/);
+        assert.match(
+          personalDataDialog.textContent,
+          /4\.3\.\s+поставщики услуг/,
+        );
+        await act(async () => {
+          const closeTarget =
+            triggerSelector === ".registration__policy a"
+              ? document.querySelector(".consent-modal")
+              : personalDataDialog.querySelector(".consent-modal__close");
+          closeTarget.dispatchEvent(
+            new window.Event(
+              closeTarget.classList.contains("consent-modal")
+                ? "pointerdown"
+                : "click",
+              { bubbles: true },
+            ),
+          );
+        });
+        await finishConsentModalClose();
+        assert.equal(document.querySelector(".consent-modal"), null);
+      }
+      const footerLegalLinks = [
+        ...document.querySelectorAll(".site-footer__legal-link"),
+      ];
+      assert.deepEqual(
+        footerLegalLinks.map((link) => link.textContent.trim()),
+        [
+          "Политика обработки персональных данных",
+          "Согласие на анонс-рассылку",
+        ],
+      );
+      await act(async () => {
+        document
+          .querySelector(".site-footer__advertising-consent")
+          .dispatchEvent(new window.Event("click", { bubbles: true }));
+      });
+      assert.match(
+        document.querySelector(".consent-modal__dialog").textContent,
+        /Согласие на\s+рекламное взаимодействие/,
+      );
+      await act(async () => {
+        document
+          .querySelector(".consent-modal__close")
+          .dispatchEvent(new window.Event("click", { bubbles: true }));
+      });
+      await finishConsentModalClose();
+      assert.equal(document.querySelector(".consent-modal"), null);
+      reminderCheckbox.checked = true;
+      await act(async () => {
+        reminderCheckbox.dispatchEvent(
+          new window.Event("click", { bubbles: true }),
+        );
       });
       window.dispatchEvent(
         new window.CustomEvent("scene-effects-active", {
@@ -705,16 +1016,14 @@ for (const [width, height, reduced] of [
         3,
         "organizer notification is sent after Sendsay success",
       );
+      assert.equal(apiBodies[0].reminderConsent, true);
       assert.equal(document.querySelector("#registration-form"), null);
       const success = document.querySelector(".registration__success");
       assert.equal(success.getAttribute("role"), "status");
       assert.match(success.textContent, /Вы зарегистрированы/);
       assert.match(success.textContent, /19 ноября/);
       assert.equal(success.querySelectorAll("img").length, 5);
-      assert.equal(
-        success.querySelectorAll(".site-footer__fact").length,
-        4,
-      );
+      assert.equal(success.querySelectorAll(".site-footer__fact").length, 4);
       Object.defineProperty(document, "hidden", {
         value: true,
         writable: true,

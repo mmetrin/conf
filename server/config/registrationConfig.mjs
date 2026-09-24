@@ -5,6 +5,7 @@ export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 export const RATE_LIMIT_MAX_REQUESTS = 5;
 export const MAX_RATE_LIMIT_BUCKETS = 10000;
 export const EMAIL_TIMEOUT_MS = 10000;
+export const SENDSAY_IMPORT_TIMEOUT_MS = 10000;
 export const PRODUCTION_ORGANIZER_ADDRESS = "mmetrindesign@gmail.com";
 
 function readRequired(env, name) {
@@ -40,6 +41,37 @@ function readAppOrigin(env) {
   return value;
 }
 
+function readOptionalSendsayWebhookUrl(env) {
+  const value = env.SENDSAY_IMPORT_WEBHOOK_URL?.trim();
+  if (!value) return undefined;
+
+  let parsed;
+  try {
+    parsed = new URL(value);
+  } catch {
+    throw new ConfigurationError(
+      "SENDSAY_IMPORT_WEBHOOK_URL must be a valid URL",
+    );
+  }
+
+  const isSendsayHost =
+    parsed.hostname === "sendsay.ru" || parsed.hostname.endsWith(".sendsay.ru");
+  if (
+    parsed.protocol !== "https:" ||
+    !isSendsayHost ||
+    !parsed.pathname.startsWith("/backend/api/") ||
+    parsed.username ||
+    parsed.password ||
+    parsed.hash
+  ) {
+    throw new ConfigurationError(
+      "SENDSAY_IMPORT_WEBHOOK_URL must be an HTTPS Sendsay JSON import URL",
+    );
+  }
+
+  return value;
+}
+
 export function getRegistrationConfig(env = process.env) {
   const testMode = readBoolean(env, "EMAIL_TEST_MODE", false);
   const testRecipient = testMode
@@ -62,6 +94,10 @@ export function getRegistrationConfig(env = process.env) {
       testMode,
       testRecipient,
       timeoutMs: EMAIL_TIMEOUT_MS,
+    },
+    sendsayImport: {
+      webhookUrl: readOptionalSendsayWebhookUrl(env),
+      timeoutMs: SENDSAY_IMPORT_TIMEOUT_MS,
     },
   };
 }

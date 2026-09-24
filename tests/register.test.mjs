@@ -15,6 +15,7 @@ const data = {
   company: "Example",
   role: "Test",
   website: "",
+  reminderConsent: false,
 };
 
 const defaultEnv = {
@@ -25,6 +26,7 @@ const defaultEnv = {
 
 async function fixture(t, options = {}) {
   const requests = [];
+  const sendsayRequests = [];
   const fetchEmail =
     options.fetchEmail ||
     (async (url, request) => {
@@ -34,6 +36,16 @@ async function fixture(t, options = {}) {
   const handler = createRegistrationHandler({
     env: options.env || defaultEnv,
     fetchEmail,
+    fetchSendsay:
+      options.fetchSendsay ||
+      (async (url, request) => {
+        sendsayRequests.push({
+          url,
+          ...request,
+          json: JSON.parse(request.body),
+        });
+        return { ok: true };
+      }),
     now: options.now,
   });
   const server = http.createServer(handler);
@@ -43,6 +55,7 @@ async function fixture(t, options = {}) {
 
   return {
     requests,
+    sendsayRequests,
     async request(body = data, extra = {}) {
       const method = extra.method || "POST";
       const headers = {
@@ -210,11 +223,91 @@ test("rejects unknown fields, honeypot, control characters and invalid fields", 
     { name: "Я" },
     { company: "X" },
     { role: "Я" },
+    { reminderConsent: "true" },
   ]) {
     const context = await fixture(t);
     assert.equal((await context.request({ ...data, ...patch })).status, 400);
     assert.equal(context.requests.length, 0);
   }
+});
+
+test("reminder consent imports the contact through the server-only Sendsay webhook", async (t) => {
+  const webhookUrl =
+    "https://be.sendsay.ru/backend/api/test-key/member.set/email/-/member.email,set.copy,email/";
+  const context = await fixture(t, {
+    env: { ...defaultEnv, SENDSAY_IMPORT_WEBHOOK_URL: webhookUrl },
+    now: () => Date.parse("2026-09-24T12:00:00.000Z"),
+  });
+
+  assert.equal((await context.request()).status, 200);
+  assert.equal(context.sendsayRequests.length, 0);
+
+  assert.equal(
+    (await context.request({ ...data, reminderConsent: true })).status,
+    200,
+  );
+  assert.equal(context.sendsayRequests.length, 1);
+  assert.equal(context.sendsayRequests[0].url, webhookUrl);
+  assert.equal(context.sendsayRequests[0].method, "POST");
+  assert.equal(
+    context.sendsayRequests[0].headers["Content-Type"],
+    "application/json",
+  );
+  assert.deepEqual(context.sendsayRequests[0].json, {
+    email: data.email,
+    name: data.name,
+    phone: data.phone,
+    company: data.company,
+    role: data.role,
+    event_datetime: "2026-11-19 17:00:00",
+    reminder_consent: true,
+    reminder_consent_version: "2026-09-24",
+    reminder_consent_at: "2026-09-24T12:00:00.000Z",
+    source: "mts-ads-conference",
+  });
+});
+
+test("reminder consent requires a configured working Sendsay webhook", async (t) => {
+  const missing = await fixture(t);
+  assert.equal(
+    (await missing.request({ ...data, reminderConsent: true })).status,
+    500,
+  );
+  assert.equal(
+    missing.requests.length,
+    1,
+    "organizer email is still attempted",
+  );
+
+  const rejected = await fixture(t, {
+    env: {
+      ...defaultEnv,
+      SENDSAY_IMPORT_WEBHOOK_URL:
+        "https://be.sendsay.ru/backend/api/test-key/member.set/email/-/member.email,set.copy,email/",
+    },
+    fetchSendsay: async () => ({ ok: false }),
+  });
+  assert.equal(
+    (await rejected.request({ ...data, reminderConsent: true })).status,
+    500,
+  );
+
+  const applicationError = await fixture(t, {
+    env: {
+      ...defaultEnv,
+      SENDSAY_IMPORT_WEBHOOK_URL:
+        "https://be.sendsay.ru/backend/api/test-key/member.set/email/-/member.email,set.copy,email/",
+    },
+    fetchSendsay: async () =>
+      new Response(JSON.stringify({ errors: [{ id: "error/test" }] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+  });
+  assert.equal(
+    (await applicationError.request({ ...data, reminderConsent: true })).status,
+    500,
+  );
 });
 
 test("requires a valid idempotency key", async (t) => {
@@ -301,6 +394,18 @@ test("missing or unsafe server configuration returns a generic 500", async (t) =
       EMAIL_FROM: "events@example.test\r\nBcc: victim@example.test",
     },
     { ...defaultEnv, EMAIL_TEST_MODE: "true" },
+    {
+      ...defaultEnv,
+      SENDSAY_IMPORT_WEBHOOK_URL: "http://be.sendsay.ru/backend/api/key",
+    },
+    {
+      ...defaultEnv,
+      SENDSAY_IMPORT_WEBHOOK_URL: "https://evil.test/backend/api/key",
+    },
+    {
+      ...defaultEnv,
+      SENDSAY_IMPORT_WEBHOOK_URL: "https://sendsay.ru/backend/tilda/test-token",
+    },
   ]) {
     const context = await fixture(t, { env });
     const response = await context.request();
@@ -401,4 +506,27 @@ test("registration service works with a provider-agnostic fake email service", a
   assert.match(messages[0].text, /Тест Тестов/);
   assert.equal("to" in messages[0], false);
   assert.equal("from" in messages[0], false);
+});
+
+test("a successful consent import is not blocked by an organizer email failure", async () => {
+  const imports = [];
+  const registrationService = createRegistrationService({
+    emailService: {
+      sendEmail: async () => {
+        throw new Error("email unavailable");
+      },
+    },
+    sendsayImporter: {
+      importParticipant: async (input) => imports.push(input),
+    },
+    now: () => Date.parse("2026-09-24T12:00:00.000Z"),
+  });
+
+  await registrationService.registerConferenceParticipant({
+    fields: data,
+    reminderConsent: true,
+    idempotencyKey: "request-key-123456",
+  });
+  assert.equal(imports.length, 1);
+  assert.equal(imports[0].acceptedAt, "2026-09-24T12:00:00.000Z");
 });

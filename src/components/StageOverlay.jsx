@@ -1,6 +1,9 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { loaderLensSrc } from "../loader-lens.js";
+
+const REGISTRATION_SCROLL_TOP_GAP = 120;
+
 export function StageOverlay() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [loadingError, setLoadingError] = useState(false);
@@ -23,14 +26,26 @@ export function StageOverlay() {
       const target = document.querySelector(selector);
       if (!target) return false;
       const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
-      target.scrollIntoView({
-        behavior: reduced ? "instant" : "smooth",
-        block,
-      });
-      if (selector === "#registration-title")
-        document
-          .querySelector("#registration-title")
-          ?.focus({ preventScroll: true });
+      const behavior = reduced ? "instant" : "smooth";
+      if (selector === "#registration-title") {
+        const registration = target.closest("#registration");
+        const entryOffset = Number.parseFloat(
+          registration?.style.getPropertyValue("--registration-entry-y") || "0",
+        );
+        window.scrollTo({
+          top: Math.max(
+            0,
+            window.scrollY +
+              target.getBoundingClientRect().top -
+              (Number.isFinite(entryOffset) ? entryOffset : 0) -
+              REGISTRATION_SCROLL_TOP_GAP,
+          ),
+          behavior,
+        });
+        target.focus({ preventScroll: true });
+      } else {
+        target.scrollIntoView({ behavior, block });
+      }
       return true;
     };
     if (!navigate()) {
@@ -39,18 +54,35 @@ export function StageOverlay() {
     }
     setMenuOpen(false);
   };
+  const reloadFromTop = (event) => {
+    event.preventDefault();
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    window.location.reload();
+  };
   return createPortal(
     <>
-      <i id="cursor-dot" aria-hidden="true" />
+      <i id="cursor-dot" aria-hidden="true">
+        <span className="cursor-dot__pointer" />
+      </i>
       <div className="viewport-top-fade" aria-hidden="true" />
       <nav className="scene-nav" aria-label="Навигация">
-        <img
-          src="assets/logos/main-mts.svg"
-          className="scene-logo"
-          alt="МТС ADS"
-          fetchPriority="high"
-          decoding="async"
-        />
+        <a
+          className="scene-logo-link"
+          href="/"
+          aria-label="Обновить страницу и перейти наверх"
+          onClick={reloadFromTop}
+        >
+          <img
+            src="assets/logos/main-mts.svg"
+            className="scene-logo"
+            alt="МТС ADS"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </a>
         <button
           className={`menu-trigger${menuOpen ? " is-open" : ""}`}
           type="button"

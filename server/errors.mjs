@@ -23,3 +23,9 @@ export class EmailDeliveryError extends ApplicationError {
     super("EMAIL_DELIVERY_ERROR", message, options);
   }
 }
+
+export class SendsayImportError extends ApplicationError {
+  constructor(message = "Sendsay import failed", options) {
+    super("SENDSAY_IMPORT_ERROR", message, options);
+  }
+}

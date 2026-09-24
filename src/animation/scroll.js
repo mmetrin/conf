@@ -134,11 +134,19 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
       if (!metrics)
         metrics = items.map((node) => {
           const r = node.getBoundingClientRect();
-          return { top: r.top - rect.top, bottom: r.bottom - rect.top };
+          return {
+            top: r.top - rect.top,
+            bottom: r.bottom - rect.top,
+            isTopic: node.classList.contains("programme__topic"),
+          };
         });
       const trackTop = rect.top - previousEntryY + entryY,
         contentTop = contentRect.top - previousEntryY + entryY,
         focus = height * (mobile.matches ? 0.5 : 0.48);
+      const distances = metrics.map((item) =>
+        Math.abs((item.top + item.bottom) / 2 + trackTop - focus),
+      );
+      const focusedIndex = distances.indexOf(Math.min(...distances));
       focusState = {
         lineY: (focus - trackTop).toFixed(1) + "px",
         edges: [
@@ -147,21 +155,16 @@ export function startScrollTransitions(scope, fontsReady, abstractLights) {
           darkEdge + (litEdge - darkEdge) * 0.75,
           litEdge,
         ].map((v) => (v - contentTop).toFixed(1) + "px"),
-        levels: metrics.map((item) => {
-          const centerOffset = (item.top + item.bottom) / 2 + trackTop - focus;
-          const distance = Math.abs(centerOffset);
-          // Above the focus line, only the top mask dims outgoing content.
-          const entryDistance = Math.max(0, centerOffset);
+        levels: metrics.map((item, index) => {
+          const distance = distances[index];
           return {
-            opacity: (
-              0.3 +
-              0.7 * ease(clamp(1 - entryDistance / (height * 0.3)))
-            ).toFixed(3),
+            opacity: index === focusedIndex ? "1.000" : "0.500",
             scale: reduced.matches || mobile.matches
               ? "1"
               : (
                   0.84 +
-                  0.34 * ease(clamp(1 - distance / (height * 0.18)))
+                  (item.isTopic ? 0.36 : 0.44) *
+                    ease(clamp(1 - distance / (height * 0.18)))
                 ).toFixed(4),
           };
         }),

@@ -21,7 +21,8 @@ export const topics = [
   },
   {
     image: "assets/programme/public-talk.webp",
-    author: "Елена Лебедева",
+    secondaryImage: "assets/programme/public-talk-guest.webp",
+    author: "Елена Лебедева и Антон Шастун",
     title: "Public Talk: «Что перестало работать по старому сценарию»",
     description:
       "Лидеры рынка обсудят, где реклама теряет точность, почему привычного набора каналов уже недостаточно и как меняются критерии эффективности",

@@ -1,57 +1,57 @@
 {
-  "jsBytes": 272898,
-  "initialJsBytes": 272898,
-  "asyncJsBytes": 57065,
-  "totalJsBytes": 329963,
-  "cssBytes": 74081,
+  "jsBytes": 269967,
+  "initialJsBytes": 269967,
+  "asyncJsBytes": 103353,
+  "totalJsBytes": 373320,
+  "cssBytes": 85047,
   "precompressedAssets": [
     {
-      "path": "app/chunks/BelowFold-R2NLSQK2.js.br",
-      "bytes": 7275
+      "path": "app/chunks/BelowFold-PUJHYMIQ.js.br",
+      "bytes": 13238
     },
     {
-      "path": "app/chunks/BelowFold-R2NLSQK2.js.gz",
-      "bytes": 7524
+      "path": "app/chunks/BelowFold-PUJHYMIQ.js.gz",
+      "bytes": 13482
     },
     {
-      "path": "app/chunks/abstract-4V67ZJO7.js.br",
-      "bytes": 2588
+      "path": "app/chunks/abstract-TJNN6IEO.js.br",
+      "bytes": 2587
     },
     {
-      "path": "app/chunks/abstract-4V67ZJO7.js.gz",
-      "bytes": 2713
+      "path": "app/chunks/abstract-TJNN6IEO.js.gz",
+      "bytes": 2712
     },
     {
-      "path": "app/chunks/chunk-7IMM3BQH.js.br",
-      "bytes": 3237
+      "path": "app/chunks/chunk-3GSFVTFP.js.br",
+      "bytes": 4321
     },
     {
-      "path": "app/chunks/chunk-7IMM3BQH.js.gz",
-      "bytes": 3369
+      "path": "app/chunks/chunk-3GSFVTFP.js.gz",
+      "bytes": 4491
     },
     {
-      "path": "app/chunks/particles-HJ35N7TW.js.br",
+      "path": "app/chunks/particles-NHZ3LYQF.js.br",
       "bytes": 3712
     },
     {
-      "path": "app/chunks/particles-HJ35N7TW.js.gz",
+      "path": "app/chunks/particles-NHZ3LYQF.js.gz",
       "bytes": 3851
     },
     {
-      "path": "app/chunks/scroll-MUIZAIBK.js.br",
-      "bytes": 1802
+      "path": "app/chunks/scroll-N2JHISL2.js.br",
+      "bytes": 1839
     },
     {
-      "path": "app/chunks/scroll-MUIZAIBK.js.gz",
-      "bytes": 1912
+      "path": "app/chunks/scroll-N2JHISL2.js.gz",
+      "bytes": 1942
     },
     {
-      "path": "app/site-VD6TETLH.js.br",
-      "bytes": 84457
+      "path": "app/site-UU7WL4OY.js.br",
+      "bytes": 84154
     },
     {
-      "path": "app/site-VD6TETLH.js.gz",
-      "bytes": 89969
+      "path": "app/site-UU7WL4OY.js.gz",
+      "bytes": 89559
     },
     {
       "path": "assets/fact-address.svg.br",
@@ -159,33 +159,33 @@
     },
     {
       "path": "index.html.br",
-      "bytes": 6396
+      "bytes": 6392
     },
     {
       "path": "index.html.gz",
-      "bytes": 6762
+      "bytes": 6760
     },
     {
       "path": "mts-ads-portrait-frames-current.html.br",
-      "bytes": 6396
+      "bytes": 6392
     },
     {
       "path": "mts-ads-portrait-frames-current.html.gz",
-      "bytes": 6762
+      "bytes": 6760
     },
     {
-      "path": "site-160af169c3.css.br",
-      "bytes": 14158
+      "path": "site-120c22fec6.css.br",
+      "bytes": 15812
     },
     {
-      "path": "site-160af169c3.css.gz",
-      "bytes": 15113
+      "path": "site-120c22fec6.css.gz",
+      "bytes": 16912
     }
   ],
   "metafile": {
     "inputs": {
       "<define:__SENDSAY_PUBLIC_CONFIG__>": {
-        "bytes": 181,
+        "bytes": 225,
         "imports": []
       },
       "node_modules/scheduler/cjs/scheduler.production.js": {
@@ -450,7 +450,7 @@
         "format": "esm"
       },
       "src/components/StageOverlay.jsx": {
-        "bytes": 7823,
+        "bytes": 8885,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -519,7 +519,7 @@
         "format": "esm"
       },
       "src/animation/typography.js": {
-        "bytes": 6830,
+        "bytes": 7125,
         "imports": [
           {
             "path": "src/utils/desktopScale.js",
@@ -546,7 +546,7 @@
         "format": "esm"
       },
       "src/animation/scene.js": {
-        "bytes": 64161,
+        "bytes": 65896,
         "imports": [
           {
             "path": "src/animation/typography.js",
@@ -588,7 +588,7 @@
         "format": "esm"
       },
       "src/animation/scroll.js": {
-        "bytes": 11510,
+        "bytes": 11561,
         "imports": [
           {
             "path": "src/utils/desktopScale.js",
@@ -650,7 +650,7 @@
         "format": "esm"
       },
       "src/data/programme.js": {
-        "bytes": 3039,
+        "bytes": 3129,
         "imports": [
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -661,7 +661,7 @@
         "format": "esm"
       },
       "src/components/Programme.jsx": {
-        "bytes": 3817,
+        "bytes": 4902,
         "imports": [
           {
             "path": "src/data/programme.js",
@@ -719,6 +719,69 @@
         ],
         "format": "esm"
       },
+      "src/utils/bottomSheet.js": {
+        "bytes": 141,
+        "imports": [
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          }
+        ],
+        "format": "esm"
+      },
+      "src/components/ConsentModal.jsx": {
+        "bytes": 5450,
+        "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "node_modules/react-dom/index.js",
+            "kind": "import-statement",
+            "original": "react-dom"
+          },
+          {
+            "path": "src/utils/bottomSheet.js",
+            "kind": "import-statement",
+            "original": "../utils/bottomSheet.js"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
+      "src/components/PersonalDataConsentModal.jsx": {
+        "bytes": 7669,
+        "imports": [
+          {
+            "path": "src/components/ConsentModal.jsx",
+            "kind": "import-statement",
+            "original": "./ConsentModal.jsx"
+          },
+          {
+            "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
+            "path": "node_modules/react/jsx-runtime.js",
+            "kind": "import-statement",
+            "original": "react/jsx-runtime"
+          }
+        ],
+        "format": "esm"
+      },
       "src/services/sendsay/sendsayConfig.js": {
         "bytes": 2652,
         "imports": [
@@ -731,7 +794,7 @@
         "format": "esm"
       },
       "src/services/sendsay/sendsayFormClient.js": {
-        "bytes": 3073,
+        "bytes": 3551,
         "imports": [
           {
             "path": "src/services/sendsay/sendsayConfig.js",
@@ -747,7 +810,7 @@
         "format": "esm"
       },
       "src/services/registration/registrationSubmission.js": {
-        "bytes": 2074,
+        "bytes": 2135,
         "imports": [
           {
             "path": "shared/registrationValidation.js",
@@ -768,7 +831,7 @@
         "format": "esm"
       },
       "src/components/Registration.jsx": {
-        "bytes": 15311,
+        "bytes": 25922,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -784,6 +847,16 @@
             "path": "src/utils/validation.js",
             "kind": "import-statement",
             "original": "../utils/validation.js"
+          },
+          {
+            "path": "src/components/ConsentModal.jsx",
+            "kind": "import-statement",
+            "original": "./ConsentModal.jsx"
+          },
+          {
+            "path": "src/components/PersonalDataConsentModal.jsx",
+            "kind": "import-statement",
+            "original": "./PersonalDataConsentModal.jsx"
           },
           {
             "path": "src/services/registration/registrationSubmission.js",
@@ -809,8 +882,23 @@
         "format": "esm"
       },
       "src/components/Footer.jsx": {
-        "bytes": 2601,
+        "bytes": 3965,
         "imports": [
+          {
+            "path": "node_modules/react/index.js",
+            "kind": "import-statement",
+            "original": "react"
+          },
+          {
+            "path": "src/components/PersonalDataConsentModal.jsx",
+            "kind": "import-statement",
+            "original": "./PersonalDataConsentModal.jsx"
+          },
+          {
+            "path": "src/components/Registration.jsx",
+            "kind": "import-statement",
+            "original": "./Registration.jsx"
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -929,38 +1017,38 @@
       }
     },
     "outputs": {
-      "outputs/app/site-VD6TETLH.js": {
+      "outputs/app/site-UU7WL4OY.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-C6BZTBNO.js",
+            "path": "outputs/app/chunks/chunk-LSR74TKP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-4Z3KZ6LL.js",
+            "path": "outputs/app/chunks/chunk-ENKGPETP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-7IMM3BQH.js",
+            "path": "outputs/app/chunks/chunk-3GSFVTFP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/particles-HJ35N7TW.js",
+            "path": "outputs/app/chunks/particles-NHZ3LYQF.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/abstract-4V67ZJO7.js",
+            "path": "outputs/app/chunks/abstract-TJNN6IEO.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/scroll-MUIZAIBK.js",
+            "path": "outputs/app/chunks/scroll-N2JHISL2.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/BelowFold-R2NLSQK2.js",
+            "path": "outputs/app/chunks/BelowFold-PUJHYMIQ.js",
             "kind": "dynamic-import"
           }
         ],
@@ -968,70 +1056,64 @@
         "entryPoint": "src/main.jsx",
         "inputs": {
           "node_modules/scheduler/cjs/scheduler.production.js": {
-            "bytesInOutput": 3666
+            "bytesInOutput": 3667
           },
           "node_modules/scheduler/index.js": {
-            "bytesInOutput": 55
-          },
-          "node_modules/react-dom/cjs/react-dom.production.js": {
-            "bytesInOutput": 3670
-          },
-          "node_modules/react-dom/index.js": {
-            "bytesInOutput": 257
+            "bytesInOutput": 56
           },
           "node_modules/react-dom/cjs/react-dom-client.production.js": {
-            "bytesInOutput": 205668
+            "bytesInOutput": 205669
           },
           "node_modules/react-dom/client.js": {
-            "bytesInOutput": 257
+            "bytesInOutput": 258
           },
           "src/main.jsx": {
-            "bytesInOutput": 833
+            "bytesInOutput": 834
           },
           "src/App.jsx": {
-            "bytesInOutput": 828
+            "bytesInOutput": 829
           },
           "src/components/Hero.jsx": {
-            "bytesInOutput": 5772
+            "bytesInOutput": 5773
           },
           "src/components/ThreeParticleShape.jsx": {
-            "bytesInOutput": 1985
+            "bytesInOutput": 1986
           },
           "src/components/StageOverlay.jsx": {
-            "bytesInOutput": 6352
+            "bytesInOutput": 7066
           },
           "src/loader-lens.js": {
-            "bytesInOutput": 6229
+            "bytesInOutput": 6230
           },
           "src/hooks/useSceneRuntime.js": {
-            "bytesInOutput": 2571
+            "bytesInOutput": 2572
           },
           "src/animation/runtime.js": {
-            "bytesInOutput": 905
+            "bytesInOutput": 906
           },
           "src/animation/scheduler.js": {
-            "bytesInOutput": 472
+            "bytesInOutput": 473
           },
           "src/animation/scene.js": {
-            "bytesInOutput": 25959
+            "bytesInOutput": 26436
           },
           "src/animation/typography.js": {
-            "bytesInOutput": 3052
+            "bytesInOutput": 3096
           },
           "src/animation/receiver.js": {
-            "bytesInOutput": 3194
+            "bytesInOutput": 3231
           }
         },
-        "bytes": 272898
+        "bytes": 269967
       },
-      "outputs/app/chunks/particles-HJ35N7TW.js": {
+      "outputs/app/chunks/particles-NHZ3LYQF.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-C6BZTBNO.js",
+            "path": "outputs/app/chunks/chunk-LSR74TKP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1046,10 +1128,10 @@
         },
         "bytes": 7991
       },
-      "outputs/app/chunks/chunk-C6BZTBNO.js": {
+      "outputs/app/chunks/chunk-LSR74TKP.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1069,10 +1151,10 @@
         },
         "bytes": 1012
       },
-      "outputs/app/chunks/abstract-4V67ZJO7.js": {
+      "outputs/app/chunks/abstract-TJNN6IEO.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1087,14 +1169,14 @@
         },
         "bytes": 5161
       },
-      "outputs/app/chunks/scroll-MUIZAIBK.js": {
+      "outputs/app/chunks/scroll-N2JHISL2.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-4Z3KZ6LL.js",
+            "path": "outputs/app/chunks/chunk-ENKGPETP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1104,15 +1186,15 @@
         "entryPoint": "src/animation/scroll.js",
         "inputs": {
           "src/animation/scroll.js": {
-            "bytesInOutput": 4415
+            "bytesInOutput": 4495
           }
         },
-        "bytes": 4535
+        "bytes": 4615
       },
-      "outputs/app/chunks/chunk-4Z3KZ6LL.js": {
+      "outputs/app/chunks/chunk-ENKGPETP.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1127,14 +1209,14 @@
         },
         "bytes": 189
       },
-      "outputs/app/chunks/BelowFold-R2NLSQK2.js": {
+      "outputs/app/chunks/BelowFold-PUJHYMIQ.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-7IMM3BQH.js",
+            "path": "outputs/app/chunks/chunk-3GSFVTFP.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
@@ -1144,19 +1226,19 @@
         "entryPoint": "src/components/BelowFold.jsx",
         "inputs": {
           "src/components/BelowFold.jsx": {
-            "bytesInOutput": 230
+            "bytesInOutput": 231
           },
           "src/components/Programme.jsx": {
-            "bytesInOutput": 2186
+            "bytesInOutput": 2704
           },
           "src/data/programme.js": {
-            "bytesInOutput": 6161
+            "bytesInOutput": 6294
           },
           "src/components/Registration.jsx": {
-            "bytesInOutput": 10178
+            "bytesInOutput": 29789
           },
           "src/utils/phone.js": {
-            "bytesInOutput": 272
+            "bytesInOutput": 273
           },
           "src/utils/validation.js": {
             "bytesInOutput": 4
@@ -1164,49 +1246,65 @@
           "shared/registrationValidation.js": {
             "bytesInOutput": 2639
           },
+          "src/components/ConsentModal.jsx": {
+            "bytesInOutput": 3108
+          },
+          "src/utils/bottomSheet.js": {
+            "bytesInOutput": 44
+          },
+          "src/components/PersonalDataConsentModal.jsx": {
+            "bytesInOutput": 17822
+          },
           "src/services/registration/registrationSubmission.js": {
-            "bytesInOutput": 940
+            "bytesInOutput": 981
           },
           "src/services/sendsay/sendsayFormClient.js": {
-            "bytesInOutput": 1557
+            "bytesInOutput": 1718
           },
           "src/services/sendsay/sendsayConfig.js": {
-            "bytesInOutput": 1400
+            "bytesInOutput": 1408
           },
           "src/components/Footer.jsx": {
-            "bytesInOutput": 2724
+            "bytesInOutput": 3243
           }
         },
-        "bytes": 28415
+        "bytes": 70390
       },
-      "outputs/app/chunks/chunk-7IMM3BQH.js": {
+      "outputs/app/chunks/chunk-3GSFVTFP.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-ZM3EZUG6.js",
+            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
             "kind": "import-statement"
           }
         ],
         "exports": [
           "a",
-          "b"
+          "b",
+          "c"
         ],
         "inputs": {
           "node_modules/react/cjs/react.production.js": {
-            "bytesInOutput": 7839
+            "bytesInOutput": 7861
           },
           "node_modules/react/index.js": {
-            "bytesInOutput": 51
+            "bytesInOutput": 50
           },
           "node_modules/react/cjs/react-jsx-runtime.production.js": {
             "bytesInOutput": 359
           },
           "node_modules/react/jsx-runtime.js": {
             "bytesInOutput": 51
+          },
+          "node_modules/react-dom/cjs/react-dom.production.js": {
+            "bytesInOutput": 3609
+          },
+          "node_modules/react-dom/index.js": {
+            "bytesInOutput": 250
           }
         },
-        "bytes": 8997
+        "bytes": 13186
       },
-      "outputs/app/chunks/chunk-ZM3EZUG6.js": {
+      "outputs/app/chunks/chunk-OIBSJGDP.js": {
         "imports": [],
         "exports": [
           "a",
@@ -1216,10 +1314,10 @@
         ],
         "inputs": {
           "<define:__SENDSAY_PUBLIC_CONFIG__>": {
-            "bytesInOutput": 172
+            "bytesInOutput": 216
           }
         },
-        "bytes": 765
+        "bytes": 809
       }
     }
   }

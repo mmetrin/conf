@@ -35,50 +35,59 @@ server/config/serverConfig.mjs              port, bind host, static root and ent
 Registration UI
 → submitConferenceRegistration
 → POST https://sendsay.ru/form/<ACCOUNT>/<FORM_ID>/
+→ при согласии: дождаться POST /api/register → Sendsay import webhook
 → success UI
-→ best-effort POST /api/register
 → EmailService → ResendEmailProvider → Resend → organizer
 ```
 
 Form API никогда не вызывается с backend и не требует secret API key. Email передаётся только как `_member_email`. Остальные поля строятся по конфигурации; honeypot в Sendsay не попадает. Resend-specific endpoint, authorization, payload, idempotency header и timeout находятся только в server provider adapter.
 
-## Sendsay: что нужно получить и где настроить
+Ссылка на политику под формой и одноимённая ссылка в футере открывают общий popup «Согласие на обработку персональных данных». Внешние URL внутри юридического текста продолжают открываться как обычные ссылки.
 
-Следующему разработчику/владельцу аккаунта нужны реальные значения из Sendsay:
+Чекбокс напоминаний необязательный и включён по умолчанию; посетитель может снять его перед отправкой формы. Регистрация через Form API не зависит от него. При `reminderConsent=true` frontend ждёт ответ backend, а backend отправляет в `SENDSAY_IMPORT_WEBHOOK_URL` JSON с ключами `email`, `name`, `phone`, `company`, `role`, `event_datetime`, `reminder_consent`, `reminder_consent_version`, `reminder_consent_at`, `source`. URL хранится только в server env; в frontend bundle и Git его добавлять нельзя. Владелец Sendsay должен настроить webhook на подтверждённый/доступный для рассылки статус и запуск сценария только для согласившихся контактов.
 
-| Что                                        | Где взять/проверить                                                       |
-| ------------------------------------------ | ------------------------------------------------------------------------- |
-| Account code                               | URL/настройки аккаунта Sendsay                                            |
-| Form ID                                    | **Сайт → Формы**, форма-дубль конференции                                 |
-| codes имени, телефона, компании, должности | `fields[].name` ответа `GET https://sendsay.ru/form/<ACCOUNT>/<FORM_ID>/` |
-| обязательность и типы                      | `fields[].required` и `fields[].type` того же ответа                      |
-| event datetime field code                  | code скрытого поля типа «Дата и время», если используется                 |
-| event datetime value                       | подтверждённое московское время `2026-11-19 17:00:00`                     |
-| event venue                                | Арбатская площадь, 14, строение 1, кинотеатр «Художественный»             |
-| event ID field/value                       | только если реально создано и нужно                                       |
-| audience list                              | шаг «Аудитория» формы                                                     |
-| confirmation template                      | шаг «Письмо подтверждения формы»                                          |
-| automation                                 | **Автоматизации → Сценарии**, сценарий конкретной формы                   |
-| email templates                            | **Контент** и блоки отправки сценария                                     |
+## Sendsay: полученные данные и что ещё нужно
 
-Build-time переменные перечислены в `.env.example`: `SENDSAY_ACCOUNT`, `SENDSAY_FORM_ID`, `SENDSAY_FIELD_NAME`, `SENDSAY_FIELD_PHONE`, `SENDSAY_FIELD_COMPANY`, `SENDSAY_FIELD_ROLE`; optional пары для event datetime/event ID; `SENDSAY_TEST_FORM_ID` и `SENDSAY_USE_TEST_FORM`. После изменения нужна новая `npm run build`.
+| Что                            | Значение / статус                                                                                                     |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| Account code                   | `mtsmarketolog`                                                                                                       |
+| Form ID                        | `24`; используется на production, публичный GET Form API подтвердил `state: 1`                                        |
+| Test audience list             | `pl58174`                                                                                                             |
+| Email field                    | `_member_email`                                                                                                       |
+| Фамилия и имя                  | `q1`, required text, max 160                                                                                          |
+| Телефон                        | `q2`, required text, max 16                                                                                           |
+| Компания                       | `q3`, required text, max 200                                                                                          |
+| Должность                      | `q4`, required text, max 200                                                                                          |
+| Дата мероприятия               | `q5`, скрытое поле даты; значение `2026-11-19 17:00:00` по московскому времени                                        |
+| Event ID                       | не используется                                                                                                       |
+| Адрес                          | Арбатская площадь, 14, строение 1, кинотеатр «Художественный»                                                         |
+| Test workflow                  | «Конференция МТС Ads — 19.11.2026 — TEST», ID `52`; `https://app.sendsay.ru/automation/workflows/52/overview/summary` |
+| Production Form ID             | `24`; отдельная production-копия не создаётся                                                                         |
+| Production audience            | выбирается внутри production-формы; название/ID проекту не требуются                                                  |
+| Production form active         | да; подтверждено владельцем Sendsay                                                                                   |
+| Email logic/templates/schedule | ведутся владельцем Sendsay; не требуются коду формы и могут меняться независимо                                       |
+
+Build-time переменные перечислены в `.env.example`. Локальный `.env` настроен на production Form ID `24` с `SENDSAY_USE_TEST_FORM=false`. Отдельная production-копия формы не требуется.
 
 Нельзя угадывать codes или добавлять API key в frontend. Если обязательная конфигурация отсутствует, клиент прекращает submit до network request. General Sendsay API key, если когда-либо понадобится, должен быть только server-side и выдан саблогину с минимальными правами.
 
 ## Sendsay UI checklist
 
-1. Создать форму-дубль с полями текущей формы: имя, email, телефон, компания, должность.
-2. Назначить отдельный список аудитории конференции.
-3. Создать и добавить скрытое поле «Дата мероприятия» типа «Дата и время» с точностью до минут; передавать подтверждённое значение `2026-11-19 17:00:00` по московскому времени.
-4. Настроить DOI-письмо со ссылкой `[% confirm_url %]`; не использовать `form.transfer` для обхода подтверждения.
-5. Активировать форму и проверить через GET её `state`, fields, required/types и реальные codes.
-6. Создать отдельную test form/list, собрать с `SENDSAY_USE_TEST_FORM=true`, выполнить smoke test, затем вернуть `false` и пересобрать production.
-7. Создать scenario со стартом **Подтверждение формы** для конкретной формы.
-8. Добавить EMAIL 1 сразу после подтверждения; затем согласованные reminders через разделения по дате и timers.
+1. Выполнить test registration через сайт и проверить контакт в списке `pl58174`, значения `_member_email`, `q1–q5` и запуск писем без подтверждения со стороны посетителя.
+2. Владельцу Sendsay поддерживать test workflow «Конференция МТС Ads — 19.11.2026 — TEST» (ID `52`), шаблоны и расписание; передавать их разработчику формы не требуется.
+3. Использовать форму `24` на production и назначить ей нужный список внутри Sendsay; отдельная копия и ID списка разработчику не нужны.
+4. Проверить в production-форме поля `_member_email`, `q1–q5`; для `q5` использовать `2026-11-19 17:00:00`.
+5. Не требовать от посетителя подтверждать email или переходить по дополнительной ссылке.
+6. Оставить форму `24` активной; GET уже подтвердил `state: 1`, required/types и codes.
+7. Настроить scenario для формы `24`, который запускается после успешного заполнения формы.
+8. Добавить EMAIL 1 после регистрации; затем согласованные reminders через разделения по дате и timers.
 9. Перед каждым фиксированным timer поставить условие **Совпадение даты и времени**, чтобы late registration пропускала прошедший момент и не застревала.
-10. Проверить sender, subject и шаблоны в разделе **Контент**, затем активировать scenario.
+10. Включить уведомление организатору о заполнении формы; проверить получателя, sender, subject и шаблоны, затем активировать scenario.
+11. Перед production build оставить `SENDSAY_FORM_ID=24`, `SENDSAY_USE_TEST_FORM=false` и пересобрать сайт.
+12. Сгенерировать новый Sendsay import webhook для JSON-контракта из README, выбрать подтверждённый статус, список и reminder-сценарий; передать разработчику URL.
+13. Установить `SENDSAY_IMPORT_WEBHOOK_URL` только на сервере и проверить: без чекбокса webhook не вызывается, с чекбоксом контакт становится доступен для рассылки и попадает в нужный сценарий.
 
-Текущий success-текст UI оставлен как утверждённый. Для точного DOI flow рекомендуется отдельно согласовать текст «Регистрация отправлена. Проверьте почту и подтвердите адрес».
+Текущий success-текст UI соответствует утверждённому flow: заявка сохранена, посетителю не нужно подтверждать email. Ответ Sendsay только с `error/draft/emptyfromemail` считается post-save warning и приводит к success-экрану; остальные ошибки не маскируются.
 
 ## Resend после Sendsay
 
@@ -101,16 +110,17 @@ Sendsay отвечает за контакт/participant emails и может о
 
 Необходимые server-only values:
 
-| Переменная             | Назначение                                                      |
-| ---------------------- | --------------------------------------------------------------- |
-| `EMAIL_API_KEY`        | Секретный Resend API key                                        |
-| `EMAIL_FROM`           | Sender на подтверждённом домене                                 |
-| `APP_ORIGIN`           | Точный origin frontend, HTTPS в production                      |
-| `EMAIL_TEST_MODE`      | `false` в production, `true` только для теста                   |
-| `EMAIL_TEST_RECIPIENT` | Обязателен при test mode                                        |
-| `TRUST_LOCAL_PROXY`    | `true` только за настроенным доверенным локальным proxy         |
-| `PORT`                 | Внутренний Node.js port, по умолчанию 53860                     |
-| `SERVER_HOST`          | `127.0.0.1` по умолчанию; `0.0.0.0` только если требует хостинг |
+| Переменная                   | Назначение                                                      |
+| ---------------------------- | --------------------------------------------------------------- |
+| `EMAIL_API_KEY`              | Секретный Resend API key                                        |
+| `EMAIL_FROM`                 | Sender на подтверждённом домене                                 |
+| `APP_ORIGIN`                 | Точный origin frontend, HTTPS в production                      |
+| `EMAIL_TEST_MODE`            | `false` в production, `true` только для теста                   |
+| `EMAIL_TEST_RECIPIENT`       | Обязателен при test mode                                        |
+| `TRUST_LOCAL_PROXY`          | `true` только за настроенным доверенным локальным proxy         |
+| `SENDSAY_IMPORT_WEBHOOK_URL` | Секретный URL импорта согласившихся контактов в Sendsay         |
+| `PORT`                       | Внутренний Node.js port, по умолчанию 53860                     |
+| `SERVER_HOST`                | `127.0.0.1` по умолчанию; `0.0.0.0` только если требует хостинг |
 
 Production organizer recipient сейчас `mmetrindesign@gmail.com` и задан server-side в `server/config/registrationConfig.mjs`. Браузеру нельзя разрешать менять `to`, `from` или recipient. При `EMAIL_TEST_MODE=true` используется только `EMAIL_TEST_RECIPIENT`; при `false` — только production recipient.
 
@@ -142,9 +152,9 @@ Rate limiter хранит максимум 10000 HMAC-анонимизирова
 
 Перед production:
 
-- задать Account, production Form ID и реальные field codes до `npm run build`;
-- установить `SENDSAY_USE_TEST_FORM=false`, проверить active form и audience list;
-- пройти DOI и event scenario одним контролируемым production-контактом;
+- использовать Production Form ID `24`; Account и field codes уже заданы, ID production-списка проект не использует;
+- оставить `SENDSAY_USE_TEST_FORM=false`, форма `24` уже подтверждена активной;
+- пройти регистрацию и event scenario одним контролируемым production-контактом без подтверждения email;
 - установить `EMAIL_TEST_MODE=false`;
 - проверить production recipient и `APP_ORIGIN`;
 - подтвердить sender/domain у provider;

@@ -41,12 +41,14 @@ export function createRegistrationHttpHandler({
         return sendRegistrationResponse(res, 429);
 
       const input = await readJsonBody(req, { maxBytes: maxBodyBytes });
-      const fields = validateAndNormalizeRegistration(input);
+      const { fields, reminderConsent } =
+        validateAndNormalizeRegistration(input);
       const idempotencyKey = validateIdempotencyKey(
         req.headers["idempotency-key"],
       );
       await registrationService.registerConferenceParticipant({
         fields,
+        reminderConsent,
         idempotencyKey,
       });
       return sendRegistrationResponse(res, 200);

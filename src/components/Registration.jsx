@@ -1,12 +1,126 @@
-import { useState, useRef, useLayoutEffect } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { formatPhone } from "../utils/phone.js";
 import { registrationFields, validateField } from "../utils/validation.js";
+import { ConsentModal } from "./ConsentModal.jsx";
+import { PersonalDataConsentModal } from "./PersonalDataConsentModal.jsx";
 import {
   canUseTestModeFallback,
   notifyOrganizer,
   submitConferenceRegistration,
 } from "../services/registration/registrationSubmission.js";
 import { SendsayFormError } from "../services/sendsay/sendsayFormClient.js";
+
+export function AdvertisingConsentModal({ onClose, returnFocusRef }) {
+  return (
+    <ConsentModal
+      title="Согласие на рекламное взаимодействие"
+      titleId="advertising-consent-title"
+      onClose={onClose}
+      returnFocusRef={returnFocusRef}
+    >
+      <p>
+        Я даю ООО «МТС Рекламные технологии» (далее – Оператор) (Юридический
+        адрес: 115432, Москва, Проектируемый проезд 4062, д. 6, стр. 2,
+        комн. 22, ОГРН 1097746431903, ИНН 7705893691) настоящее согласие
+        (далее – Согласие) на следующих условиях:
+      </p>
+      <ol>
+        <li>
+          Реклама отправляется в целях совершенствования и развития Оператором
+          деятельности в части, касающейся предложения и продвижения собственной
+          продукции и бренда и/или продукции и бренда третьих лиц, указанных
+          в п. 3 Согласия, на рынке путем осуществления маркетинговых
+          коммуникаций (рекламного взаимодействия), в том числе путем
+          направления персональных предложений и рекламных сообщений, а также
+          путем демонстрации (в т.ч. в сети Интернет) персонализированной
+          и (или) неперсонализированной рекламы.
+        </li>
+        <li>
+          Для рекламного взаимодействия могут использоваться также результаты
+          сопоставления(сравнения) и объединения (связывания) данных между
+          собой, например, с файлами cookies.
+        </li>
+        <li>
+          Оператор вправе для достижения цели привлекать[1] третьих лиц
+          к рекламному взаимодействию, к которым могут относиться поставщики
+          услуг по осуществлению информационного и маркетингового взаимодействия
+          (в т.ч. с помощью Интернет-ресурсов и средств связи) и организации,
+          входящие в группу компаний, включая, но не ограничиваясь:
+          <ul>
+            <li>
+              ООО «ЯНДЕКС» (Юридический адрес: 119021, г. Москва, ул. Льва
+              Толстого, д.16; ИНН: 7736207543, КПП: 770401001,
+              ОГРН 1027700229193);
+            </li>
+            <li>
+              ООО «ВК» (Юридический адрес: 125167, г. Москва, вн.тер.г.
+              Муниципальный Округ Хорошевский, пр-кт Ленинградский, д. 39,
+              стр. 79; ИНН: 7743001840, КПП: 771401001, ОГРН 1027739850962);
+            </li>
+            <li>
+              ООО «РА «Индекс 20» (Юридический адрес: 117105, г. Москва,
+              ш. Варшавское, д. 9, стр. 1, пом. Б часть комнаты № 38);
+            </li>
+            <li>
+              ООО «МТС АДС ВИДЕО» (Юридический адрес: 115432, г. Москва, проезд
+              Проектируемый 4062-й, д. 6, стр. 2, БЦ «Порт Плаза»,
+              ОГРН 5157746165660, ИНН 7706431241)
+            </li>
+          </ul>
+        </li>
+        <li>
+          Сообщения могут направляться мне по указанным мной контактным данным
+          посредством электронной почты, sms-рассылки по сетям электросвязи,
+          в том числе посредством использования телефонной, подвижной
+          радиотелефонной связи, сообщений в социальных сетях и мессенджерах.
+        </li>
+        <li>
+          Согласие действует с даты его предоставления до истечения 10 лет или
+          до предоставления отзыва Согласия, если предусмотренная цель не будет
+          достигнута ранее или в случае утраты необходимости в достижении цели.
+        </li>
+        <li>
+          Мне понятно, что отказ от дачи Согласия, а равно отзыв Согласия
+          создаст негативные последствия в отношении меня, затронув мои права
+          и законные интересы иным образом, так как без дачи Согласия не может
+          быть достигнута цель, указанная в п. 1 Согласия. В случае отзыва
+          Согласия Оператор вправе продолжить обработку персональных данных при
+          наличии оснований, указанных в п. 2 - 11 ч. 1 ч. 6 ФЗ РФ
+          «О персональных данных» от 27.07.2006 N 152-ФЗ.
+        </li>
+        <li>
+          Отказ от получения рекламных сообщений может быть реализован также
+          путем перехода по ссылке «Отписаться от рассылки»;
+        </li>
+        <li>
+          Мне понятно, что дополнительная информация об обработке персональных
+          данных ООО «МТС Рекламные технологии» в рамках рекламного
+          взаимодействия содержится в Политике в отношении обработки
+          персональных данных ООО «МТС Рекламные технологии», которая размещена
+          по адресу:{" "}
+          <a
+            href="https://stream.ru/docs/personal_info.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            https://stream.ru/docs/personal_info.pdf
+          </a>
+        </li>
+      </ol>
+      <p className="consent-modal__footnote">
+        <em>
+          [1] При условии соблюдение конфиденциальности, требований
+          законодательства и исполнения обозначенных целей. В случае
+          неисполнения третьими лицами данных условий они будут нести
+          ответственность на основании своих договорных обязательств перед
+          Оператором и (или) в соответствии с положениями применимого
+          законодательства.
+        </em>
+      </p>
+    </ConsentModal>
+  );
+}
+
 export function RegistrationField({
   field,
   value,
@@ -162,6 +276,11 @@ export function Registration() {
     Object.fromEntries(registrationFields.map((f) => [f.name, ""])),
   );
   const [submitted, setSubmitted] = useState(false);
+  const [reminderConsent, setReminderConsent] = useState(true);
+  const [consentOpen, setConsentOpen] = useState(false);
+  const consentTrigger = useRef(null);
+  const [privacyConsentOpen, setPrivacyConsentOpen] = useState(false);
+  const privacyConsentTrigger = useRef(null);
   const [sending, setSending] = useState(false);
   const submitting = useRef(false);
   const attempt = useRef(null);
@@ -198,8 +317,9 @@ export function Registration() {
     setValues(
       Object.fromEntries(registrationFields.map((field) => [field.name, ""])),
     );
+    setReminderConsent(false);
     if (!organizerAlreadyNotified)
-      void notifyOrganizer(fields, attempt.current.key);
+      void notifyOrganizer(fields, attempt.current.key, { reminderConsent });
     attempt.current = null;
   }
   async function submit(event) {
@@ -232,7 +352,11 @@ export function Registration() {
     const formData = Object.fromEntries(new FormData(form.current));
     const honeypot =
       typeof formData.website === "string" ? formData.website : "";
-    const signature = JSON.stringify({ ...entered, website: honeypot });
+    const signature = JSON.stringify({
+      ...entered,
+      website: honeypot,
+      reminderConsent,
+    });
     if (!attempt.current || attempt.current.signature !== signature)
       attempt.current = { signature, key: crypto.randomUUID() };
     submitting.current = true;
@@ -252,13 +376,28 @@ export function Registration() {
         if (result.kind === "validation") setErrors(result.fieldErrors);
         return;
       }
+      if (reminderConsent) {
+        const reminderSaved = await notifyOrganizer(
+          result.fields,
+          attempt.current.key,
+          { reminderConsent: true },
+        );
+        if (!reminderSaved) {
+          setStatus(
+            "Регистрация сохранена, но подключить напоминания не удалось. Попробуйте ещё раз позже.",
+          );
+          return;
+        }
+        finishSubmission(result.fields, true);
+        return;
+      }
       finishSubmission(result.fields);
     } catch (error) {
       if (canUseTestModeFallback(error)) {
         const fallbackSent = await notifyOrganizer(
           entered,
           attempt.current.key,
-          { sendsayFallback: true },
+          { sendsayFallback: true, reminderConsent },
         );
         if (fallbackSent) {
           finishSubmission(entered, true);
@@ -420,16 +559,49 @@ export function Registration() {
             >
               {sending ? "Отправляем…" : "Принять участие"}
             </button>
-            <p className="registration__policy">
-              Продолжая, вы соглашаетесь{" "}
-              <a
-                href="https://stream.ru/docs/personal_info.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                с Политикой обработки персональных данных
-              </a>
-            </p>
+            <div className="registration__consents">
+              <p className="registration__policy">
+                Продолжая, я соглашаюсь{" "}
+                <a
+                  ref={privacyConsentTrigger}
+                  href="#personal-data-consent-title"
+                  aria-haspopup="dialog"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setPrivacyConsentOpen(true);
+                  }}
+                >
+                  с Политикой обработки персональных данных
+                </a>
+              </p>
+              <div className="registration__reminder-consent">
+                <input
+                  id="registration-reminder-consent"
+                  name="reminderConsent"
+                  type="checkbox"
+                  checked={reminderConsent}
+                  disabled={sending}
+                  aria-labelledby="registration-reminder-label registration-reminder-link"
+                  onChange={(event) => setReminderConsent(event.target.checked)}
+                />
+                <div>
+                  <label
+                    id="registration-reminder-label"
+                    htmlFor="registration-reminder-consent"
+                  >
+                    Отправьте мне{" "}
+                  </label>
+                  <button
+                    ref={consentTrigger}
+                    id="registration-reminder-link"
+                    type="button"
+                    onClick={() => setConsentOpen(true)}
+                  >
+                    анонс-напоминание о мероприятии
+                  </button>
+                </div>
+              </div>
+            </div>
             <p
               className="registration__status"
               role="status"
@@ -441,6 +613,18 @@ export function Registration() {
           </form>
         )}
       </div>
+      {consentOpen && (
+        <AdvertisingConsentModal
+          onClose={() => setConsentOpen(false)}
+          returnFocusRef={consentTrigger}
+        />
+      )}
+      {privacyConsentOpen && (
+        <PersonalDataConsentModal
+          onClose={() => setPrivacyConsentOpen(false)}
+          returnFocusRef={privacyConsentTrigger}
+        />
+      )}
     </section>
   );
 }

@@ -4,12 +4,14 @@ import { createResendEmailProvider } from "./email/providers/resendEmailProvider
 import { ConfigurationError } from "./errors.mjs";
 import { createRegistrationHttpHandler } from "./registration/registrationHandler.mjs";
 import { createRegistrationService } from "./registration/registrationService.mjs";
+import { createSendsayImportWebhook } from "./sendsay/sendsayImportWebhook.mjs";
 import { createClientIdentifier } from "./security/clientIp.mjs";
 import { createRateLimiter } from "./security/rateLimiter.mjs";
 
 export function createRegistrationHandler({
   env = process.env,
   fetchEmail = fetch,
+  fetchSendsay = fetch,
   now = Date.now,
   failOnConfigurationError = false,
 } = {}) {
@@ -27,7 +29,18 @@ export function createRegistrationHandler({
       testMode: config.email.testMode,
       testRecipient: config.email.testRecipient,
     });
-    const registrationService = createRegistrationService({ emailService });
+    const sendsayImporter = config.sendsayImport.webhookUrl
+      ? createSendsayImportWebhook({
+          fetchImpl: fetchSendsay,
+          webhookUrl: config.sendsayImport.webhookUrl,
+          timeoutMs: config.sendsayImport.timeoutMs,
+        })
+      : undefined;
+    const registrationService = createRegistrationService({
+      emailService,
+      sendsayImporter,
+      now,
+    });
     const rateLimiter = createRateLimiter({ ...config.rateLimit, now });
 
     return createRegistrationHttpHandler({

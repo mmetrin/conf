@@ -519,10 +519,11 @@ export function startScene({
     setStyle(finalProjector, "--final-opacity", finalEntry);
     setStyle(finalProjector, "--final-lens-power", lens);
     setStyle(object, "opacity", reveal * (0.45 + 0.55 * reveal) * 1);
-    const photoTitleReveal = mobile.matches ? 1 :
-      ease(
-        clamp((scrollChapter - photoFadeStart) / (photoFadeDuration * 0.85)),
-      ) * 1;
+    const photoTitleReveal = mobile.matches
+      ? 1
+      : ease(
+          clamp((scrollChapter - photoFadeStart) / (photoFadeDuration * 0.85)),
+        ) * 1;
     const photoFade = ease(
       clamp((scrollChapter - photoFadeStart) / photoFadeDuration),
     );
@@ -558,9 +559,13 @@ export function startScene({
       photoTitleReveal > 0 ? "visible" : "hidden",
     );
     // Reveal supporting copy only once the heading has entered the light.
-    const subtitleAmount = mobile.matches ? 1 : ease(clamp(audienceElapsed / 0.42));
+    const subtitleAmount = mobile.matches
+      ? 1
+      : ease(clamp(audienceElapsed / 0.42));
     const subtitleReveal = subtitleAmount * 1;
-    const silhouetteReveal = mobile.matches ? 1 : ease(clamp((audienceElapsed - 0.32) / 0.76));
+    const silhouetteReveal = mobile.matches
+      ? 1
+      : ease(clamp((audienceElapsed - 0.32) / 0.76));
     particleShapes.forEach((particleShape) => {
       setStyle(particleShape, "--three-particle-opacity", silhouetteReveal);
       setStyle(particleShape, "--three-particle-reveal", silhouetteReveal);
@@ -584,9 +589,9 @@ export function startScene({
     setAttribute(photoSubtitle, "aria-hidden", subtitleReveal <= 0);
     let rolesVisible = false;
     photoRoleItems.forEach((item, index) => {
-      const amount = mobile.matches ? 1 : ease(
-        clamp((audienceElapsed - 0.32 - index * 0.15) / 0.42),
-      );
+      const amount = mobile.matches
+        ? 1
+        : ease(clamp((audienceElapsed - 0.32 - index * 0.15) / 0.42));
       const visible = amount * 1;
       setStyle(item, "opacity", visible);
       setStyle(
@@ -604,7 +609,9 @@ export function startScene({
     setAttribute(photoTitle, "aria-hidden", photoTitleReveal <= 0);
     setAttribute(object, "aria-hidden", false);
     const nextAudienceEffectActive =
-      (mobile.matches ? openingComplete : scrollChapter >= photoFadeStart - 0.3) && programmeSpread < 0.02;
+      (mobile.matches
+        ? openingComplete
+        : scrollChapter >= photoFadeStart - 0.3) && programmeSpread < 0.02;
     if (nextAudienceEffectActive !== audienceEffectActive) {
       audienceEffectActive = nextAudienceEffectActive;
       window.dispatchEvent(
@@ -637,7 +644,8 @@ export function startScene({
       const firstLength = Math.max(30, targetY - sourceY);
       targetY += (Math.max(targetY, h * 1.45) - targetY) * mobileBeamSpread;
       // Preserve the cone angle while extending it, then widen it slightly.
-      beamWidth *= (targetY - sourceY) / firstLength * (1 + 0.18 * mobileBeamSpread);
+      beamWidth *=
+        ((targetY - sourceY) / firstLength) * (1 + 0.18 * mobileBeamSpread);
     }
     window.programmeBeam = {
       x: sourceX,
@@ -669,20 +677,22 @@ export function startScene({
       dirty = true;
       wake();
     }
-    const nextSpread = mobile.matches ? 0 : ease(
-      clamp((window.scrollY - layout.stickyEnd) / Math.max(1, h * 0.6)),
-    );
+    const nextSpread = mobile.matches
+      ? 0
+      : ease(clamp((window.scrollY - layout.stickyEnd) / Math.max(1, h * 0.6)));
     if (Math.abs(nextSpread - programmeSpread) > 0.00001) {
       programmeSpread = nextSpread;
       geometryDirty = true;
     }
-    const next = mobile.matches ? 0 : Math.max(
-      0,
-      Math.min(
-        scrollChapterCount,
-        (window.scrollY - layout.top) / Math.max(1, layout.range),
-      ),
-    );
+    const next = mobile.matches
+      ? 0
+      : Math.max(
+          0,
+          Math.min(
+            scrollChapterCount,
+            (window.scrollY - layout.top) / Math.max(1, layout.range),
+          ),
+        );
     if (
       !audiencePreparationRequested &&
       automaticEnd + next - introDuration >= photoFadeStart - 0.3
@@ -746,11 +756,14 @@ export function startScene({
     const ratio = canvas.width / w;
     const width = halfWidth * 2 * ratio,
       fullHeight = length * 1.04 * ratio;
-    const height = Math.max(1, Math.min(
-      fullHeight,
-      (h - sourceY) * ratio + 2,
-      headBoost ? 160 * ratio : Infinity,
-    ));
+    const height = Math.max(
+      1,
+      Math.min(
+        fullHeight,
+        (h - sourceY) * ratio + 2,
+        headBoost ? 160 * ratio : Infinity,
+      ),
+    );
     const slot = headBoost ? "head" : halfWidth > beamWidth ? "outer" : "inner";
     let layer = shaftLayers.get(slot);
     if (!layer) {
@@ -819,7 +832,7 @@ export function startScene({
       arrival *
       (1 - 0.3 * textSceneFade) *
       (1 + 0.24 * textSceneFade * (1 - programmeSpread)) *
-      (1 - 0.62 * mobileBeamSpread);
+      (1 - 0.45 * mobileBeamSpread);
     // Light stays fixed while the two content screens move through it.
     const beamPresence = reveal * 1;
     // Data exists only while the photograph is revealed and not yet darkened.
@@ -906,26 +919,11 @@ export function startScene({
       const lowerAlpha = (base, mobile) =>
         base + (mobile - base) * mobileBeamSpread;
       bottomMask.addColorStop(0, "#000");
-      bottomMask.addColorStop(
-        0.15,
-        `rgba(0,0,0,${lowerAlpha(0.94, 0.78)})`,
-      );
-      bottomMask.addColorStop(
-        0.3,
-        `rgba(0,0,0,${lowerAlpha(0.78, 0.48)})`,
-      );
-      bottomMask.addColorStop(
-        0.5,
-        `rgba(0,0,0,${lowerAlpha(0.5, 0.2)})`,
-      );
-      bottomMask.addColorStop(
-        0.7,
-        `rgba(0,0,0,${lowerAlpha(0.22, 0.05)})`,
-      );
-      bottomMask.addColorStop(
-        0.85,
-        `rgba(0,0,0,${lowerAlpha(0.06, 0.01)})`,
-      );
+      bottomMask.addColorStop(0.15, `rgba(0,0,0,${lowerAlpha(0.94, 0.78)})`);
+      bottomMask.addColorStop(0.3, `rgba(0,0,0,${lowerAlpha(0.78, 0.48)})`);
+      bottomMask.addColorStop(0.5, `rgba(0,0,0,${lowerAlpha(0.5, 0.2)})`);
+      bottomMask.addColorStop(0.7, `rgba(0,0,0,${lowerAlpha(0.22, 0.05)})`);
+      bottomMask.addColorStop(0.85, `rgba(0,0,0,${lowerAlpha(0.06, 0.01)})`);
       bottomMask.addColorStop(1, "#0000");
       beamEffects.bottomMask = bottomMask;
     }
@@ -1158,12 +1156,15 @@ export function startScene({
   });
   resize();
   readScroll();
-  siteFontsReady.then(() => {
-    if (scope.disposed) return;
-    fontRevision++;
-    resize();
-    wake();
-  }, () => {}); // Critical loading owns the error/retry UI.
+  siteFontsReady.then(
+    () => {
+      if (scope.disposed) return;
+      fontRevision++;
+      resize();
+      wake();
+    },
+    () => {},
+  ); // Critical loading owns the error/retry UI.
   // Sample the real invitation glyphs once, then release their pixels as a controlled
   // field of crisp motes. The canvas exists only during the opening transition.
   const inviteCanvas = document.querySelector("#invitation-particles");
@@ -1524,8 +1525,7 @@ export function startScene({
           const dotPresence = point.symbol ? 1 - glyphPresence : 1;
           if (dotPresence > 0) {
             stageCtx.globalAlpha = alpha * dotPresence;
-            const diameter =
-              (mobile.matches ? 8.5 : 7) + point.size * 2;
+            const diameter = (mobile.matches ? 8.5 : 7) + point.size * 2;
             stageCtx.drawImage(
               morphDot,
               x - diameter / 2,
@@ -1558,10 +1558,10 @@ export function startScene({
     // The shared font readiness callback performs the first measured preparation.
   }
   setupOpeningTypography();
-  // Short-lived cursor data; stop painting when the last glyph has faded.
+  // A sparse, short-lived field of quiet data points follows the cursor.
   const cursorCanvas = document.querySelector("#cursor-data");
   const cursorCtx = cursorCanvas.getContext("2d"),
-    cursorGlyphs = [];
+    cursorParticles = [];
   const textCursorSelector =
       "input:not([type]), input[type='text'], input[type='email'], input[type='tel'], input[type='url'], input[type='search'], input[type='password'], input[type='number'], textarea, [contenteditable='true']",
     pointerCursorSelector =
@@ -1570,10 +1570,22 @@ export function startScene({
     if (typeof target?.closest !== "function")
       return { isText: false, isPointer: false };
     const isText = !!target.closest(textCursorSelector);
+    const pointerTarget = target.closest(pointerCursorSelector);
+    const modalBackdropBehindContent =
+      pointerTarget?.classList.contains("consent-modal") &&
+      target.closest(".consent-modal__dialog");
     return {
       isText,
-      isPointer: !isText && !!target.closest(pointerCursorSelector),
+      isPointer: !isText && !!pointerTarget && !modalBackdropBehindContent,
     };
+  }
+  let lastCursorEvent = null,
+    lastCursorEventMode = { isText: false, isPointer: false };
+  function cursorModeForEvent(event) {
+    if (event === lastCursorEvent) return lastCursorEventMode;
+    lastCursorEvent = event;
+    lastCursorEventMode = cursorModeFor(event.target);
+    return lastCursorEventMode;
   }
   let lastCursorSpawn = 0,
     cursorFrame = 0;
@@ -1590,24 +1602,41 @@ export function startScene({
   function paintCursor(now) {
     cursorFrame = 0;
     cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
-    for (let i = cursorGlyphs.length - 1; i >= 0; i--) {
-      const g = cursorGlyphs[i],
-        age = (now - g.born) / g.life;
+    for (let i = cursorParticles.length - 1; i >= 0; i--) {
+      const particle = cursorParticles[i],
+        age = (now - particle.born) / particle.life;
       if (age >= 1) {
-        cursorGlyphs.splice(i, 1);
+        cursorParticles.splice(i, 1);
         continue;
       }
-      cursorCtx.globalAlpha =
-        Math.sin((Math.min(1, age * 9) * Math.PI) / 2) *
-        Math.pow(1 - age, 1.8) *
-        0.85;
-      cursorCtx.font = `${g.size}px monospace`;
-      cursorCtx.fillStyle = g.color;
-      cursorCtx.fillText(g.text, g.x + g.dx * age, g.y - 24 * age);
+      const appear = Math.sin((Math.min(1, age * 4) * Math.PI) / 2);
+      const fade = Math.pow(1 - age, 1.55);
+      const pulse = 0.86 + 0.14 * Math.sin(age * Math.PI * 2 + particle.phase);
+      const radius =
+        particle.size *
+        (0.82 + 0.24 * Math.sin(age * Math.PI + particle.phase)) *
+        (particle.hollow ? 2 : 1);
+      cursorCtx.globalAlpha = appear * fade * particle.opacity * pulse;
+      cursorCtx.fillStyle = particle.color;
+      cursorCtx.strokeStyle = particle.color;
+      cursorCtx.beginPath();
+      cursorCtx.arc(
+        particle.x + particle.dx * age,
+        particle.y + particle.dy * age,
+        radius,
+        0,
+        Math.PI * 2,
+      );
+      if (particle.hollow) {
+        cursorCtx.lineWidth = 0.65;
+        cursorCtx.stroke();
+      } else {
+        cursorCtx.fill();
+      }
     }
     cursorCtx.globalAlpha = 1;
     if (
-      cursorGlyphs.length &&
+      cursorParticles.length &&
       pageActive &&
       !document.hidden &&
       !reduced.matches
@@ -1615,9 +1644,10 @@ export function startScene({
       cursorFrame = requestAnimationFrame(paintCursor);
   }
   function clearCursorTrail() {
+    if (!cursorFrame && !cursorParticles.length) return;
     cancelAnimationFrame(cursorFrame);
     cursorFrame = 0;
-    cursorGlyphs.length = 0;
+    cursorParticles.length = 0;
     cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
   }
   scope.listen(document, "pointermove", (event) => {
@@ -1628,27 +1658,32 @@ export function startScene({
       document.hidden
     )
       return;
-    if (cursorModeFor(event.target).isPointer) {
+    if (cursorModeForEvent(event).isPointer) {
       clearCursorTrail();
       return;
     }
     const now = performance.now();
-    if (now - lastCursorSpawn < 35) return;
+    if (now - lastCursorSpawn < 40) return;
     lastCursorSpawn = now;
-    for (let i = 0; i < 2; i++) {
-      cursorGlyphs.push({
-        x: event.clientX + 9 + (Math.random() - 0.5) * 24,
-        y: event.clientY + 7 + (Math.random() - 0.5) * 20,
-        dx: (Math.random() - 0.5) * 30,
-        born: now,
-        life: 850 + Math.random() * 600,
-        size: 10 + Math.random() * 5,
-        text: ["0", "1", "·", "+", "▯"][Math.floor(Math.random() * 5)],
-        color: Math.random() < 0.3 ? "#f4edff" : "#bfa1f5",
-      });
-    }
-    if (cursorGlyphs.length > 100)
-      cursorGlyphs.splice(0, cursorGlyphs.length - 100);
+    const redRing = Math.random() < 0.055;
+    const lilac = !redRing && Math.random() < 0.5;
+    cursorParticles.push({
+      x: event.clientX + (Math.random() - 0.5) * 20,
+      y: event.clientY + (Math.random() - 0.5) * 16,
+      dx: (Math.random() - 0.5) * 8,
+      dy: -4 - Math.random() * 8,
+      born: now,
+      life: 1450 + Math.random() * 950,
+      size: 0.75 + Math.random() * 1.3,
+      hollow: redRing || Math.random() < 0.18,
+      opacity: lilac
+        ? 0.78 + Math.random() * 0.14
+        : 0.42 + Math.random() * 0.28,
+      phase: Math.random() * Math.PI * 2,
+      color: redRing ? "#ff0032" : lilac ? "#af78f4" : "#f5f1fa",
+    });
+    if (cursorParticles.length > 28)
+      cursorParticles.splice(0, cursorParticles.length - 28);
     if (!cursorFrame) cursorFrame = requestAnimationFrame(paintCursor);
   });
   scope.listen(reduced, "change", () => {
@@ -1659,7 +1694,10 @@ export function startScene({
   const cursorDot = document.querySelector("#cursor-dot");
   let glintFrame = 0,
     glintX = -1000,
-    glintY = -1000;
+    glintY = -1000,
+    cursorVisible = false,
+    cursorIsText = false,
+    cursorIsPointer = false;
   function paintGlint() {
     glintFrame = 0;
     cursorDot.style.transform = `translate3d(${glintX}px,${glintY}px,0) translate(-50%,-50%)`;
@@ -1668,15 +1706,25 @@ export function startScene({
     if (event.pointerType === "touch" || !pageActive || document.hidden) return;
     glintX = event.clientX;
     glintY = event.clientY;
-    const { isText, isPointer } = cursorModeFor(event.target);
-    cursorDot.classList.toggle("is-text", isText);
-    cursorDot.classList.toggle("is-pointer", isPointer);
-    document.body.classList.add("cursor-active");
-    document.body.classList.toggle("cursor-pointer", isPointer);
+    const { isText, isPointer } = cursorModeForEvent(event);
+    if (isText !== cursorIsText) {
+      cursorIsText = isText;
+      cursorDot.classList.toggle("is-text", isText);
+    }
+    if (isPointer !== cursorIsPointer) {
+      cursorIsPointer = isPointer;
+      cursorDot.classList.toggle("is-pointer", isPointer);
+      document.body.classList.toggle("cursor-pointer", isPointer);
+    }
+    if (!cursorVisible) {
+      cursorVisible = true;
+      document.body.classList.add("cursor-active");
+    }
     if (!glintFrame) glintFrame = requestAnimationFrame(paintGlint);
   });
   function clearGlint() {
     glintX = glintY = -1000;
+    cursorVisible = cursorIsText = cursorIsPointer = false;
     cancelAnimationFrame(glintFrame);
     glintFrame = 0;
     document.body.classList.remove("cursor-active", "cursor-pointer");
@@ -1718,7 +1766,7 @@ export function startScene({
       if (!pageActive || document.hidden) {
         cancelAnimationFrame(cursorFrame);
         cursorFrame = 0;
-        cursorGlyphs.length = 0;
+        cursorParticles.length = 0;
         cursorCtx.clearRect(0, 0, innerWidth, innerHeight);
         clearGlint();
       }

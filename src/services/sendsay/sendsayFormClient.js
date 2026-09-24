@@ -4,6 +4,9 @@ import {
 } from "./sendsayConfig.js";
 
 export const SENDSAY_FORM_TIMEOUT_MS = 20_000;
+const NON_BLOCKING_POST_SAVE_ERRORS = new Set([
+  "error/draft/emptyfromemail",
+]);
 
 export class SendsayFormError extends Error {
   constructor(kind, message, options) {
@@ -38,6 +41,13 @@ function formErrorKind(errors) {
   return errors.some((error) => error?.id === "wrong_member_email")
     ? "invalid_email"
     : "form_error";
+}
+
+function hasOnlyNonBlockingPostSaveErrors(errors) {
+  return (
+    errors.length > 0 &&
+    errors.every((error) => NON_BLOCKING_POST_SAVE_ERRORS.has(error?.id))
+  );
 }
 
 export async function submitRegistrationToSendsay(
@@ -99,14 +109,19 @@ export async function submitRegistrationToSendsay(
     );
   }
 
-  if (Array.isArray(body?.errors) && body.errors.length > 0) {
+  const errors = Array.isArray(body?.errors) ? body.errors : [];
+  const hasOnlyPostSaveWarnings = hasOnlyNonBlockingPostSaveErrors(errors);
+  if (errors.length > 0 && !hasOnlyPostSaveWarnings) {
     throw new SendsayFormError(
-      formErrorKind(body.errors),
+      formErrorKind(errors),
       "Sendsay rejected the form",
     );
   }
   if (!response.ok) {
     throw new SendsayFormError("http", "Sendsay returned an HTTP error");
+  }
+  if (hasOnlyPostSaveWarnings) {
+    return { ok: true, response: body, warnings: errors };
   }
   if (!hasSuccessShape(body)) {
     throw new SendsayFormError(

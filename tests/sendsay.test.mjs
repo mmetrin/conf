@@ -91,6 +91,13 @@ test("Sendsay validation and invalid-email errors are controlled failures", asyn
   const cases = [
     [[{ id: "wrong_member_email", explain: "invalid" }], "invalid_email"],
     [[{ id: "required_field", explain: "missing" }], "form_error"],
+    [
+      [
+        { id: "error/draft/emptyfromemail" },
+        { id: "required_field", explain: "missing" },
+      ],
+      "form_error",
+    ],
   ];
   for (const [errors, kind] of cases) {
     await assert.rejects(
@@ -101,6 +108,17 @@ test("Sendsay validation and invalid-email errors are controlled failures", asyn
       (error) => error instanceof SendsayFormError && error.kind === kind,
     );
   }
+});
+
+test("a post-save empty draft sender warning still completes registration", async () => {
+  const result = await submitRegistrationToSendsay(fields, {
+    config,
+    fetchImpl: async () =>
+      jsonResponse({ errors: [{ id: "error/draft/emptyfromemail" }] }),
+  });
+
+  assert.equal(result.ok, true);
+  assert.deepEqual(result.warnings, [{ id: "error/draft/emptyfromemail" }]);
 });
 
 test("network errors and timeouts are distinguished", async () => {
@@ -242,4 +260,19 @@ test("organizer fallback request carries an explicit server-checked header", asy
   assert.equal(sent, true);
   assert.equal(captured.url, "/api/register");
   assert.equal(captured.request.headers["X-Sendsay-Fallback"], "true");
+  assert.equal(JSON.parse(captured.request.body).reminderConsent, false);
+});
+
+test("organizer request forwards the optional reminder consent", async () => {
+  let body;
+  const sent = await notifyOrganizer(fields, "test-request-12345678", {
+    reminderConsent: true,
+    fetchImpl: async (_url, request) => {
+      body = JSON.parse(request.body);
+      return jsonResponse({ ok: true });
+    },
+  });
+
+  assert.equal(sent, true);
+  assert.equal(body.reminderConsent, true);
 });

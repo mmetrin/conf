@@ -12,6 +12,7 @@ export const REGISTRATION_FIELD_LIMITS = Object.freeze({
 const ALLOWED_FIELDS = new Set([
   ...Object.keys(REGISTRATION_FIELD_LIMITS),
   "website",
+  "reminderConsent",
 ]);
 const CONTROL_CHARACTERS = /[\x00-\x1f\x7f]/;
 const IDEMPOTENCY_KEY = /^[a-zA-Z0-9-]{16,80}$/;
@@ -24,6 +25,12 @@ export function validateAndNormalizeRegistration(input) {
     throw new BadRequestError();
   }
   if (typeof input.website !== "string" || input.website !== "") {
+    throw new BadRequestError();
+  }
+  if (
+    input.reminderConsent !== undefined &&
+    typeof input.reminderConsent !== "boolean"
+  ) {
     throw new BadRequestError();
   }
 
@@ -41,7 +48,7 @@ export function validateAndNormalizeRegistration(input) {
     if (validateField(name, normalized)) throw new BadRequestError();
     fields[name] = normalized;
   }
-  return fields;
+  return { fields, reminderConsent: input.reminderConsent === true };
 }
 
 export function validateIdempotencyKey(value) {
