@@ -141,6 +141,81 @@ npm start
 
 Сначала заполните `.env`, затем выполните `npm run build`, потом запустите оба процесса.
 
+## Base URL и статические файлы
+
+`PUBLIC_BASE_PATH` — build-time настройка. `npm run build` записывает её в
+`<base href="...">` внутри `outputs/index.html` и
+`outputs/mts-ads-portrait-frames-current.html`. Браузер использует этот base URL
+для всех относительных ссылок на JS, CSS, шрифты, изображения и favicon.
+
+Значение должно начинаться и заканчиваться `/`:
+
+| Окружение | Адрес сайта | `PUBLIC_BASE_PATH` | Пример URL статики |
+| --- | --- | --- | --- |
+| Локально | `http://127.0.0.1:53860/` | `/` | `/assets/fact-time.svg` |
+| GitHub Pages | `https://mmetrin.github.io/conf/` | `/conf/` | `/conf/assets/fact-time.svg` |
+| Production | `https://ads.mts.ru/conf/` | `/conf/` | `/conf/assets/fact-time.svg` |
+
+После изменения `PUBLIC_BASE_PATH` нужна новая сборка: значение в runtime не
+переключается.
+
+```sh
+# Локальная сборка
+PUBLIC_BASE_PATH=/ \
+REGISTRATION_API_URL=http://127.0.0.1:53861/api/register \
+npm run build
+
+# Сборка для GitHub Pages или production-пути /conf/
+PUBLIC_BASE_PATH=/conf/ \
+REGISTRATION_API_URL=/api/register \
+npm run build
+```
+
+Пути к frontend-ресурсам в HTML, JSX и CSS должны оставаться относительными,
+например `assets/fact-time.svg`. Путь с начальным `/`, например
+`/assets/fact-time.svg`, игнорирует `<base>` и на GitHub Pages ошибочно указывает
+на корень `mmetrin.github.io` вместо `/conf/`.
+
+Встроенный Node static server раздаёт содержимое каталога `outputs/` от корня:
+запрос `/assets/fact-time.svg` соответствует файлу
+`outputs/assets/fact-time.svg`. Сам сервер не удаляет префикс `/conf`, поэтому в
+production reverse proxy должен сделать это до передачи запроса Node-серверу:
+
+```nginx
+location = /conf {
+    return 301 /conf/;
+}
+
+location /conf/ {
+    proxy_pass http://127.0.0.1:53860/;
+}
+
+location /api/register {
+    proxy_pass http://127.0.0.1:53861;
+}
+```
+
+Завершающий `/` в `proxy_pass http://127.0.0.1:53860/;` важен: благодаря ему
+запрос `/conf/assets/fact-time.svg` передаётся SPA-серверу как
+`/assets/fact-time.svg`.
+
+`PUBLIC_BASE_PATH` не заменяет `APP_ORIGIN` и `REGISTRATION_API_URL`:
+
+- `APP_ORIGIN` содержит только origin без `/conf`, например
+  `https://ads.mts.ru`;
+- `REGISTRATION_API_URL=/api/register` остаётся корневым API-маршрутом и не
+  получает префикс `/conf`;
+- GitHub Pages публикует только статику и не запускает Node API, поэтому
+  серверный сценарий регистрации через `/api/register` там недоступен.
+
+Проверить результат сборки можно так:
+
+```sh
+rg '<base href=' outputs/index.html
+curl -I https://mmetrin.github.io/conf/
+curl -I https://mmetrin.github.io/conf/assets/fact-time.svg
+```
+
 ### Серверные логи регистрации
 
 `npm run server` пишет JSON-логи для `POST /api/register` и Sendsay webhook. Все строки одной попытки связаны общим `requestId`. События `api.request.*` показывают результат API, а `sendsay.request.*` и `sendsay.response.*` — результат webhook. Логи содержат HTTP-статус, длительность и безопасный код причины, но не содержат данные участника, API key или webhook URL. Прямой browser-запрос в Sendsay Form API в серверные логи не попадает.
