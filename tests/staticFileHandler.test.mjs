@@ -14,7 +14,11 @@ import { join } from "node:path";
 import test from "node:test";
 import { promisify } from "node:util";
 import { createStaticFileHandler } from "../server/http/staticFileHandler.mjs";
-import { createApplicationServer } from "../server/server.mjs";
+import {
+  createApiServer,
+  createApplicationServer,
+  createStaticServer,
+} from "../server/server.mjs";
 
 const brotli = promisify(brotliCompress);
 const gzipAsync = promisify(gzip);
@@ -222,6 +226,38 @@ test("routes /api/register before static handling", async (t) => {
   const response = await fixture.request("/api/register", { method: "POST" });
   assert.equal(response.status, 204);
   assert.deepEqual(fixture.registrations, ["POST"]);
+});
+
+test("split SPA and API servers expose only their own responsibilities", async (t) => {
+  const spa = createStaticServer({
+    staticFileHandler(_req, res) {
+      res.writeHead(200, { "X-Process": "spa" });
+      res.end("spa");
+    },
+  });
+  const api = createApiServer({
+    registrationHandler(_req, res) {
+      res.writeHead(204, { "X-Process": "api" });
+      res.end();
+    },
+  });
+  await Promise.all([
+    new Promise((resolve) => spa.listen(0, "127.0.0.1", resolve)),
+    new Promise((resolve) => api.listen(0, "127.0.0.1", resolve)),
+  ]);
+  t.after(() => spa.close());
+  t.after(() => api.close());
+
+  const spaResponse = await request(spa.address().port, "/");
+  assert.equal(spaResponse.status, 200);
+  assert.equal(spaResponse.headers["x-process"], "spa");
+
+  const apiResponse = await request(api.address().port, "/api/register", {
+    method: "POST",
+  });
+  assert.equal(apiResponse.status, 204);
+  assert.equal(apiResponse.headers["x-process"], "api");
+  assert.equal((await request(api.address().port, "/")).status, 404);
 });
 
 test("returns 500 rather than disguising unexpected filesystem errors as 404", async (t) => {

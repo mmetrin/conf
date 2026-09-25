@@ -168,7 +168,8 @@ html:not(.content-ready) body > #projector-final {
   pointer-events: none !important;
 }
 #scene.programme-pinned #invitation-particles,
-body.registration-visible #scene #invitation-particles {
+body.registration-visible #scene #invitation-particles,
+#scene.opening-content-suppressed #invitation-particles {
   visibility: hidden !important;
   opacity: 0 !important;
 }

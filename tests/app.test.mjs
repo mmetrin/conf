@@ -14,6 +14,9 @@ const built = await build({
   jsx: "automatic",
   external: ["react", "react-dom", "react-dom/client"],
   define: {
+    __REGISTRATION_PUBLIC_CONFIG__: JSON.stringify({
+      apiUrl: "/api/register",
+    }),
     __SENDSAY_PUBLIC_CONFIG__: JSON.stringify({
       account: "test-account",
       formId: "test-form",
@@ -410,6 +413,47 @@ test("later screens prepare while background sequence is still pending", async (
   }
 });
 
+test("a quick registration jump suppresses unfinished opening symbols", async () => {
+  const env = environment(1600, 940);
+  const root = createRoot(document.getElementById("root"));
+  try {
+    await act(async () => {
+      root.render(React.createElement(App));
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await env.step(5);
+    assert(
+      document.documentElement.classList.contains("opening-locked"),
+      "the opening is still in progress before the jump",
+    );
+    window.scrollTo({ top: 940 * 6 });
+    await env.step(1);
+    assert(
+      document
+        .querySelector("#scene")
+        .classList.contains("opening-content-suppressed"),
+      "the opening canvas is hidden as soon as the sticky hero is left",
+    );
+    await env.step(1);
+    assert(
+      !document.documentElement.classList.contains("opening-locked"),
+      "the unfinished opening settles instead of continuing over the form",
+    );
+    window.scrollTo({ top: 0 });
+    await env.step(2);
+    assert(
+      !document
+        .querySelector("#scene")
+        .classList.contains("opening-content-suppressed"),
+      "the hero can be shown again after returning to the top",
+    );
+    assert.deepEqual(env.errors, []);
+  } finally {
+    await act(async () => root.unmount());
+    env.dispose();
+  }
+});
+
 for (const frameMs of [1000 / 60, 100])
   test(`mobile starts without delay and preserves animation timing at ${Math.round(1000 / frameMs)} fps`, async () => {
     const requestedFrames = [];
@@ -508,27 +552,19 @@ for (const [width, height, reduced] of [
       }
     };
     let calls = 0,
-      sendsayCalls = 0;
+      sendsayCalls = 0,
+      apiCalls = 0;
     const apiBodies = [];
     globalThis.fetch = async (url, request) => {
       calls++;
       if (String(url).startsWith("https://sendsay.ru/form/")) {
         sendsayCalls++;
-        return sendsayCalls === 1
-          ? {
-              ok: true,
-              status: 200,
-              json: async () => ({ errors: [{ id: "temporary_form_error" }] }),
-            }
-          : {
-              ok: true,
-              status: 200,
-              json: async () => ({
-                errors: [{ id: "error/draft/emptyfromemail" }],
-              }),
-            };
+        return { ok: true, status: 200, json: async () => ({ obj: {} }) };
       }
       apiBodies.push(JSON.parse(request.body));
+      apiCalls++;
+      if (apiCalls === 1)
+        return { ok: false, status: 503, json: async () => ({ ok: false }) };
       return { ok: true, status: 200, json: async () => ({ ok: true }) };
     };
     const env = environment(width, height, reduced);
@@ -994,7 +1030,11 @@ for (const [width, height, reduced] of [
           new window.Event("submit", { bubbles: true, cancelable: true }),
         );
       });
-      assert.equal(sendsayCalls, 1);
+      assert.equal(
+        sendsayCalls,
+        0,
+        "a consented registration bypasses the public Form API",
+      );
       assert(document.querySelector("#registration-form"));
       assert(document.querySelector(".registration__status").textContent);
       assert.equal(form.elements.namedItem("email").value, values.email);
@@ -1008,13 +1048,13 @@ for (const [width, height, reduced] of [
       });
       assert.equal(
         sendsayCalls,
-        2,
-        "double submit sends only one Sendsay request",
+        0,
+        "a consented registration never creates an unconfirmed Form API contact",
       );
       assert.equal(
         calls,
-        3,
-        "organizer notification is sent after Sendsay success",
+        2,
+        "double submit sends only one retry to the server webhook",
       );
       assert.equal(apiBodies[0].reminderConsent, true);
       assert.equal(document.querySelector("#registration-form"), null);

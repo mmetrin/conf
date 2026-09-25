@@ -1,57 +1,65 @@
 {
-  "jsBytes": 269967,
-  "initialJsBytes": 269967,
-  "asyncJsBytes": 103353,
-  "totalJsBytes": 373320,
-  "cssBytes": 85046,
+  "jsBytes": 270331,
+  "initialJsBytes": 270331,
+  "asyncJsBytes": 102970,
+  "totalJsBytes": 373301,
+  "cssBytes": 85200,
   "precompressedAssets": [
     {
-      "path": "app/chunks/BelowFold-LRDAAMEI.js.br",
-      "bytes": 13238
+      "path": "app/chunks/BelowFold-FZZEXLMT.js.br",
+      "bytes": 13054
     },
     {
-      "path": "app/chunks/BelowFold-LRDAAMEI.js.gz",
-      "bytes": 13482
+      "path": "app/chunks/BelowFold-FZZEXLMT.js.gz",
+      "bytes": 13295
     },
     {
-      "path": "app/chunks/abstract-TJNN6IEO.js.br",
-      "bytes": 2587
+      "path": "app/chunks/abstract-M4H3LNOZ.js.br",
+      "bytes": 2595
     },
     {
-      "path": "app/chunks/abstract-TJNN6IEO.js.gz",
-      "bytes": 2712
+      "path": "app/chunks/abstract-M4H3LNOZ.js.gz",
+      "bytes": 2720
     },
     {
-      "path": "app/chunks/chunk-3GSFVTFP.js.br",
-      "bytes": 4321
+      "path": "app/chunks/chunk-HIQBPEZ2.js.br",
+      "bytes": 462
     },
     {
-      "path": "app/chunks/chunk-3GSFVTFP.js.gz",
-      "bytes": 4491
+      "path": "app/chunks/chunk-HIQBPEZ2.js.gz",
+      "bytes": 508
     },
     {
-      "path": "app/chunks/particles-NHZ3LYQF.js.br",
-      "bytes": 3712
+      "path": "app/chunks/chunk-JWLRBJD6.js.br",
+      "bytes": 4332
     },
     {
-      "path": "app/chunks/particles-NHZ3LYQF.js.gz",
-      "bytes": 3851
+      "path": "app/chunks/chunk-JWLRBJD6.js.gz",
+      "bytes": 4500
     },
     {
-      "path": "app/chunks/scroll-N2JHISL2.js.br",
-      "bytes": 1839
+      "path": "app/chunks/particles-MSTG5HSD.js.br",
+      "bytes": 3721
     },
     {
-      "path": "app/chunks/scroll-N2JHISL2.js.gz",
-      "bytes": 1942
+      "path": "app/chunks/particles-MSTG5HSD.js.gz",
+      "bytes": 3861
     },
     {
-      "path": "app/site-EJTH5III.js.br",
-      "bytes": 84154
+      "path": "app/chunks/scroll-AZFNFH5C.js.br",
+      "bytes": 1851
     },
     {
-      "path": "app/site-EJTH5III.js.gz",
-      "bytes": 89558
+      "path": "app/chunks/scroll-AZFNFH5C.js.gz",
+      "bytes": 1948
+    },
+    {
+      "path": "app/site-W4OMU4ZM.js.br",
+      "bytes": 84281
+    },
+    {
+      "path": "app/site-W4OMU4ZM.js.gz",
+      "bytes": 89696
     },
     {
       "path": "assets/fact-address.svg.br",
@@ -159,31 +167,35 @@
     },
     {
       "path": "index.html.br",
-      "bytes": 6392
+      "bytes": 6377
     },
     {
       "path": "index.html.gz",
-      "bytes": 6760
+      "bytes": 6775
     },
     {
       "path": "mts-ads-portrait-frames-current.html.br",
-      "bytes": 6392
+      "bytes": 6377
     },
     {
       "path": "mts-ads-portrait-frames-current.html.gz",
-      "bytes": 6760
+      "bytes": 6775
     },
     {
-      "path": "site-c71943cde0.css.br",
-      "bytes": 15808
+      "path": "site-28c475388b.css.br",
+      "bytes": 15835
     },
     {
-      "path": "site-c71943cde0.css.gz",
-      "bytes": 16906
+      "path": "site-28c475388b.css.gz",
+      "bytes": 16932
     }
   ],
   "metafile": {
     "inputs": {
+      "<define:__REGISTRATION_PUBLIC_CONFIG__>": {
+        "bytes": 26,
+        "imports": []
+      },
       "<define:__SENDSAY_PUBLIC_CONFIG__>": {
         "bytes": 225,
         "imports": []
@@ -191,6 +203,11 @@
       "node_modules/scheduler/cjs/scheduler.production.js": {
         "bytes": 10181,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -202,6 +219,11 @@
       "node_modules/scheduler/index.js": {
         "bytes": 194,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -219,6 +241,11 @@
         "bytes": 18040,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -229,6 +256,11 @@
       "node_modules/react/index.js": {
         "bytes": 186,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -246,6 +278,11 @@
         "bytes": 7326,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -262,6 +299,11 @@
         "bytes": 1359,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -277,6 +319,11 @@
       "node_modules/react-dom/cjs/react-dom-client.production.js": {
         "bytes": 625168,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -304,6 +351,11 @@
         "bytes": 1373,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -320,6 +372,11 @@
         "bytes": 435,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -330,6 +387,11 @@
       "src/utils/imageReady.js": {
         "bytes": 1641,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -352,6 +414,11 @@
             "original": "../utils/imageReady.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -363,6 +430,11 @@
         "bytes": 976,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -373,6 +445,11 @@
       "node_modules/react/jsx-runtime.js": {
         "bytes": 210,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -393,6 +470,11 @@
             "path": "node_modules/react/index.js",
             "kind": "import-statement",
             "original": "react"
+          },
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -426,6 +508,11 @@
             "original": "./ThreeParticleShape.jsx"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -441,6 +528,11 @@
       "src/loader-lens.js": {
         "bytes": 6248,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -468,6 +560,11 @@
             "original": "../../loader-lens.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -483,6 +580,11 @@
       "src/animation/scheduler.js": {
         "bytes": 1078,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -500,6 +602,11 @@
             "original": "./scheduler.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -510,6 +617,11 @@
       "src/utils/desktopScale.js": {
         "bytes": 570,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -527,6 +639,11 @@
             "original": "../utils/desktopScale.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -538,6 +655,11 @@
         "bytes": 7920,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -546,7 +668,7 @@
         "format": "esm"
       },
       "src/animation/scene.js": {
-        "bytes": 65896,
+        "bytes": 67054,
         "imports": [
           {
             "path": "src/animation/typography.js",
@@ -569,6 +691,11 @@
             "original": "../utils/imageReady.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -579,6 +706,11 @@
       "src/animation/abstract.js": {
         "bytes": 9411,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -594,6 +726,11 @@
             "path": "src/utils/desktopScale.js",
             "kind": "import-statement",
             "original": "../utils/desktopScale.js"
+          },
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -632,6 +769,11 @@
             "original": "../utils/imageReady.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -653,6 +795,11 @@
         "bytes": 3129,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -667,6 +814,11 @@
             "path": "src/data/programme.js",
             "kind": "import-statement",
             "original": "../../data/programme.js"
+          },
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -685,6 +837,11 @@
         "bytes": 469,
         "imports": [
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -695,6 +852,11 @@
       "shared/registrationValidation.js": {
         "bytes": 2441,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -712,6 +874,11 @@
             "original": "../../shared/registrationValidation.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -722,6 +889,11 @@
       "src/utils/bottomSheet.js": {
         "bytes": 141,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -749,6 +921,11 @@
             "original": "../../utils/bottomSheet.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -770,6 +947,11 @@
             "original": "./ConsentModal.jsx"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -785,6 +967,11 @@
       "src/services/sendsay/sendsayConfig.js": {
         "bytes": 2652,
         "imports": [
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
@@ -802,6 +989,11 @@
             "original": "./sendsayConfig.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -810,7 +1002,7 @@
         "format": "esm"
       },
       "src/services/registration/registrationSubmission.js": {
-        "bytes": 2135,
+        "bytes": 1937,
         "imports": [
           {
             "path": "shared/registrationValidation.js",
@@ -823,6 +1015,11 @@
             "original": "../sendsay/sendsayFormClient.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -831,7 +1028,7 @@
         "format": "esm"
       },
       "src/components/Registration/Registration.jsx": {
-        "bytes": 25962,
+        "bytes": 25153,
         "imports": [
           {
             "path": "node_modules/react/index.js",
@@ -869,6 +1066,11 @@
             "original": "../../services/sendsay/sendsayFormClient.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -898,6 +1100,11 @@
             "path": "src/components/Registration/Registration.jsx",
             "kind": "import-statement",
             "original": "../Registration/Registration.jsx"
+          },
+          {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
           },
           {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
@@ -936,6 +1143,11 @@
             "original": "../Footer/Footer.jsx"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -972,6 +1184,11 @@
             "original": "./hooks/useSceneRuntime.js"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -1003,6 +1220,11 @@
             "original": "./App.jsx"
           },
           {
+            "path": "<define:__REGISTRATION_PUBLIC_CONFIG__>",
+            "kind": "import-statement",
+            "external": true
+          },
+          {
             "path": "<define:__SENDSAY_PUBLIC_CONFIG__>",
             "kind": "import-statement",
             "external": true
@@ -1017,38 +1239,38 @@
       }
     },
     "outputs": {
-      "outputs/app/site-EJTH5III.js": {
+      "outputs/app/site-W4OMU4ZM.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-LSR74TKP.js",
+            "path": "outputs/app/chunks/chunk-HIQBPEZ2.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-ENKGPETP.js",
+            "path": "outputs/app/chunks/chunk-WZM6I2GO.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-3GSFVTFP.js",
+            "path": "outputs/app/chunks/chunk-JWLRBJD6.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/particles-NHZ3LYQF.js",
+            "path": "outputs/app/chunks/particles-MSTG5HSD.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/abstract-TJNN6IEO.js",
+            "path": "outputs/app/chunks/abstract-M4H3LNOZ.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/scroll-N2JHISL2.js",
+            "path": "outputs/app/chunks/scroll-AZFNFH5C.js",
             "kind": "dynamic-import"
           },
           {
-            "path": "outputs/app/chunks/BelowFold-LRDAAMEI.js",
+            "path": "outputs/app/chunks/BelowFold-FZZEXLMT.js",
             "kind": "dynamic-import"
           }
         ],
@@ -1056,64 +1278,64 @@
         "entryPoint": "src/main.jsx",
         "inputs": {
           "node_modules/scheduler/cjs/scheduler.production.js": {
-            "bytesInOutput": 3667
+            "bytesInOutput": 3672
           },
           "node_modules/scheduler/index.js": {
-            "bytesInOutput": 56
+            "bytesInOutput": 61
           },
           "node_modules/react-dom/cjs/react-dom-client.production.js": {
-            "bytesInOutput": 205669
+            "bytesInOutput": 205674
           },
           "node_modules/react-dom/client.js": {
-            "bytesInOutput": 258
+            "bytesInOutput": 263
           },
           "src/main.jsx": {
-            "bytesInOutput": 834
+            "bytesInOutput": 839
           },
           "src/App.jsx": {
-            "bytesInOutput": 829
+            "bytesInOutput": 834
           },
           "src/components/Hero/Hero.jsx": {
-            "bytesInOutput": 5773
+            "bytesInOutput": 5778
           },
           "src/components/Hero/ThreeParticleShape.jsx": {
-            "bytesInOutput": 1986
+            "bytesInOutput": 1991
           },
           "src/components/StageOverlay/StageOverlay.jsx": {
-            "bytesInOutput": 7066
+            "bytesInOutput": 7071
           },
           "src/loader-lens.js": {
-            "bytesInOutput": 6230
+            "bytesInOutput": 6235
           },
           "src/hooks/useSceneRuntime.js": {
-            "bytesInOutput": 2572
+            "bytesInOutput": 2577
           },
           "src/animation/runtime.js": {
-            "bytesInOutput": 906
+            "bytesInOutput": 911
           },
           "src/animation/scheduler.js": {
-            "bytesInOutput": 473
+            "bytesInOutput": 478
           },
           "src/animation/scene.js": {
-            "bytesInOutput": 26436
+            "bytesInOutput": 26717
           },
           "src/animation/typography.js": {
-            "bytesInOutput": 3096
+            "bytesInOutput": 3101
           },
           "src/animation/receiver.js": {
-            "bytesInOutput": 3231
+            "bytesInOutput": 3236
           }
         },
-        "bytes": 269967
+        "bytes": 270331
       },
-      "outputs/app/chunks/particles-NHZ3LYQF.js": {
+      "outputs/app/chunks/particles-MSTG5HSD.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-LSR74TKP.js",
+            "path": "outputs/app/chunks/chunk-HIQBPEZ2.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1123,15 +1345,15 @@
         "entryPoint": "src/animation/particles.js",
         "inputs": {
           "src/animation/particles.js": {
-            "bytesInOutput": 7859
+            "bytesInOutput": 7864
           }
         },
-        "bytes": 7991
+        "bytes": 8004
       },
-      "outputs/app/chunks/chunk-LSR74TKP.js": {
+      "outputs/app/chunks/chunk-HIQBPEZ2.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1143,18 +1365,18 @@
         ],
         "inputs": {
           "src/animation/frameHost.js": {
-            "bytesInOutput": 189
+            "bytesInOutput": 193
           },
           "src/utils/imageReady.js": {
-            "bytesInOutput": 746
+            "bytesInOutput": 750
           }
         },
-        "bytes": 1012
+        "bytes": 1027
       },
-      "outputs/app/chunks/abstract-TJNN6IEO.js": {
+      "outputs/app/chunks/abstract-M4H3LNOZ.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1164,19 +1386,19 @@
         "entryPoint": "src/animation/abstract.js",
         "inputs": {
           "src/animation/abstract.js": {
-            "bytesInOutput": 5087
+            "bytesInOutput": 5091
           }
         },
-        "bytes": 5161
+        "bytes": 5172
       },
-      "outputs/app/chunks/scroll-N2JHISL2.js": {
+      "outputs/app/chunks/scroll-AZFNFH5C.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-ENKGPETP.js",
+            "path": "outputs/app/chunks/chunk-WZM6I2GO.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1186,15 +1408,15 @@
         "entryPoint": "src/animation/scroll.js",
         "inputs": {
           "src/animation/scroll.js": {
-            "bytesInOutput": 4495
+            "bytesInOutput": 4500
           }
         },
-        "bytes": 4615
+        "bytes": 4628
       },
-      "outputs/app/chunks/chunk-ENKGPETP.js": {
+      "outputs/app/chunks/chunk-WZM6I2GO.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1204,19 +1426,19 @@
         ],
         "inputs": {
           "src/utils/desktopScale.js": {
-            "bytesInOutput": 126
+            "bytesInOutput": 130
           }
         },
-        "bytes": 189
+        "bytes": 200
       },
-      "outputs/app/chunks/BelowFold-LRDAAMEI.js": {
+      "outputs/app/chunks/BelowFold-FZZEXLMT.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-3GSFVTFP.js",
+            "path": "outputs/app/chunks/chunk-JWLRBJD6.js",
             "kind": "import-statement"
           },
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1226,54 +1448,54 @@
         "entryPoint": "src/components/BelowFold/BelowFold.jsx",
         "inputs": {
           "src/components/BelowFold/BelowFold.jsx": {
-            "bytesInOutput": 231
+            "bytesInOutput": 235
           },
           "src/components/Programme/Programme.jsx": {
-            "bytesInOutput": 2704
+            "bytesInOutput": 2708
           },
           "src/data/programme.js": {
-            "bytesInOutput": 6294
+            "bytesInOutput": 6298
           },
           "src/components/Registration/Registration.jsx": {
-            "bytesInOutput": 29789
+            "bytesInOutput": 29352
           },
           "src/utils/phone.js": {
-            "bytesInOutput": 273
+            "bytesInOutput": 277
           },
           "src/utils/validation.js": {
-            "bytesInOutput": 4
+            "bytesInOutput": 8
           },
           "shared/registrationValidation.js": {
-            "bytesInOutput": 2639
+            "bytesInOutput": 2643
           },
           "src/components/ConsentModal/ConsentModal.jsx": {
-            "bytesInOutput": 3108
+            "bytesInOutput": 3112
           },
           "src/utils/bottomSheet.js": {
-            "bytesInOutput": 44
+            "bytesInOutput": 48
           },
           "src/components/ConsentModal/PersonalDataConsentModal.jsx": {
-            "bytesInOutput": 17822
+            "bytesInOutput": 17826
           },
           "src/services/registration/registrationSubmission.js": {
-            "bytesInOutput": 981
+            "bytesInOutput": 822
           },
           "src/services/sendsay/sendsayFormClient.js": {
-            "bytesInOutput": 1718
+            "bytesInOutput": 1722
           },
           "src/services/sendsay/sendsayConfig.js": {
-            "bytesInOutput": 1408
+            "bytesInOutput": 1412
           },
           "src/components/Footer/Footer.jsx": {
-            "bytesInOutput": 3243
+            "bytesInOutput": 3247
           }
         },
-        "bytes": 70390
+        "bytes": 69851
       },
-      "outputs/app/chunks/chunk-3GSFVTFP.js": {
+      "outputs/app/chunks/chunk-JWLRBJD6.js": {
         "imports": [
           {
-            "path": "outputs/app/chunks/chunk-OIBSJGDP.js",
+            "path": "outputs/app/chunks/chunk-BIZXHZND.js",
             "kind": "import-statement"
           }
         ],
@@ -1284,40 +1506,45 @@
         ],
         "inputs": {
           "node_modules/react/cjs/react.production.js": {
-            "bytesInOutput": 7861
+            "bytesInOutput": 7867
           },
           "node_modules/react/index.js": {
-            "bytesInOutput": 50
+            "bytesInOutput": 54
           },
           "node_modules/react/cjs/react-jsx-runtime.production.js": {
-            "bytesInOutput": 359
+            "bytesInOutput": 363
           },
           "node_modules/react/jsx-runtime.js": {
-            "bytesInOutput": 51
+            "bytesInOutput": 55
           },
           "node_modules/react-dom/cjs/react-dom.production.js": {
-            "bytesInOutput": 3609
+            "bytesInOutput": 3613
           },
           "node_modules/react-dom/index.js": {
-            "bytesInOutput": 250
+            "bytesInOutput": 256
           }
         },
-        "bytes": 13186
+        "bytes": 13221
       },
-      "outputs/app/chunks/chunk-OIBSJGDP.js": {
+      "outputs/app/chunks/chunk-BIZXHZND.js": {
         "imports": [],
         "exports": [
           "a",
           "b",
           "c",
-          "d"
+          "d",
+          "e",
+          "f"
         ],
         "inputs": {
+          "<define:__REGISTRATION_PUBLIC_CONFIG__>": {
+            "bytesInOutput": 44
+          },
           "<define:__SENDSAY_PUBLIC_CONFIG__>": {
             "bytesInOutput": 216
           }
         },
-        "bytes": 809
+        "bytes": 867
       }
     }
   }

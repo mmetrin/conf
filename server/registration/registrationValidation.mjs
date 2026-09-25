@@ -15,7 +15,6 @@ const ALLOWED_FIELDS = new Set([
   "reminderConsent",
 ]);
 const CONTROL_CHARACTERS = /[\x00-\x1f\x7f]/;
-const IDEMPOTENCY_KEY = /^[a-zA-Z0-9-]{16,80}$/;
 
 export function validateAndNormalizeRegistration(input) {
   if (!input || Array.isArray(input) || typeof input !== "object") {
@@ -27,10 +26,7 @@ export function validateAndNormalizeRegistration(input) {
   if (typeof input.website !== "string" || input.website !== "") {
     throw new BadRequestError();
   }
-  if (
-    input.reminderConsent !== undefined &&
-    typeof input.reminderConsent !== "boolean"
-  ) {
+  if (input.reminderConsent !== true) {
     throw new BadRequestError();
   }
 
@@ -48,12 +44,5 @@ export function validateAndNormalizeRegistration(input) {
     if (validateField(name, normalized)) throw new BadRequestError();
     fields[name] = normalized;
   }
-  return { fields, reminderConsent: input.reminderConsent === true };
-}
-
-export function validateIdempotencyKey(value) {
-  if (typeof value !== "string" || !IDEMPOTENCY_KEY.test(value)) {
-    throw new BadRequestError();
-  }
-  return value;
+  return { fields };
 }

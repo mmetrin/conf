@@ -2,25 +2,12 @@ import {
   registrationFields,
   validateField,
 } from "../../../shared/registrationValidation.js";
-import {
-  SendsayFormError,
-  submitRegistrationToSendsay,
-} from "../sendsay/sendsayFormClient.js";
+import { submitRegistrationToSendsay } from "../sendsay/sendsayFormClient.js";
 
-const SENDSAY_TECHNICAL_ERROR_KINDS = new Set([
-  "configuration",
-  "network",
-  "timeout",
-  "http",
-  "unexpected_response",
-]);
-
-export function canUseTestModeFallback(error) {
-  return (
-    error instanceof SendsayFormError &&
-    SENDSAY_TECHNICAL_ERROR_KINDS.has(error.kind)
-  );
-}
+const REGISTRATION_API_URL =
+  typeof __REGISTRATION_PUBLIC_CONFIG__ === "undefined"
+    ? "/api/register"
+    : __REGISTRATION_PUBLIC_CONFIG__.apiUrl;
 
 export function normalizeRegistrationFields(input) {
   return Object.fromEntries(
@@ -33,10 +20,7 @@ export function normalizeRegistrationFields(input) {
   );
 }
 
-export async function submitConferenceRegistration(
-  { fields, honeypot = "" },
-  options = {},
-) {
+export function prepareConferenceRegistration({ fields, honeypot = "" }) {
   if (honeypot !== "") return { ok: false, kind: "honeypot" };
 
   const normalized = normalizeRegistrationFields(fields);
@@ -50,31 +34,27 @@ export async function submitConferenceRegistration(
     return { ok: false, kind: "validation", fieldErrors };
   }
 
-  await submitRegistrationToSendsay(normalized, options);
   return { ok: true, fields: normalized };
 }
 
-export async function notifyOrganizer(
+export async function submitConferenceRegistration(input, options = {}) {
+  const prepared = prepareConferenceRegistration(input);
+  if (!prepared.ok) return prepared;
+
+  await submitRegistrationToSendsay(prepared.fields, options);
+  return prepared;
+}
+
+export async function submitReminderConsent(
   fields,
-  idempotencyKey,
-  {
-    fetchImpl = fetch,
-    timeoutMs = 15_000,
-    sendsayFallback = false,
-    reminderConsent = false,
-  } = {},
+  { fetchImpl = fetch, timeoutMs = 15_000 } = {},
 ) {
   try {
-    const headers = {
-      "Content-Type": "application/json",
-      "Idempotency-Key": idempotencyKey,
-    };
-    if (sendsayFallback) headers["X-Sendsay-Fallback"] = "true";
-    const response = await fetchImpl("/api/register", {
+    const response = await fetchImpl(REGISTRATION_API_URL, {
       method: "POST",
-      headers,
+      headers: { "Content-Type": "application/json" },
       credentials: "same-origin",
-      body: JSON.stringify({ ...fields, website: "", reminderConsent }),
+      body: JSON.stringify({ ...fields, website: "", reminderConsent: true }),
       signal: AbortSignal.timeout(timeoutMs),
     });
     if (!response.ok) return false;

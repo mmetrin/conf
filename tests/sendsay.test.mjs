@@ -6,9 +6,9 @@ import {
 } from "../src/services/sendsay/sendsayFormClient.js";
 import { getSendsayConfig } from "../src/services/sendsay/sendsayConfig.js";
 import {
-  canUseTestModeFallback,
-  notifyOrganizer,
+  prepareConferenceRegistration,
   submitConferenceRegistration,
+  submitReminderConsent,
 } from "../src/services/registration/registrationSubmission.js";
 
 const fields = {
@@ -208,49 +208,21 @@ test("reserved and duplicate field codes are rejected as configuration errors", 
       fields: { ...base.fields, role: "company_code" },
     }),
   );
-});
-
-test("organizer notification failure is isolated from Sendsay registration", async () => {
-  const registered = await submitConferenceRegistration(
-    { fields, honeypot: "" },
-    { config, fetchImpl: async () => jsonResponse({ obj: {} }) },
-  );
-  assert.equal(registered.ok, true);
-  assert.equal(
-    await notifyOrganizer(registered.fields, "test-request-12345678", {
-      fetchImpl: async () => {
-        throw new Error("provider unavailable");
-      },
-    }),
-    false,
-  );
-});
-
-test("test-mode fallback marks only technical Sendsay failures", () => {
-  for (const kind of [
-    "configuration",
-    "network",
-    "timeout",
-    "http",
-    "unexpected_response",
-  ]) {
-    assert.equal(canUseTestModeFallback(new SendsayFormError(kind)), true);
+  for (const invalidCode of ["field.name", "field-name"]) {
+    assert.throws(() =>
+      getSendsayConfig({
+        ...base,
+        fields: { ...base.fields, name: invalidCode },
+      }),
+    );
   }
-  assert.equal(
-    canUseTestModeFallback(new SendsayFormError("invalid_email")),
-    false,
-  );
-  assert.equal(
-    canUseTestModeFallback(new SendsayFormError("form_error")),
-    false,
-  );
-  assert.equal(canUseTestModeFallback(new Error("unrelated")), false);
 });
 
-test("organizer fallback request carries an explicit server-checked header", async () => {
+test("reminder consent is validated without creating a Form API contact", async () => {
+  const registered = prepareConferenceRegistration({ fields, honeypot: "" });
+  assert.equal(registered.ok, true);
   let captured;
-  const sent = await notifyOrganizer(fields, "test-request-12345678", {
-    sendsayFallback: true,
+  const sent = await submitReminderConsent(registered.fields, {
     fetchImpl: async (url, request) => {
       captured = { url, request };
       return jsonResponse({ ok: true });
@@ -259,20 +231,29 @@ test("organizer fallback request carries an explicit server-checked header", asy
 
   assert.equal(sent, true);
   assert.equal(captured.url, "/api/register");
-  assert.equal(captured.request.headers["X-Sendsay-Fallback"], "true");
-  assert.equal(JSON.parse(captured.request.body).reminderConsent, false);
+  assert.deepEqual(captured.request.headers, {
+    "Content-Type": "application/json",
+  });
+  assert.deepEqual(JSON.parse(captured.request.body), {
+    ...fields,
+    website: "",
+    reminderConsent: true,
+  });
 });
 
-test("organizer request forwards the optional reminder consent", async () => {
-  let body;
-  const sent = await notifyOrganizer(fields, "test-request-12345678", {
-    reminderConsent: true,
-    fetchImpl: async (_url, request) => {
-      body = JSON.parse(request.body);
-      return jsonResponse({ ok: true });
-    },
-  });
-
-  assert.equal(sent, true);
-  assert.equal(body.reminderConsent, true);
+test("reminder consent request reports backend failures without throwing", async () => {
+  assert.equal(
+    await submitReminderConsent(fields, {
+      fetchImpl: async () => jsonResponse({ ok: false }, { ok: false }),
+    }),
+    false,
+  );
+  assert.equal(
+    await submitReminderConsent(fields, {
+      fetchImpl: async () => {
+        throw new Error("Sendsay unavailable");
+      },
+    }),
+    false,
+  );
 });

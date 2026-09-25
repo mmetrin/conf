@@ -4,9 +4,9 @@ import { registrationFields, validateField } from "../../utils/validation.js";
 import { ConsentModal } from "../ConsentModal/ConsentModal.jsx";
 import { PersonalDataConsentModal } from "../ConsentModal/PersonalDataConsentModal.jsx";
 import {
-  canUseTestModeFallback,
-  notifyOrganizer,
+  prepareConferenceRegistration,
   submitConferenceRegistration,
+  submitReminderConsent,
 } from "../../services/registration/registrationSubmission.js";
 import { SendsayFormError } from "../../services/sendsay/sendsayFormClient.js";
 
@@ -283,7 +283,6 @@ export function Registration() {
   const privacyConsentTrigger = useRef(null);
   const [sending, setSending] = useState(false);
   const submitting = useRef(false);
-  const attempt = useRef(null);
   const [errors, setErrors] = useState({}),
     [status, setStatus] = useState("");
   const touched = useRef(new Set()),
@@ -312,15 +311,12 @@ export function Registration() {
       ),
     }));
   }
-  function finishSubmission(fields, organizerAlreadyNotified = false) {
+  function finishSubmission() {
     setSubmitted(true);
     setValues(
       Object.fromEntries(registrationFields.map((field) => [field.name, ""])),
     );
     setReminderConsent(false);
-    if (!organizerAlreadyNotified)
-      void notifyOrganizer(fields, attempt.current.key, { reminderConsent });
-    attempt.current = null;
   }
   async function submit(event) {
     event.preventDefault();
@@ -352,13 +348,6 @@ export function Registration() {
     const formData = Object.fromEntries(new FormData(form.current));
     const honeypot =
       typeof formData.website === "string" ? formData.website : "";
-    const signature = JSON.stringify({
-      ...entered,
-      website: honeypot,
-      reminderConsent,
-    });
-    if (!attempt.current || attempt.current.signature !== signature)
-      attempt.current = { signature, key: crypto.randomUUID() };
     submitting.current = true;
     setSending(true);
     setStatus("");
@@ -368,42 +357,27 @@ export function Registration() {
         !["127.0.0.1", "localhost"].includes(location.hostname)
       )
         throw new Error();
-      const result = await submitConferenceRegistration({
-        fields: entered,
-        honeypot,
-      });
+      const registration = { fields: entered, honeypot };
+      const result = reminderConsent
+        ? prepareConferenceRegistration(registration)
+        : await submitConferenceRegistration(registration);
       if (!result.ok) {
         if (result.kind === "validation") setErrors(result.fieldErrors);
         return;
       }
       if (reminderConsent) {
-        const reminderSaved = await notifyOrganizer(
-          result.fields,
-          attempt.current.key,
-          { reminderConsent: true },
-        );
+        const reminderSaved = await submitReminderConsent(result.fields);
         if (!reminderSaved) {
           setStatus(
-            "Регистрация сохранена, но подключить напоминания не удалось. Попробуйте ещё раз позже.",
+            "Не удалось отправить заявку. Проверьте соединение и попробуйте ещё раз.",
           );
           return;
         }
-        finishSubmission(result.fields, true);
+        finishSubmission();
         return;
       }
-      finishSubmission(result.fields);
+      finishSubmission();
     } catch (error) {
-      if (canUseTestModeFallback(error)) {
-        const fallbackSent = await notifyOrganizer(
-          entered,
-          attempt.current.key,
-          { sendsayFallback: true, reminderConsent },
-        );
-        if (fallbackSent) {
-          finishSubmission(entered, true);
-          return;
-        }
-      }
       if (error instanceof SendsayFormError && error.kind === "invalid_email") {
         setErrors((current) => ({
           ...current,

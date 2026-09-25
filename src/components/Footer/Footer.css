@@ -32,8 +32,10 @@
 }
 .site-footer__legal-links {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   gap: 32px;
+  width: fit-content;
+  max-width: 100%;
   color: #7f8c9f;
   font:
     400 12px/16px "MTS Text",
@@ -41,11 +43,15 @@
     sans-serif;
 }
 .site-footer__legal-link {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: 100%;
   border: 0;
   padding: 0;
   background: none;
   color: inherit;
   font: inherit;
+  text-align: left;
   text-decoration: underline;
   text-underline-offset: 2px;
   cursor: pointer;

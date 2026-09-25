@@ -4,9 +4,7 @@ export const MAX_BODY_BYTES = 8192;
 export const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
 export const RATE_LIMIT_MAX_REQUESTS = 5;
 export const MAX_RATE_LIMIT_BUCKETS = 10000;
-export const EMAIL_TIMEOUT_MS = 10000;
 export const SENDSAY_IMPORT_TIMEOUT_MS = 10000;
-export const PRODUCTION_ORGANIZER_ADDRESS = "mmetrindesign@gmail.com";
 
 function readRequired(env, name) {
   const value = env[name];
@@ -73,11 +71,6 @@ function readOptionalSendsayWebhookUrl(env) {
 }
 
 export function getRegistrationConfig(env = process.env) {
-  const testMode = readBoolean(env, "EMAIL_TEST_MODE", false);
-  const testRecipient = testMode
-    ? readRequired(env, "EMAIL_TEST_RECIPIENT")
-    : undefined;
-
   return {
     appOrigin: readAppOrigin(env),
     maxBodyBytes: MAX_BODY_BYTES,
@@ -86,14 +79,6 @@ export function getRegistrationConfig(env = process.env) {
       maxRequests: RATE_LIMIT_MAX_REQUESTS,
       windowMs: RATE_LIMIT_WINDOW_MS,
       maxEntries: MAX_RATE_LIMIT_BUCKETS,
-    },
-    email: {
-      apiKey: readRequired(env, "EMAIL_API_KEY"),
-      fromAddress: readRequired(env, "EMAIL_FROM"),
-      organizerAddress: PRODUCTION_ORGANIZER_ADDRESS,
-      testMode,
-      testRecipient,
-      timeoutMs: EMAIL_TIMEOUT_MS,
     },
     sendsayImport: {
       webhookUrl: readOptionalSendsayWebhookUrl(env),

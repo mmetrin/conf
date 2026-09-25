@@ -122,7 +122,24 @@ export function startScene({
   let openingElapsed = 0,
     openingReady = false,
     openingComplete = false,
-    heroVisibleDispatched = false;
+    heroVisibleDispatched = false,
+    openingContentSuppressed = false;
+  function revealHero() {
+    document.documentElement.classList.add("loader-finished");
+    if (heroVisibleDispatched) return;
+    heroVisibleDispatched = true;
+    window.dispatchEvent(new window.Event("hero-visible"));
+  }
+  function finishOpeningAfterSceneExit() {
+    if (!openingReady || openingComplete) return;
+    openingElapsed =
+      openingHoldDuration + projectorBlendStart + contentRevealDuration;
+    rawScrollChapter = automaticEnd;
+    openingComplete = true;
+    revealHero();
+    geometryDirty = true;
+    dirty = true;
+  }
   scope.listen(
     window,
     "opening-ready",
@@ -137,11 +154,7 @@ export function startScene({
     if (!openingReady || openingComplete) return;
     openingElapsed += dt;
     if (openingElapsed >= openingHoldDuration - 0.2) {
-      document.documentElement.classList.add("loader-finished");
-      if (!heroVisibleDispatched) {
-        heroVisibleDispatched = true;
-        window.dispatchEvent(new window.Event("hero-visible"));
-      }
+      revealHero();
     }
 
     const elapsed = Math.max(0, openingElapsed - openingHoldDuration);
@@ -662,6 +675,20 @@ export function startScene({
     mobileBeamSpread = 0,
     mobileSymbolVisibility = 1;
   function readScroll() {
+    const nextOpeningContentSuppressed =
+      window.scrollY >= Math.max(layout.top, layout.stickyEnd - 1);
+    if (nextOpeningContentSuppressed !== openingContentSuppressed) {
+      openingContentSuppressed = nextOpeningContentSuppressed;
+      scene.classList.toggle(
+        "opening-content-suppressed",
+        openingContentSuppressed,
+      );
+      dirty = true;
+    }
+    // A direct jump to the programme/registration can happen while the opening
+    // sequence is still running. Do not let its fixed canvas finish over the
+    // destination; settle the opening as soon as the sticky hero is behind us.
+    if (openingContentSuppressed) finishOpeningAfterSceneExit();
     const nextMobileBeamSpread = mobile.matches
       ? ease(clamp((window.scrollY - layout.top) / Math.max(1, h * 0.55)))
       : 0;
@@ -1472,7 +1499,7 @@ export function startScene({
         String(departure >= 1 || textAssembly <= 0),
       );
       stageCtx.clearRect(0, 0, w, h);
-      if (departure >= 1) return;
+      if (openingContentSuppressed || departure >= 1) return;
       // A sparse mix of symbols and light points sketches the second projector first.
       if (morph > 0 && morph < 1) {
         stageCtx.save();
@@ -1817,6 +1844,7 @@ export function startScene({
   updateDecorativeState();
 
   scope.defer(() => {
+    scene.classList.remove("opening-content-suppressed");
     sceneObserver?.disconnect();
     sceneResizeObserver?.disconnect();
     cancelAnimationFrame(raf);

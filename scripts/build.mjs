@@ -46,6 +46,40 @@ function publicSendsayConfig(env = process.env) {
   };
 }
 
+function publicRegistrationConfig(env = process.env) {
+  const value = env.REGISTRATION_API_URL;
+  const apiUrl =
+    typeof value === "string" && value.trim() !== ""
+      ? value.trim()
+      : "/api/register";
+  if (apiUrl.startsWith("/") && !apiUrl.startsWith("//")) return { apiUrl };
+
+  let parsed;
+  try {
+    parsed = new URL(apiUrl);
+  } catch {
+    throw new Error(
+      "REGISTRATION_API_URL must be an absolute HTTP(S) URL or root-relative path",
+    );
+  }
+  if (!["http:", "https:"].includes(parsed.protocol)) {
+    throw new Error(
+      "REGISTRATION_API_URL must be an absolute HTTP(S) URL or root-relative path",
+    );
+  }
+  return { apiUrl };
+}
+
+function publicBasePath(env = process.env) {
+  const value = env.PUBLIC_BASE_PATH?.trim() || "/";
+  if (!/^\/(?:[A-Za-z0-9_-]+\/)*$/.test(value)) {
+    throw new Error(
+      "PUBLIC_BASE_PATH must be a root-relative directory ending with /",
+    );
+  }
+  return value;
+}
+
 async function precompressFile(path) {
   const extension = extname(path).toLowerCase();
   if (!compressibleExtensions.has(extension)) return [];
@@ -95,6 +129,7 @@ const result = await build({
   define: {
     "process.env.NODE_ENV": '"production"',
     __SENDSAY_PUBLIC_CONFIG__: JSON.stringify(publicSendsayConfig()),
+    __REGISTRATION_PUBLIC_CONFIG__: JSON.stringify(publicRegistrationConfig()),
   },
   metafile: true,
   legalComments: "eof",
@@ -115,13 +150,22 @@ function collectModules(path) {
       collectModules(dependency.path);
 }
 collectModules(entryOutput[0]);
-const modulePreloads = [...criticalModules].map((path) =>
-  `<link rel="modulepreload" href="${path.replace(/^outputs\//, "")}">`,
-).join("");
+const modulePreloads = [...criticalModules]
+  .map(
+    (path) =>
+      `<link rel="modulepreload" href="${path.replace(/^outputs\//, "")}">`,
+  )
+  .join("");
 const criticalIconPreloads = [
-  "logos/main-mts.svg", "inline-edcfeadab87b.svg",
-  "fact-address.svg", "fact-cinema.svg", "fact-online.svg", "fact-time.svg",
-].map((path) => `<link rel="preload" href="assets/${path}" as="image">`).join("");
+  "logos/main-mts.svg",
+  "inline-edcfeadab87b.svg",
+  "fact-address.svg",
+  "fact-cinema.svg",
+  "fact-online.svg",
+  "fact-time.svg",
+]
+  .map((path) => `<link rel="preload" href="assets/${path}" as="image">`)
+  .join("");
 const totalJsBytes = result.outputFiles.reduce(
   (sum, file) => sum + file.contents.length,
   0,
@@ -156,10 +200,12 @@ await fs.rm(output + "/assets", { recursive: true, force: true });
 await fs.cp("public/assets", output + "/assets", { recursive: true });
 for (const file of rootStaticFiles)
   await fs.copyFile(`public/${file}`, `${output}/${file}`);
-const loadingShell = (await fs.readFile("src/loading-shell.html", "utf8"))
-  .replace("__LOADER_LENS_SRC__", loaderLensSrc);
+const loadingShell = (
+  await fs.readFile("src/loading-shell.html", "utf8")
+).replace("__LOADER_LENS_SRC__", loaderLensSrc);
+const basePath = publicBasePath();
 const entryHtml = `<!doctype html>
-<html lang="ru" class="opening-locked" style="background:#030307"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030307"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Флагманская конференция МТС Ads о технологиях будущего рекламной индустрии</title><style>html,body{margin:0;background:#030307;color-scheme:dark}</style>
+<html lang="ru" class="opening-locked" style="background:#030307"><head><base href="${basePath}"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030307"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Флагманская конференция МТС Ads о технологиях будущего рекламной индустрии</title><style>html,body{margin:0;background:#030307;color-scheme:dark}</style>
 <link rel="preload" href="${cssPath}" as="style">
 ${modulePreloads}${criticalIconPreloads}
 <link rel="preload" href="assets/MTSWide-Regular.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/MTSWide-Medium.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="assets/MTSUltraExtended-Bold.woff2" as="font" type="font/woff2" crossorigin>
