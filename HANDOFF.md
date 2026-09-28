@@ -52,7 +52,7 @@ Production-список выбирается внутри формы в Sendsay;
 | `APP_ORIGIN` | `https://ads.mts.ru` — только origin, без `/conf` |
 | `SENDSAY_IMPORT_WEBHOOK_URL` | секретный URL импорта согласившихся контактов |
 
-Production build-time значения: `PUBLIC_BASE_PATH=/conf/` и `REGISTRATION_API_URL=/api/register`. Дополнительные server values: `TRUST_LOCAL_PROXY`, `SERVER_HOST`, `SPA_PORT`, `API_PORT`. Полный список находится в `.env.example`.
+Production build-time значения: `PUBLIC_BASE_PATH=/conf/` и пустой `API_BASE_URL` для same-origin API. Node SPA server использует тот же `PUBLIC_BASE_PATH` при маршрутизации статики. Дополнительные server values: `TRUST_LOCAL_PROXY`, `SERVER_HOST`, `SPA_PORT`, `API_PORT`. Полный список находится в `.env.example`.
 
 Секретный webhook нельзя коммитить, добавлять в `.env.example` или встраивать в frontend bundle.
 
@@ -77,10 +77,10 @@ API пишет структурированные JSON-логи `api.request.*`,
 ## Deployment
 
 - Итоговая страница публикуется по `https://ads.mts.ru/conf`.
-- Перед production build задать `APP_ORIGIN=https://ads.mts.ru`, `PUBLIC_BASE_PATH=/conf/` и `REGISTRATION_API_URL=/api/register`.
+- Перед production build задать `APP_ORIGIN=https://ads.mts.ru`, `PUBLIC_BASE_PATH=/conf/` и пустой `API_BASE_URL` для same-origin `/api/register`.
 - В production оставить `SENDSAY_FORM_ID=24` и `SENDSAY_USE_TEST_FORM=false`.
 - Направить `/api/register` на API.
-- Направить `/conf` и `/conf/*` на SPA, удаляя префикс `/conf` перед передачей Node static server; остальные страницы `ads.mts.ru` не перехватывать.
+- Направить `/conf` и `/conf/*` на SPA без изменения пути: Node static server самостоятельно применяет `PUBLIC_BASE_PATH`; остальные страницы `ads.mts.ru` не перехватывать.
 - Опубликовать оба процесса через HTTPS.
 - Не указывать `/conf` в `APP_ORIGIN`: browser origin равен `https://ads.mts.ru`.
 - Если используется отдельный API origin, разрешить его в CSP `connect-src` вместе с `https://sendsay.ru`.

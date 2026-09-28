@@ -6,6 +6,7 @@ import {
 } from "../src/services/sendsay/sendsayFormClient.js";
 import { getSendsayConfig } from "../src/services/sendsay/sendsayConfig.js";
 import {
+  getRegistrationApiUrl,
   prepareConferenceRegistration,
   submitConferenceRegistration,
   submitReminderConsent,
@@ -34,6 +35,15 @@ const config = getSendsayConfig({
   },
   eventDateTime: "2026-11-19 17:00:00",
   eventId: "mts-ads-2026",
+});
+
+test("registration API URL combines a configurable backend with a fixed route", () => {
+  assert.equal(getRegistrationApiUrl(""), "/api/register");
+  assert.equal(
+    getRegistrationApiUrl("http://127.0.0.1:53861"),
+    "http://127.0.0.1:53861/api/register",
+  );
+  assert.equal(getRegistrationApiUrl("/conf/"), "/conf/api/register");
 });
 
 function jsonResponse(body, { ok = true, status = 200 } = {}) {

@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { readPublicBasePath } from "../../shared/publicBasePath.js";
 
 const DEFAULT_PORT = 53860;
 const DEFAULT_API_PORT = 53861;
@@ -32,6 +33,7 @@ export function createServerConfig(env = process.env) {
     static: {
       root: resolve("outputs"),
       entryDocument: "mts-ads-portrait-frames-current.html",
+      basePath: readPublicBasePath(env),
     },
     timeouts: {
       requestTimeoutMs: 15000,

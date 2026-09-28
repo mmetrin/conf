@@ -11,21 +11,21 @@ React 19 сайт конференции с интеграцией только 
 
 Дата, время и адрес подтверждены и не требуют дополнительного согласования.
 
-Подтверждённый production URL сайта: **https://ads.mts.ru/conf**.
+Подтверждённый боевой URL сайта: **https://ads.mts.ru/conf**.
 
 ## Как работает регистрация
 
 ```text
 Форма на сайте
 → проверка полей и honeypot
-→ чекбокс включён: backend сохраняет заявку через Sendsay webhook
+→ чекбокс включён: серверная часть сохраняет заявку через webhook Sendsay
 → чекбокс снят: браузер сохраняет заявку через Sendsay Form API
 → экран успешной регистрации
 ```
 
 - Чекбокс «Отправьте мне анонс-напоминание о мероприятии» необязательный и включён по умолчанию.
-- Если чекбокс включён, заявка отправляется только через backend в import webhook. Form API перед этим не вызывается, поэтому он не создаёт контакт со статусом «Подписка не подтверждена».
-- Если чекбокс снят, backend и webhook не вызываются: заявка отправляется напрямую в форму `24` через Form API.
+- Если чекбокс включён, заявка отправляется только через серверную часть в импортирующий webhook. Form API перед этим не вызывается, поэтому он не создаёт контакт со статусом «Подписка не подтверждена».
+- Если чекбокс снят, серверная часть и webhook не вызываются: заявка отправляется напрямую в форму `24` через Form API.
 - Посетителю не нужно подтверждать email или переходить по дополнительной ссылке.
 - Своей базы участников в проекте нет: данные хранятся в Sendsay.
 - Расписание писем и уведомление организатору настраиваются только в Sendsay.
@@ -35,7 +35,7 @@ React 19 сайт конференции с интеграцией только 
 | Параметр | Значение |
 | --- | --- |
 | Account code | `mtsmarketolog` |
-| Production Form ID | `24` |
+| ID боевой формы | `24` |
 | Email | `_member_email` |
 | Фамилия и имя | `q1` |
 | Телефон | `q2` |
@@ -46,7 +46,7 @@ React 19 сайт конференции с интеграцией только 
 | Тестовый список | `pl58174` |
 | Тестовый сценарий | «Конференция МТС Ads — 19.11.2026 — TEST», ID `52` |
 
-Форма `24` активна (`state: 1`) и используется для заявок без согласия на напоминания. Отдельная production-копия формы и ID production-списка коду не нужны: назначения выполняются внутри Sendsay.
+Форма `24` активна (`state: 1`) и используется для заявок без согласия на напоминания. Отдельная боевая копия формы и ID боевого списка коду не нужны: назначения выполняются внутри Sendsay.
 
 ## Webhook напоминаний
 
@@ -85,7 +85,7 @@ Webhook URL сопоставляет `memberemail` с `member.email`, а вло�
 cp .env.example .env
 ```
 
-Frontend-переменные встраиваются в сборку:
+Переменные клиентской части встраиваются в сборку:
 
 | Переменная | Значение |
 | --- | --- |
@@ -97,22 +97,22 @@ Frontend-переменные встраиваются в сборку:
 | `SENDSAY_FIELD_ROLE` | `q4` |
 | `SENDSAY_FIELD_EVENT_DATETIME` | `q5` |
 | `SENDSAY_EVENT_DATETIME` | `2026-11-19 17:00:00` |
-| `SENDSAY_USE_TEST_FORM` | `false` для production |
-| `PUBLIC_BASE_PATH` | локально `/`; для production URL — `/conf/` |
-| `REGISTRATION_API_URL` | локально `http://127.0.0.1:53861/api/register`; за единым reverse proxy — `/api/register` |
+| `SENDSAY_USE_TEST_FORM` | `false` для боевого окружения |
+| `PUBLIC_BASE_PATH` | публичный путь SPA и статики: локально `/`, в боевом окружении `/conf/` |
+| `API_BASE_URL` | адрес серверной части без маршрута: локально `http://127.0.0.1:53861`, при общем источнике — пустая строка |
 
-Server-only переменные:
+Переменные только для серверной части:
 
 | Переменная | Назначение |
 | --- | --- |
-| `APP_ORIGIN` | origin без пути: локально `http://127.0.0.1:53860`, в production `https://ads.mts.ru` |
+| `APP_ORIGIN` | источник без пути: локально `http://127.0.0.1:53860`, в боевом окружении `https://ads.mts.ru` |
 | `SENDSAY_IMPORT_WEBHOOK_URL` | секретный Sendsay webhook для согласившихся на напоминания |
 | `TRUST_LOCAL_PROXY` | `true` только за настроенным доверенным proxy |
 | `SPA_PORT` | порт SPA, по умолчанию `53860` |
 | `API_PORT` | порт API, по умолчанию `53861` |
 | `SERVER_HOST` | bind address, по умолчанию `127.0.0.1` |
 
-После изменения frontend-переменных выполните новую сборку. `.env` не коммитится.
+После изменения переменных клиентской части выполните новую сборку. `.env` не коммитится.
 
 ## Установка, проверка и сборка
 
@@ -121,8 +121,8 @@ Server-only переменные:
 ```sh
 npm ci
 npm test       # тесты без реальных запросов в Sendsay
-npm run build  # production-сборка в outputs/
-npm run check  # тесты + production-сборка
+npm run build  # боевая сборка в outputs/
+npm run check  # тесты + боевая сборка
 ```
 
 Сборка создаёт HTML, fingerprinted JS/CSS и сжатые `.br`/`.gz` файлы в `outputs/`.
@@ -141,12 +141,13 @@ npm start
 
 Сначала заполните `.env`, затем выполните `npm run build`, потом запустите оба процесса.
 
-## Base URL и статические файлы
+## Базовый URL и статические файлы
 
-`PUBLIC_BASE_PATH` — build-time настройка. `npm run build` записывает её в
-`<base href="...">` внутри `outputs/index.html` и
-`outputs/mts-ads-portrait-frames-current.html`. Браузер использует этот base URL
-для всех относительных ссылок на JS, CSS, шрифты, изображения и favicon.
+`PUBLIC_BASE_PATH` — единая настройка публичного пути SPA. `npm run build`
+записывает её в `<base href="...">` внутри `outputs/index.html` и
+`outputs/mts-ads-portrait-frames-current.html`. Node-сервер SPA читает то же
+значение при запуске и обслуживает только этот URL-префикс. Браузер использует
+значение для всех относительных ссылок на JS, CSS, шрифты, изображения и иконки сайта.
 
 Значение должно начинаться и заканчиваться `/`:
 
@@ -154,40 +155,49 @@ npm start
 | --- | --- | --- | --- |
 | Локально | `http://127.0.0.1:53860/` | `/` | `/assets/fact-time.svg` |
 | GitHub Pages | `https://mmetrin.github.io/conf/` | `/conf/` | `/conf/assets/fact-time.svg` |
-| Production | `https://ads.mts.ru/conf/` | `/conf/` | `/conf/assets/fact-time.svg` |
+| Боевое окружение | `https://ads.mts.ru/conf/` | `/conf/` | `/conf/assets/fact-time.svg` |
 
-После изменения `PUBLIC_BASE_PATH` нужна новая сборка: значение в runtime не
-переключается.
+После изменения `PUBLIC_BASE_PATH` нужны новая сборка и перезапуск SPA-сервера:
+значение в уже собранном HTML и запущенном процессе не переключается.
 
 ```sh
 # Локальная сборка
 PUBLIC_BASE_PATH=/ \
-REGISTRATION_API_URL=http://127.0.0.1:53861/api/register \
+API_BASE_URL=http://127.0.0.1:53861 \
 npm run build
 
-# Сборка для GitHub Pages или production-пути /conf/
+# Сборка для GitHub Pages или боевого пути /conf/
 PUBLIC_BASE_PATH=/conf/ \
-REGISTRATION_API_URL=/api/register \
+API_BASE_URL= \
 npm run build
 ```
 
-Пути к frontend-ресурсам в HTML, JSX и CSS должны оставаться относительными,
+Пути к ресурсам клиентской части в HTML, JSX и CSS должны оставаться относительными,
 например `assets/fact-time.svg`. Путь с начальным `/`, например
 `/assets/fact-time.svg`, игнорирует `<base>` и на GitHub Pages ошибочно указывает
 на корень `mmetrin.github.io` вместо `/conf/`.
 
-Встроенный Node static server раздаёт содержимое каталога `outputs/` от корня:
-запрос `/assets/fact-time.svg` соответствует файлу
-`outputs/assets/fact-time.svg`. Сам сервер не удаляет префикс `/conf`, поэтому в
-production reverse proxy должен сделать это до передачи запроса Node-серверу:
+Встроенный Node-сервер SPA раздаёт содержимое `outputs/` с учётом
+`PUBLIC_BASE_PATH`. При `PUBLIC_BASE_PATH=/conf/` он выполняет такие
+сопоставления:
+
+| Внешний запрос | Результат |
+| --- | --- |
+| `/conf` | `308` на `/conf/` |
+| `/conf/` | `outputs/mts-ads-portrait-frames-current.html` |
+| `/conf/assets/fact-time.svg` | `outputs/assets/fact-time.svg` |
+| `/assets/fact-time.svg` | `404`, потому что запрос вне `/conf/` |
+
+Значение при сборке и при запуске сервера должно совпадать. Обратный прокси должен
+передавать `/conf` без удаления префикса:
 
 ```nginx
 location = /conf {
-    return 301 /conf/;
+    proxy_pass http://127.0.0.1:53860;
 }
 
-location /conf/ {
-    proxy_pass http://127.0.0.1:53860/;
+location ^~ /conf/ {
+    proxy_pass http://127.0.0.1:53860;
 }
 
 location /api/register {
@@ -195,16 +205,32 @@ location /api/register {
 }
 ```
 
-Завершающий `/` в `proxy_pass http://127.0.0.1:53860/;` важен: благодаря ему
-запрос `/conf/assets/fact-time.svg` передаётся SPA-серверу как
-`/assets/fact-time.svg`.
+У `proxy_pass` намеренно нет завершающего `/`: так исходный путь `/conf/...`
+сохраняется, а Node-сервер самостоятельно применяет `PUBLIC_BASE_PATH`.
 
-`PUBLIC_BASE_PATH` не заменяет `APP_ORIGIN` и `REGISTRATION_API_URL`:
+### URL серверного API
 
-- `APP_ORIGIN` содержит только origin без `/conf`, например
+Адрес серверной части настраивается отдельно через `API_BASE_URL`. API-клиент содержит
+постоянный маршрут `/api/register` и добавляет его к настроенной базе:
+
+| Окружение | `API_BASE_URL` | Итоговый запрос |
+| --- | --- | --- |
+| Локально, отдельный API-порт | `http://127.0.0.1:53861` | `http://127.0.0.1:53861/api/register` |
+| Боевое окружение, общий источник | пустая строка | `/api/register` |
+| Серверная часть под префиксом | `/conf` | `/conf/api/register` |
+| Отдельная серверная часть | `https://api.example.ru` | `https://api.example.ru/api/register` |
+
+В `API_BASE_URL` нельзя указывать сам маршрут `/api/register`: это именно адрес
+или префикс серверной части. Клиент не определяет её адрес по адресу статики автоматически.
+Пустая строка означает запрос к тому же источнику. Эта настройка встраивается
+при сборке, поэтому после её изменения клиентскую часть нужно пересобрать.
+
+`PUBLIC_BASE_PATH` и `API_BASE_URL` не заменяют `APP_ORIGIN`:
+
+- `APP_ORIGIN` содержит только источник без `/conf`, например
   `https://ads.mts.ru`;
-- `REGISTRATION_API_URL=/api/register` остаётся корневым API-маршрутом и не
-  получает префикс `/conf`;
+- `PUBLIC_BASE_PATH` управляет SPA и статикой;
+- `API_BASE_URL` управляет только адресом запросов к серверной части;
 - GitHub Pages публикует только статику и не запускает Node API, поэтому
   серверный сценарий регистрации через `/api/register` там недоступен.
 
@@ -220,31 +246,31 @@ curl -I https://mmetrin.github.io/conf/assets/fact-time.svg
 
 `npm run server` пишет JSON-логи для `POST /api/register` и Sendsay webhook. Все строки одной попытки связаны общим `requestId`. События `api.request.*` показывают результат API, а `sendsay.request.*` и `sendsay.response.*` — результат webhook. Логи содержат HTTP-статус, длительность и безопасный код причины, но не содержат данные участника, API key или webhook URL. Прямой browser-запрос в Sendsay Form API в серверные логи не попадает.
 
-## Deployment
+## Развёртывание
 
-Подтверждённая production-конфигурация для `https://ads.mts.ru/conf`:
+Подтверждённая боевая конфигурация для `https://ads.mts.ru/conf`:
 
 ```env
 APP_ORIGIN=https://ads.mts.ru
 PUBLIC_BASE_PATH=/conf/
-REGISTRATION_API_URL=/api/register
+API_BASE_URL=
 ```
 
-`APP_ORIGIN` не должен содержать `/conf`: HTTP-заголовок `Origin` включает только протокол и домен. `PUBLIC_BASE_PATH` обязательно заканчивается `/` и задаёт базу для JS, CSS, шрифтов и изображений.
+`APP_ORIGIN` не должен содержать `/conf`: HTTP-заголовок `Origin` включает только протокол и домен. `PUBLIC_BASE_PATH` обязательно заканчивается `/` и задаёт базовый путь для JS, CSS, шрифтов и изображений.
 
 1. Установить Node.js 22+ и выполнить `npm ci`.
-2. Задать production `APP_ORIGIN` и секретный `SENDSAY_IMPORT_WEBHOOK_URL`.
-3. До сборки задать публичные Sendsay-переменные, `PUBLIC_BASE_PATH=/conf/` и `REGISTRATION_API_URL=/api/register`.
+2. Задать боевые `APP_ORIGIN` и секретный `SENDSAY_IMPORT_WEBHOOK_URL`.
+3. До сборки задать публичные переменные Sendsay, `PUBLIC_BASE_PATH=/conf/` и пустой `API_BASE_URL` для API на том же источнике.
 4. Выполнить `npm run check`.
 5. Запустить `npm run server` и `npm start`.
 6. Опубликовать оба процесса через HTTPS/reverse proxy.
-7. Направить `/api/register` на API, а `/conf` и `/conf/*` — на SPA с удалением префикса `/conf` перед передачей Node static server. Остальные маршруты домена не перехватывать.
+7. Направить `/api/register` на API, а `/conf` и `/conf/*` — на SPA без изменения пути. Остальные маршруты домена не перехватывать.
 
-Если CSP задаётся на proxy/CDN, в `connect-src` нужно разрешить `'self'`, `https://sendsay.ru` и отдельный API origin, если он используется.
+Если CSP задаётся на прокси или CDN, в `connect-src` нужно разрешить `'self'`, `https://sendsay.ru` и отдельный источник API, если он используется.
 
 ## Что настроить сотруднице в Sendsay
 
-1. Оставить форму `24` активной для регистраций без согласия на напоминания и назначить ей нужный production-список.
+1. Оставить форму `24` активной для регистраций без согласия на напоминания и назначить ей нужный боевой список.
 2. Проверить Form API mapping `_member_email`, `q1–q5` и соответствующие поля `anketa.event.*` в Sendsay.
 3. Настроить письма и напоминания на дату **19.11.2026, 17:00 МСК**.
 4. Настроить уведомление организатору о новой заявке внутри Sendsay.
@@ -283,7 +309,7 @@ REGISTRATION_API_URL=/api/register
 
 ## Безопасность
 
-- Webhook URL и любые секретные ключи нельзя помещать во frontend-переменные или bundle.
+- URL webhook и любые секретные ключи нельзя помещать в переменные клиентской части или браузерную сборку.
 - API принимает только JSON с разрешёнными полями, проверяет `Origin`, размер body, honeypot и rate limit.
 - Не логировать данные заявки, raw IP, webhook URL и ответы Sendsay с секретами.
 - Для нескольких API instances нужен общий rate-limit store; текущий limiter хранится в памяти процесса.

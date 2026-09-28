@@ -106,6 +106,7 @@ function logStaticError(error, pathname) {
 export function createStaticFileHandler({
   root,
   entryDocument,
+  basePath = "/",
   statFile = defaultStat,
   createReadStream = defaultCreateReadStream,
   onError = logStaticError,
@@ -133,13 +134,25 @@ export function createStaticFileHandler({
       return send(res, 405, { Allow: "GET, HEAD" });
     }
 
+    let requestUrl;
     let pathname;
     try {
-      pathname = decodeURIComponent(
-        new URL(req.url, "http://localhost").pathname,
-      );
+      requestUrl = new URL(req.url, "http://localhost");
+      pathname = decodeURIComponent(requestUrl.pathname);
     } catch {
       return send(res, 400);
+    }
+
+    if (basePath !== "/") {
+      const basePathWithoutSlash = basePath.slice(0, -1);
+      if (pathname === basePathWithoutSlash) {
+        return send(res, 308, {
+          Location: `${basePath}${requestUrl.search}`,
+          "Cache-Control": "no-cache",
+        });
+      }
+      if (!pathname.startsWith(basePath)) return send(res, 404);
+      pathname = `/${pathname.slice(basePath.length)}`;
     }
 
     const requestedPath = pathname === "/" ? `/${entryDocument}` : pathname;

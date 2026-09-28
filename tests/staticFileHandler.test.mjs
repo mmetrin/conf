@@ -169,6 +169,28 @@ test("serves entry document, static MIME types and conservative cache policies",
   assert.equal(stableJs.headers["cache-control"], "public, max-age=86400");
 });
 
+test("serves the SPA and assets from the configured public base path", async (t) => {
+  const fixture = await staticFixture(t, { basePath: "/conf/" });
+
+  const redirect = await fixture.request("/conf?source=test");
+  assert.equal(redirect.status, 308);
+  assert.equal(redirect.headers.location, "/conf/?source=test");
+  assert.equal(redirect.headers["cache-control"], "no-cache");
+
+  const home = await fixture.request("/conf/");
+  assert.equal(home.status, 200);
+  assert.equal(home.headers["content-type"], "text/html; charset=utf-8");
+  assert.equal((await fixture.request("/conf/assets/hero.webp")).status, 200);
+  assert.equal(
+    (await fixture.request("/conf/app/site-ABCDEFGH.js")).status,
+    200,
+  );
+
+  assert.equal((await fixture.request("/")).status, 404);
+  assert.equal((await fixture.request("/assets/hero.webp")).status, 404);
+  assert.equal((await fixture.request("/conference/")).status, 404);
+});
+
 test("HEAD sends the selected representation headers without a body", async (t) => {
   const fixture = await staticFixture(t);
   const get = await fixture.request("/app/site-ABCDEFGH.js", {

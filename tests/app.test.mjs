@@ -15,7 +15,7 @@ const built = await build({
   external: ["react", "react-dom", "react-dom/client"],
   define: {
     __REGISTRATION_PUBLIC_CONFIG__: JSON.stringify({
-      apiUrl: "/api/register",
+      apiBaseUrl: "",
     }),
     __SENDSAY_PUBLIC_CONFIG__: JSON.stringify({
       account: "test-account",

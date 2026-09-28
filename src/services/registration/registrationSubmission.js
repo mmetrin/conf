@@ -4,10 +4,15 @@ import {
 } from "../../../shared/registrationValidation.js";
 import { submitRegistrationToSendsay } from "../sendsay/sendsayFormClient.js";
 
-const REGISTRATION_API_URL =
+const API_BASE_URL =
   typeof __REGISTRATION_PUBLIC_CONFIG__ === "undefined"
-    ? "/api/register"
-    : __REGISTRATION_PUBLIC_CONFIG__.apiUrl;
+    ? ""
+    : (__REGISTRATION_PUBLIC_CONFIG__.apiBaseUrl ?? "");
+const REGISTRATION_PATH = "/api/register";
+
+export function getRegistrationApiUrl(apiBaseUrl = API_BASE_URL) {
+  return `${apiBaseUrl.replace(/\/+$/, "")}${REGISTRATION_PATH}`;
+}
 
 export function normalizeRegistrationFields(input) {
   return Object.fromEntries(
@@ -50,7 +55,7 @@ export async function submitReminderConsent(
   { fetchImpl = fetch, timeoutMs = 15_000 } = {},
 ) {
   try {
-    const response = await fetchImpl(REGISTRATION_API_URL, {
+    const response = await fetchImpl(getRegistrationApiUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "same-origin",

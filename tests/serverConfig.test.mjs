@@ -10,6 +10,11 @@ test("server configuration uses safe defaults and validates PORT", () => {
   const defaults = createServerConfig({});
   assert.equal(defaults.host, "127.0.0.1");
   assert.equal(defaults.port, 53860);
+  assert.equal(defaults.static.basePath, "/");
+  assert.equal(
+    createServerConfig({ PUBLIC_BASE_PATH: "/conf/" }).static.basePath,
+    "/conf/",
+  );
   assert.equal(createSpaServerConfig({}).port, 53860);
   assert.equal(createApiServerConfig({}).port, 53861);
   assert.deepEqual(
@@ -41,4 +46,8 @@ test("server configuration uses safe defaults and validates PORT", () => {
   assert.throws(() => createServerConfig({ SERVER_HOST: "  " }), /SERVER_HOST/);
   assert.throws(() => createSpaServerConfig({ SPA_PORT: "0" }), /SPA_PORT/);
   assert.throws(() => createApiServerConfig({ API_PORT: "nope" }), /API_PORT/);
+  assert.throws(
+    () => createServerConfig({ PUBLIC_BASE_PATH: "/conf" }),
+    /PUBLIC_BASE_PATH/,
+  );
 });

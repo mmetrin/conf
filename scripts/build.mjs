@@ -4,6 +4,7 @@ import crypto from "node:crypto";
 import { extname, join } from "node:path";
 import { promisify } from "node:util";
 import { brotliCompress, constants, gzip } from "node:zlib";
+import { readPublicBasePath } from "../shared/publicBasePath.js";
 import { loaderLensSrc } from "../src/loader-lens.js";
 const output = "outputs";
 const rootStaticFiles = [
@@ -47,37 +48,42 @@ function publicSendsayConfig(env = process.env) {
 }
 
 function publicRegistrationConfig(env = process.env) {
-  const value = env.REGISTRATION_API_URL;
-  const apiUrl =
-    typeof value === "string" && value.trim() !== ""
-      ? value.trim()
-      : "/api/register";
-  if (apiUrl.startsWith("/") && !apiUrl.startsWith("//")) return { apiUrl };
+  const value = env.API_BASE_URL;
+  const apiBaseUrl = typeof value === "string" ? value.trim() : "";
+  if (apiBaseUrl === "") return { apiBaseUrl: "" };
+  const normalizedApiBaseUrl = apiBaseUrl.replace(/\/+$/, "");
+  if (normalizedApiBaseUrl.endsWith("/api/register")) {
+    throw new Error(
+      "API_BASE_URL must identify the backend, not the /api/register endpoint",
+    );
+  }
+  if (apiBaseUrl.startsWith("/") && !apiBaseUrl.startsWith("//")) {
+    if (/[?#]/.test(apiBaseUrl)) {
+      throw new Error("API_BASE_URL path must not contain a query or hash");
+    }
+    return { apiBaseUrl: normalizedApiBaseUrl };
+  }
 
   let parsed;
   try {
-    parsed = new URL(apiUrl);
+    parsed = new URL(apiBaseUrl);
   } catch {
     throw new Error(
-      "REGISTRATION_API_URL must be an absolute HTTP(S) URL or root-relative path",
+      "API_BASE_URL must be an absolute HTTP(S) URL, a root-relative path, or empty",
     );
   }
-  if (!["http:", "https:"].includes(parsed.protocol)) {
+  if (
+    !["http:", "https:"].includes(parsed.protocol) ||
+    parsed.username ||
+    parsed.password ||
+    parsed.search ||
+    parsed.hash
+  ) {
     throw new Error(
-      "REGISTRATION_API_URL must be an absolute HTTP(S) URL or root-relative path",
+      "API_BASE_URL must be an absolute HTTP(S) URL without credentials, query, or hash",
     );
   }
-  return { apiUrl };
-}
-
-function publicBasePath(env = process.env) {
-  const value = env.PUBLIC_BASE_PATH?.trim() || "/";
-  if (!/^\/(?:[A-Za-z0-9_-]+\/)*$/.test(value)) {
-    throw new Error(
-      "PUBLIC_BASE_PATH must be a root-relative directory ending with /",
-    );
-  }
-  return value;
+  return { apiBaseUrl: normalizedApiBaseUrl };
 }
 
 async function precompressFile(path) {
@@ -203,7 +209,7 @@ for (const file of rootStaticFiles)
 const loadingShell = (
   await fs.readFile("src/loading-shell.html", "utf8")
 ).replace("__LOADER_LENS_SRC__", loaderLensSrc);
-const basePath = publicBasePath();
+const basePath = readPublicBasePath();
 const entryHtml = `<!doctype html>
 <html lang="ru" class="opening-locked" style="background:#030307"><head><base href="${basePath}"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#030307"><meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><meta name="googlebot" content="noindex,nofollow,noarchive,nosnippet,noimageindex"><title>Флагманская конференция МТС Ads о технологиях будущего рекламной индустрии</title><style>html,body{margin:0;background:#030307;color-scheme:dark}</style>
 <link rel="preload" href="${cssPath}" as="style">
