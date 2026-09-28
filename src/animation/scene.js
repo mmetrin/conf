@@ -100,7 +100,7 @@ export function startScene({
     audiencePreparationRequested = false,
     audienceEffectActive = false;
   const automaticEnd = 2.65;
-  const openingHoldDuration = mobile.matches ? 0.15 : 0.6;
+  const openingHoldDuration = 0.6;
   const projectorTravelDuration = 2.2,
     projectorBlendStart = projectorTravelDuration * 0.76,
     projectorBlendDuration = 0.6;

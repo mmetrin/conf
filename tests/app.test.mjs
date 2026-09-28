@@ -481,17 +481,23 @@ for (const frameMs of [1000 / 60, 100])
         "only the initial frame is loaded during opening",
       );
       assert.match(requestedFrames[0], /receiver-frames\/mobile\/01\.webp/);
-      await env.step(Math.ceil(1650 / frameMs), frameMs);
+      await env.step(Math.ceil(1000 / frameMs), frameMs);
+      assert.notEqual(
+        document.querySelector("#projector").style.visibility,
+        "hidden",
+        "mobile keeps the first projector for the same hold as desktop",
+      );
+      await env.step(Math.ceil(650 / frameMs), frameMs);
       assert(
         document.documentElement.classList.contains("opening-locked"),
-        "the opening animation keeps its original pace instead of finishing in 1.5 seconds",
+        "the longer first-projector hold keeps the opening in progress",
       );
       assert.equal(
         requestedFrames.length,
         1,
         "background frames still wait for the full opening animation",
       );
-      await env.step(Math.ceil(1500 / frameMs), frameMs);
+      await env.step(Math.ceil(2000 / frameMs), frameMs);
       assert(
         !document.documentElement.classList.contains("opening-locked"),
         "opening finishes without stretching its timing on dropped frames",

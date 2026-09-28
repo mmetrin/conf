@@ -1,8 +1,8 @@
 {
-  "jsBytes": 270331,
-  "initialJsBytes": 270331,
+  "jsBytes": 270317,
+  "initialJsBytes": 270317,
   "asyncJsBytes": 103027,
-  "totalJsBytes": 373358,
+  "totalJsBytes": 373344,
   "cssBytes": 85200,
   "precompressedAssets": [
     {
@@ -54,12 +54,12 @@
       "bytes": 1948
     },
     {
-      "path": "app/site-24M37VSG.js.br",
-      "bytes": 84282
+      "path": "app/site-PUMDULVI.js.br",
+      "bytes": 84275
     },
     {
-      "path": "app/site-24M37VSG.js.gz",
-      "bytes": 89692
+      "path": "app/site-PUMDULVI.js.gz",
+      "bytes": 89685
     },
     {
       "path": "assets/fact-address.svg.br",
@@ -167,19 +167,19 @@
     },
     {
       "path": "index.html.br",
-      "bytes": 6377
+      "bytes": 6378
     },
     {
       "path": "index.html.gz",
-      "bytes": 6772
+      "bytes": 6774
     },
     {
       "path": "mts-ads-portrait-frames-current.html.br",
-      "bytes": 6377
+      "bytes": 6378
     },
     {
       "path": "mts-ads-portrait-frames-current.html.gz",
-      "bytes": 6772
+      "bytes": 6774
     },
     {
       "path": "site-28c475388b.css.br",
@@ -668,7 +668,7 @@
         "format": "esm"
       },
       "src/animation/scene.js": {
-        "bytes": 67054,
+        "bytes": 67030,
         "imports": [
           {
             "path": "src/animation/typography.js",
@@ -1239,7 +1239,7 @@
       }
     },
     "outputs": {
-      "outputs/app/site-24M37VSG.js": {
+      "outputs/app/site-PUMDULVI.js": {
         "imports": [
           {
             "path": "outputs/app/chunks/chunk-7IMPOFPG.js",
@@ -1317,7 +1317,7 @@
             "bytesInOutput": 478
           },
           "src/animation/scene.js": {
-            "bytesInOutput": 26717
+            "bytesInOutput": 26703
           },
           "src/animation/typography.js": {
             "bytesInOutput": 3101
@@ -1326,7 +1326,7 @@
             "bytesInOutput": 3236
           }
         },
-        "bytes": 270331
+        "bytes": 270317
       },
       "outputs/app/chunks/particles-AXWKV3T7.js": {
         "imports": [
